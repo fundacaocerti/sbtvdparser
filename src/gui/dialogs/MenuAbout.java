@@ -70,11 +70,13 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 				if (!java.awt.Desktop.isDesktopSupported())
 					return;
 				File license = new File("COPYNG.txt");
-				try {
-					desk.open(license);
-				} catch (IOException e2) {
-					e2.printStackTrace();
-				}
+				System.out.println(license.getAbsolutePath());
+				if (license.exists() && license.canRead())
+					try {
+						desk.open(license);
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
 			}
 			if (e.widget == certiLink)
 				java.awt.Desktop.getDesktop().browse(new URI("http://www.certi.org.br")); 
