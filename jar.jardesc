@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="C:/Arquivos de programas/TSParser/tsp.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/TV-D/jar.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/TV-D/tsp.mf" manifestVersion="1.0" reuseManifest="true" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <folder path="/TV-D/res"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;gui"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.es"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.psi.descriptors"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.sbtvd"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;parsers"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.pes"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;sys"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.psi"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;dsmcc"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;gui.events"/>
+    </selectedElements>
+</jardesc>
