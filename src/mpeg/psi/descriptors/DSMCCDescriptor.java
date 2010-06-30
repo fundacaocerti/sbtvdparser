@@ -21,16 +21,15 @@
  */
 package mpeg.psi.descriptors;
 
+import dsmcc.ModuleList;
 import gui.MainPanel;
 import sys.BitWise;
 
 public class DSMCCDescriptor {
 
-	int[] predefinedTags = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0xc2};
+	int[] predefinedTags = {0x09, 0x71};
 
-	String[] predefinedNames = { "type_descriptor", "name_descriptor", "info_descriptor", 
-			"module_link_descriptor", "CRC32_descriptor", "location_descriptor", "est_download_time_descriptor", 
-			"compression_type_descriptor"};
+	String[] predefinedNames = { "compressed_module", "caching_priority" };
 
 	String name = null;
 
@@ -39,11 +38,12 @@ public class DSMCCDescriptor {
 	int descriptor_length = 0;
 
 	BitWise bw;
+	
+	ModuleList ml;
 
-	// public Descriptor() {}
-
-	public void setUp(int treeIndex, BitWise tableBw) {
+	public void setUp(int treeIndex, BitWise tableBw, ModuleList ml) {
 		tableIndx = treeIndex;
+		this.ml = ml; 
 		int startIndx = tableBw.getAbsolutePosition();
 		// descriptor_tag 8 uimsbf
 		parsedTag = tableBw.pop();
@@ -59,13 +59,6 @@ public class DSMCCDescriptor {
 		for (int i = 0; i < predefinedTags.length; i++)
 			if (predefinedTags[i] == parsedTag)
 				descriptorName = predefinedNames[i];
-		if (parsedTag > 0x79 && parsedTag < 0xC0)
-			descriptorName = "Broadcaster defined";
-		if (parsedTag > 0x07 && parsedTag < 0x80 ||
-				parsedTag > 0xbf && parsedTag < 0xc2 || 
-				parsedTag > 0xc2)
-			descriptorName = "Reserved";
-
 		int descIndx = addSubItem(descriptorName + " descriptor", tableIndx);
 		addSubItem("descriptor semantic unknown", descIndx);
 		addSubItem("tag = " + bw.toHex(parsedTag), descIndx);

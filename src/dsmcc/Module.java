@@ -26,22 +26,24 @@ import gui.MainPanel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 import sys.BitWise;
-import sys.Log;
 
 
 public class Module {
-	int id, version, lenght, remainingParts, treeLvl;
+	int id, version, lenght, remainingParts, treeLvl, origSize;
 	boolean[] receivedParts;
 	public int partLvl;
 	byte[] data;
 	ModuleList moduleList;
 	
-	public Module(int id, int version, int lenght, int treeLvl, ModuleList moduleList) {
+	public Module(int id, int version, int lenght, int treeLvl, ModuleList moduleList, int origSize) {
 		this.id = id;
 		this.version = version;
 		this.lenght = lenght;
+		this.origSize = origSize;
 		this.treeLvl = treeLvl;
 		this.moduleList = moduleList;
 		data = new byte[lenght];
@@ -101,6 +103,20 @@ public class Module {
 		//TODO: verificar blocos já recebidos, ignorar
 		if (remainingParts == 0) {
 			System.out.println("Module complete");
+			if (origSize != lenght) {
+				 Inflater decompresser = new Inflater();
+				 decompresser.setInput(this.data, 0, lenght);
+				 byte[] result = new byte[origSize];
+				 try {
+					int resultLength = decompresser.inflate(result);
+					decompresser.end();
+					if (resultLength == origSize)
+						this.data = result;
+				} catch (DataFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 //			save();
 			BIOP b = new BIOP();
 			BitWise bw = new BitWise(this.data);
@@ -108,8 +124,10 @@ public class Module {
 			moduleList.increaseCompleted();
 			if (moduleList.isReadyToMount()) {
 				DSMCCDir root = (DSMCCDir)FileList.getByObjKey(BIOP.svcGatewayObjKey);
-				root.name = "Carrossel";//+carroussel_id
-				root.mountTree(moduleList.parent.progressLvl);
+				if (root != null) {
+					root.name = "Carrossel";//+TODO: carroussel_id
+					root.mountTree(moduleList.parent.progressLvl);
+				}
 			}
 		}
 		

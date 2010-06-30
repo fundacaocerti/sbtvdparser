@@ -21,12 +21,13 @@
  */
 package mpeg.psi.descriptors;
 
+import dsmcc.ModuleList;
 import sys.BitWise;
 import sys.Log;
 
 public class DSMCCDescriptorList {
 
-	static Class[] descList = { TSinformation.class };
+	static Class[] descList = { CompressedModule.class };
 
 	static boolean exception;
 
@@ -66,21 +67,21 @@ public class DSMCCDescriptorList {
 		return d;
 	}
 
-	public static void print(BitWise bw, int treeIndex) {
+	public static void print(BitWise bw, int treeIndex, ModuleList ml) {
 		int tag = DSMCCDescriptor.preparse(bw);
 		exception = false;
 		for (int i = 0; i < descList.length; i++) {
 			Class descClass = descList[i];
 			if (getTag(descClass) == tag) {
 				DSMCCDescriptor d = getDSMCCDescriptor(descClass, treeIndex, bw);
-				d.setUp(treeIndex, bw);
+				d.setUp(treeIndex, bw, ml);
 				invokeMethod(descClass, d, "printDescription");
 				if (!exception)
 					return;
 			}
 		}
 		DSMCCDescriptor d = new DSMCCDescriptor();
-		d.setUp(treeIndex, bw);
+		d.setUp(treeIndex, bw, ml);
 		d.print();
 	}
 }
