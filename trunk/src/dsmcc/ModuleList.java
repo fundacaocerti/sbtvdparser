@@ -26,6 +26,7 @@ import gui.MainPanel;
 import java.util.Vector;
 
 import mpeg.psi.DSMCC;
+import mpeg.psi.descriptors.DSMCCDescriptorList;
 import sys.BitWise;
 
 public class ModuleList {
@@ -33,6 +34,7 @@ public class ModuleList {
 	Vector moduleList = new Vector();
 	Module lastOne;
 	int completeModules = 0;
+	int origSize;
 	
 	DSMCC parent;
 	
@@ -82,17 +84,37 @@ public class ModuleList {
 		MainPanel.addTreeItem("moduleSize: "+bw.toHex(moduleSize), aModuleLvl);
 		int moduleVersion = bw.pop();
 		MainPanel.addTreeItem("moduleVersion: "+bw.toHex(moduleVersion), aModuleLvl);
+		
 		int moduleInfoLength = bw.pop();
-//		int milLvl = MainPanel.addTreeItem("moduleInfoLength: "+bw.toHex(moduleInfoLength), aModuleLvl);
-//		bw.mark();
-//		// for(i=0,i<N,i++){ uimsbf
-//		// descriptor()
-//		while ((bw.getByteCount() < moduleInfoLength)
-//				&& (bw.getAvailableSize() > 0)) {
-//			DSMCCDescriptorList.print(bw, milLvl);
-//		}
-		MainPanel.addTreeItem("moduleInfo: "+bw.getHexSequence(moduleInfoLength), aModuleLvl);
-		moduleList.add(new Module(moduleId, moduleVersion, moduleSize, aModuleLvl, this));
+		int miLvl = MainPanel.addTreeItem("moduleInfo: lenght "+bw.toHex(moduleInfoLength), aModuleLvl);
+		MainPanel.addTreeItem("ModuleTimeOut: "+bw.toHex(bw.pop32()), miLvl);
+		MainPanel.addTreeItem("BlockTimeOut: "+bw.toHex(bw.pop32()), miLvl);
+		MainPanel.addTreeItem("MinBlockTime: "+bw.toHex(bw.pop32()), miLvl);
+		int taps = bw.pop();
+		int tapLvl = MainPanel.addTreeItem("taps_count: "+taps, miLvl);
+		for (int i = 0; i < taps; i++) {
+			int aTapLvl = MainPanel.addTreeItem("id: "+bw.toHex(bw.pop16()), tapLvl);
+			MainPanel.addTreeItem("use: "+bw.toHex(bw.pop16()), aTapLvl);
+			MainPanel.addTreeItem("association_tag: "+bw.toHex(bw.pop16()), aTapLvl);
+			MainPanel.addTreeItem("selector_length: "+bw.toHex(bw.pop()), aTapLvl);
+		} 				
+		int userInfoLength 	= bw.pop();
+		int uiLvl = MainPanel.addTreeItem("userInfo: lenght "+bw.toHex(userInfoLength), aModuleLvl);
+		
+		// for(i=0,i<N,i++){ uimsbf
+		// descriptor()
+		bw.mark();
+		origSize = moduleSize;
+		while ((bw.getByteCount() < userInfoLength)
+				&& (bw.getAvailableSize() > 0)) {
+			DSMCCDescriptorList.print(bw, uiLvl, this);
+		}
+//		MainPanel.addTreeItem("moduleInfo: "+bw.getHexSequence(moduleInfoLength), aModuleLvl);
+		moduleList.add(new Module(moduleId, moduleVersion, moduleSize, aModuleLvl, this, origSize));
+	}
+
+	public void setCompression(int origSize) {
+		this.origSize = origSize;
 	}
 }
 

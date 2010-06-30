@@ -188,6 +188,10 @@ public class BitWise {
 		if (size > buf.length)
 			bufSize = buf.length;
 	}
+	
+	public void reset() {
+		readPtr = readCount;
+	}
 
 	public void mark() {
 		readCount = readPtr;

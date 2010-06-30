@@ -43,10 +43,20 @@ BIOP::StreamEvent Base, Access, Stream, Event
 	
 	public void parseModule(BitWise bw, int moduleLvl) {
 		int biopLvl = MainPanel.addTreeItem("BIOP", moduleLvl);
-		while (bw.getAvailableSize() > 0 && parseMessage(bw, biopLvl));
-		if (bw.getAvailableSize() > 0)
-			MainPanel.addTreeItem(bw.getHexSequence(bw.getAvailableSize()),
+		bw.mark();
+		while (bw.getAvailableSize() > 0)
+			if (!parseMessage(bw, biopLvl)) {
+				System.out.println("pm fail");
+				break;
+			}
+		if (bw.getAvailableSize() > 0) {
+			bw.reset();
+			int i = bw.getAvailableSize();
+			if (i > 120)
+				i = 120;
+			MainPanel.addTreeItem(bw.getHexSequence(i),
 					MainPanel.addTreeItem("Module contains unidentified data!", biopLvl));
+		}
 	}
 	
 	public boolean parseMessage(BitWise bw, int biopLvl) {
