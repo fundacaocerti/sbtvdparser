@@ -60,10 +60,13 @@ public class Module {
 		return remainingParts == 0;
 	}
 	
-	public void save() {
+	public String toString() {
+		return "000"+Integer.toHexString(id);
+	}
+	
+	public void save(File f) {
 		try {
-			String mId = "000"+Integer.toHexString(id);
-			File f = new File("k:\\modules\\module"+mId.substring(mId.length()-4, mId.length()));
+//			File f = new File("k:\\modules\\module"+mId.substring(mId.length()-4, mId.length()));
 			if (f.exists())
 				f.delete();
 			f.createNewFile();
@@ -77,7 +80,7 @@ public class Module {
 	}
 	
 	public void feedPart(byte[] data, int dataOffset, int dataLenght, int blockNumber, int partLvl) {
-		if (remainingParts == 0 || blockNumber > receivedParts.length
+		if (remainingParts == 0 || blockNumber >= receivedParts.length
 				|| receivedParts[blockNumber])
 			return;
 		int pLvl = MainPanel.addTreeItem("part: "+blockNumber+" size: "+dataLenght, partLvl);
@@ -89,18 +92,15 @@ public class Module {
 //		System.out.print("Module: "+Integer.toHexString(id));
 //		System.out.print("\tsize: "+Integer.toHexString(lenght));
 //		System.out.println("\tfeed: do="+dataOffset+" dl="+dataLenght+" bn="+blockNumber);
-		if (data.length < dataOffset+dataLenght) {
-//			Log.printWarning("Corrupted);
+		if ((data.length < dataOffset+dataLenght) 
+				|| (this.data.length < blockNumber*4066+dataLenght)) {
 			System.out.println("Module "+id+" data feed err: inserting "+dataLenght+
-					"b of "+data.length+"b buffer from "+dataOffset);
-//			System.out.println("Module "+id+" data feed err: inserting "+dataLenght+
-//					"b into "+this.data.length+"b buffer from "+blockNumber*4066);
+					"b of "+data.length+"b buffer from "+dataOffset+" into "+this.data.length+"b dest. at "+blockNumber*4066+dataLenght);
 			return;
 		}
 		System.arraycopy(data, dataOffset, this.data, blockNumber*4066, dataLenght);
 		remainingParts--;
 		receivedParts[blockNumber] = true;
-		//TODO: verificar blocos já recebidos, ignorar
 		if (remainingParts == 0) {
 			System.out.println("Module complete");
 			if (origSize != lenght) {
@@ -113,22 +113,16 @@ public class Module {
 					if (resultLength == origSize)
 						this.data = result;
 				} catch (DataFormatException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-//			save();
-			BIOP b = new BIOP();
+			MainPanel.setTreeData(treeLvl, this);
+			BIOP b = new BIOP(moduleList.fileList);
 			BitWise bw = new BitWise(this.data);
 			b.parseModule(bw, treeLvl);
 			moduleList.increaseCompleted();
-			if (moduleList.isReadyToMount()) {
-				DSMCCDir root = (DSMCCDir)FileList.getByObjKey(BIOP.svcGatewayObjKey);
-				if (root != null) {
-					root.name = "Carrossel";//+TODO: carroussel_id
-					root.mountTree(moduleList.parent.progressLvl);
-				}
-			}
+			if (moduleList.isReadyToMount())
+				moduleList.mountFS();
 		}
 		
 //		StringBuffer sb =  new StringBuffer();

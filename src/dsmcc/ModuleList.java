@@ -23,26 +23,31 @@ package dsmcc;
 
 import gui.MainPanel;
 
+import java.io.File;
 import java.util.Vector;
 
 import mpeg.psi.DSMCC;
 import mpeg.psi.descriptors.DSMCCDescriptorList;
 import sys.BitWise;
+import sys.Log;
 
 public class ModuleList {
 	
 	Vector moduleList = new Vector();
+	Vector cacheList = new Vector();
 	Module lastOne;
 	int completeModules = 0;
 	int origSize;
+	FileList fileList;
 	
 	DSMCC parent;
 	
 	public ModuleList(DSMCC parent) {
 		super();
 		this.parent = parent;
+		fileList = new FileList();
 	}
-
+	
 	public Module getById(int id) {
 		//version is not used by now
 		if (lastOne != null && lastOne.getId() == id)
@@ -55,24 +60,61 @@ public class ModuleList {
 		return null;
 	}
 	
+	public void loadCache() {
+		for (int i = 0; i < cacheList.size(); i++)
+			((ModuleCache)cacheList.get(i)).load(this);
+		cacheList.removeAllElements();
+	}
+	
+	public void mountFS() {
+		DSMCCObject root = fileList.getByObjKey(BIOP.svcGatewayObjKey);
+		if (root != null) {
+			root.name = "Carrossel "+BitWise.toHex(parent.downloadId);
+			root.mountTree(parent.progressLvl);
+		}
+		fileList.reset();
+	}
+	
+	public void reset() {
+		completeModules = 0;
+		moduleList.removeAllElements();
+		cacheList.removeAllElements();
+		mountFS();
+	}
+	
 	public void increaseCompleted() {
 		completeModules++;
 	}
 	
-	public void feedData(int id, byte[] data, int dataOffset, int dataLenght, int blockNumber, int treeLvl) {
+	public void feedData(Module m, byte[] data, int dataOffset, int dataLenght, int blockNumber, int treeLvl) {
 		parent.updateProgress(dataLenght);
-		Module m = getById(id);
-		if (m != null) {
-			if (m.isComplete())
-				return;
-			m.feedPart(data, dataOffset, dataLenght, blockNumber, treeLvl);
-		}
-		else
-			System.out.println("unknownModule");
+		m.feedPart(data, dataOffset, dataLenght, blockNumber, treeLvl);
 	}
 	
 	public boolean isReadyToMount() {
 		return completeModules > 0 && completeModules == moduleList.size();
+	}
+	
+	public void cacheData(int m, byte[] data, int dataOffset, int dataLenght, int blockNumber) {
+		ModuleCache mc = new ModuleCache(data, m, dataOffset, dataLenght, blockNumber);
+		if (!cacheList.contains(mc))
+			cacheList.add(mc);
+		else
+			System.out.println("já no cache");
+	}
+	
+	public void save(File f) {
+		if (f.exists())
+			f.delete();
+		f.mkdir();
+		for (int i = 0; i < moduleList.size(); i++) {
+			Module m = (Module)moduleList.get(i);
+			m.save(new File(f, m.toString()));
+		}
+	}
+	
+	public String toString() {
+		return "ModuleList "+BitWise.toHex(parent.downloadId);
 	}
 	
 	public void createModule(BitWise bw, int treeLvl) {
@@ -80,6 +122,12 @@ public class ModuleList {
 		int moduleId = bw.pop16();
 		int aModuleLvl = MainPanel.addTreeItem("moduleId: "+bw.toHex(moduleId), treeLvl);
 		int moduleSize = bw.pop16()<<16 | bw.pop16();
+		if (moduleSize > 0xa00000 || moduleSize < 0) {
+			Log.printWarning("DSMCC module is too large (>1Mb) - not creating");
+			return;
+		}
+		if (moduleSize == 0)
+			increaseCompleted();
 		parent.updateDlSize(moduleSize);
 		MainPanel.addTreeItem("moduleSize: "+bw.toHex(moduleSize), aModuleLvl);
 		int moduleVersion = bw.pop();

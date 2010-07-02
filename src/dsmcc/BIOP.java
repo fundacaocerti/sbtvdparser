@@ -40,6 +40,11 @@ BIOP::StreamEvent Base, Access, Stream, Event
 	static byte[] svcGatewayObjKey = null;
 	public static int carouselPID = 0;
 	int msgNumb = 0;
+	FileList fl;
+	
+	public BIOP(FileList fl) {
+		this.fl = fl;
+	}
 	
 	public void parseModule(BitWise bw, int moduleLvl) {
 		int biopLvl = MainPanel.addTreeItem("BIOP", moduleLvl);
@@ -80,16 +85,16 @@ BIOP::StreamEvent Base, Access, Stream, Event
 		int objKind = bw.pop32();
 		MainPanel.addTreeItem("objKind: "+(char)(bw.stripBits(objKind, 32, 8))+(char)(bw.stripBits(objKind, 24, 8))
 				+(char)(bw.stripBits(objKind, 16, 8)), msglvl);
-		System.out.println(bw.toHex(objKind));
+		System.out.println("objKind "+bw.toHex(objKind));
 		int objectInfo_length;
 		
 		switch (objKind) {
 		case 0x73726700: //"srg" == ServiceGateway
 			System.out.println("ServiceGateway");
 			svcGatewayObjKey = objKey;
-//			break;
 		case 0x64697200: //"dir" == Directory
 			System.out.println("Directory");
+//			fl.setToDir(objKey); //for empty directories
 			objectInfo_length = bw.pop16();
 			System.out.println("objInfo: "+bw.getHexSequence(objectInfo_length));
 			bw.pop(bw.pop()*7); //ServiceContextList
@@ -109,8 +114,8 @@ BIOP::StreamEvent Base, Access, Stream, Event
 				int bindingType = bw.pop(); //0x01 == ncontext > bound to a Directory or ServiceGateway
 //				System.out.println("bindingType: "+bindingType);
 //				bw.pop(0x49);
-				DSMCCFile f = FileList.setName(parseIOR(bw, nameLvl), name);
-				FileList.add(objKey, f);
+				DSMCCObject f = fl.setName(parseIOR(bw, nameLvl), name);
+				fl.addChildren(objKey, f);
 				objectInfo_length = bw.pop16();
 				MainPanel.addTreeItem("objInfo: "+bw.getHexSequence(objectInfo_length), nameLvl);
 			}
@@ -129,7 +134,7 @@ BIOP::StreamEvent Base, Access, Stream, Event
 			bw.pop32();
 			int content_length = bw.pop32();
 			MainPanel.addTreeItem("file size "+bw.toHex(content_length), msglvl);
-			FileList.setContent(objKey, bw.buf, bw.getAbsolutePosition(), content_length);
+			fl.setContent(objKey, bw.buf, bw.getAbsolutePosition(), content_length);
 			break;
 		case 0x73747200: //"str" == Stream
 			System.out.println("Stream");
@@ -149,7 +154,7 @@ BIOP::StreamEvent Base, Access, Stream, Event
 		byte[] objKey = new byte[objectKey_length];
 		for (int i = 0; i < objKey.length; i++)
 			objKey[i] = (byte)bw.pop();
-		MainPanel.addTreeItem("objKey: "+DSMCCFile.printObjKey(objKey), msgLvl);
+		MainPanel.addTreeItem("objKey: "+DSMCCObject.printObjKey(objKey), msgLvl);
 		return objKey;
 	}
 	
@@ -194,14 +199,14 @@ BIOP::StreamEvent Base, Access, Stream, Event
 		System.out.println("nameComponents_count: "+nameComponents_count);
 		for (int i=0; i<nameComponents_count; i++) {
 			int id_length = bw.pop();
-			System.out.print("NameComponent id: [");
+			System.out.print("nameComponent id: [");
 			StringBuffer sb = new StringBuffer();
 			for (int j=0; j<id_length-1; j++)
 				sb.append((char)bw.pop());
 			bw.pop();//null terminated
 			System.out.println(sb.toString()+"]");
 			int kind_length = bw.pop();
-			System.out.print("NameComponent kind: [");
+			System.out.print("nameComponent kind: [");
 			for (int j=0; j<kind_length-1; j++)
 				System.out.print((char)bw.pop());
 			bw.pop();//null terminated
@@ -217,28 +222,33 @@ BIOP::StreamEvent Base, Access, Stream, Event
 	public static void main(String[] cmdArgs) {
 		BitWise btw = new BitWise(new byte[] {});
 		byte[] svcGatewayObjKey = null;
-		for (int i = 1; i < 31; i++) {
-			File f =  new File("K:\\modules\\Module00"+btw.toHex(i).substring(2));
-			System.out.println("\n\nModule: "+f.getName());
-			try {
-				FileInputStream fis = new FileInputStream(f);
-				byte[] ba = new byte[(int)f.length()];
-				fis.read(ba);
-				BitWise bw = new BitWise(ba);
-				BIOP me =  new BIOP();
-				me.parseModule(bw, 0);
-				fis.close();
-				if (me.svcGatewayObjKey != null) {
-					svcGatewayObjKey = me.svcGatewayObjKey;
-					System.out.println("gateway found");
+		FileList fl = new FileList();
+		File f =  new File("K:\\TS\\ModuleListB");
+		File[] modules = f.listFiles();
+		for (int i = 0; i < modules.length; i++) {
+			f = modules[i];
+			if (f.isFile()) {
+				System.out.println("\n\nModule: "+f.getName());
+				try {
+					FileInputStream fis = new FileInputStream(f);
+					byte[] ba = new byte[(int)f.length()];
+					fis.read(ba);
+					BitWise bw = new BitWise(ba);
+					BIOP me = new BIOP(fl);
+					me.parseModule(bw, 0);
+					fis.close();
+					if (me.svcGatewayObjKey != null) {
+						svcGatewayObjKey = me.svcGatewayObjKey;
+						System.out.println("gateway found");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
-		DSMCCDir rd = (DSMCCDir)FileList.getByObjKey(svcGatewayObjKey);
+		DSMCCObject rd = fl.getByObjKey(svcGatewayObjKey);
 		rd.name = "root";
-		File root =  new File("K:\\modules");
+		File root =  new File("K:\\TS\\ModuleListB\\fs");
 		root.mkdir();
 		rd.saveIn(root);
 //		File f =  new File("K:\\modules\\Module0002");
