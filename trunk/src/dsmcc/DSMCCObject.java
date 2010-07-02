@@ -27,8 +27,11 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Vector;
 
-public class DSMCCFile {
+public class DSMCCObject {
+	
+	boolean isDirectory;
 	
 	byte[] objKey = null;
 	
@@ -40,8 +43,37 @@ public class DSMCCFile {
 	
 	File file = null;
 	
+	Vector childrens = new Vector();
+	
+	public void addChildren(DSMCCObject file) {
+		isDirectory = true;
+		childrens.add(file);
+	}
+	
+	public void mountTree(int msgLvl) {
+		if (isDirectory) {
+			int dirLvl = MainPanel.addTreeItem(name, msgLvl, MainPanel.DSMCC_TREE);
+			MainPanel.setTreeData(dirLvl, this);
+			for (int i = 0; i < childrens.size(); i++)
+				((DSMCCObject)childrens.get(i)).mountTree(dirLvl);
+		}
+		else {
+			int fileLvl = MainPanel.addTreeItem("["+name+"] size: "+lenght, msgLvl, MainPanel.DSMCC_TREE);	
+			MainPanel.setTreeData(fileLvl, this);
+		}
+	}
+	
+	public void saveIn(File parentDir) {
+		file = new File(parentDir, name);
+		save(file);
+	}
+	
 	public static String printObjKey(byte[] ok) {
 		return printHex(ok, 0, ok.length);
+	}
+	
+	public String toString() {
+		return name;
 	}
 	
 	public static String printHex(byte[] ok, int start, int end) {
@@ -57,21 +89,19 @@ public class DSMCCFile {
 		return sb.toString();
 	}
 	
-	public DSMCCFile(byte[] objKey) {
+	public DSMCCObject(byte[] objKey) {
 		this.objKey = objKey;
-//		printObjKey(objKey);
-//		System.out.println();
 	}
 	
 	public void setName(String name) {
 		this.name = name;
-//		printObjKey(objKey);
 	}
 
 	public void setContent(byte[] contents, int startOffset, int lenght) {
 		this.contents = contents;
 		this.startOffset = startOffset;
 		this.lenght = lenght;
+		isDirectory = false;
 //		System.out.print("FS: set contents of ");
 //		printObjKey(objKey);
 //		System.out.print(" to [");
@@ -82,9 +112,9 @@ public class DSMCCFile {
 	}
 	
 	public boolean equals(Object o) {
-		if (!(o instanceof DSMCCFile))
+		if (!(o instanceof DSMCCObject))
 			return false;
-		return isTheSame(((DSMCCFile)o).objKey);
+		return isTheSame(((DSMCCObject)o).objKey);
 	}
 	
 	public boolean isTheSame(byte[] objKey) {
@@ -97,32 +127,32 @@ public class DSMCCFile {
 				return false;
 		return true;
 	}
-	
-	public void mountTree(int dirLvl) {
-		int fileLvl = MainPanel.addTreeItem("["+name+"] size: "+lenght, dirLvl, MainPanel.DSMCC_TREE);	
-		MainPanel.setTreeData(fileLvl, this);
-	}
-	
-	public void saveIn(File parentDir) {
-		file = new File(parentDir, name);
-		save(file);
-	}
 
 	public void save(File file) {
 		this.file = file;
 		if (file.exists())
 			file.delete();
-		try {
-			file.createNewFile();
-			if (contents != null) {
-				FileOutputStream fos = new FileOutputStream(file);
-				fos.write(contents, startOffset, lenght);
-				fos.flush();
-				fos.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (isDirectory) {
+	//			try {
+				file.mkdir();
+	//		} catch (IOException e) {
+	//			e.printStackTrace();
+	//		}
+			for (int i = 0; i < childrens.size(); i++)
+				((DSMCCObject)childrens.get(i)).saveIn(file);
 		}
+		else
+			try {
+				file.createNewFile();
+				if (contents != null) {
+					FileOutputStream fos = new FileOutputStream(file);
+					fos.write(contents, startOffset, lenght);
+					fos.flush();
+					fos.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 	
 	public void open() {
@@ -138,5 +168,8 @@ public class DSMCCFile {
 		}
 //		java.awt.Desktop
 	}
+
+	public boolean isDirectory() {
+		return isDirectory;
+	}
 }
-

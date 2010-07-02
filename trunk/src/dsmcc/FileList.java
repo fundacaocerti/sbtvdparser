@@ -25,46 +25,57 @@ import java.util.Vector;
 
 public class FileList {
 	
-	static Vector contentList = new Vector();
+	Vector contentList = new Vector();
 	
-	public static void add(DSMCCFile file) {
+	public void reset() {
+		contentList.removeAllElements();
+	}
+	
+	public void add(DSMCCObject file) {
 		contentList.add(file);
 	}
 	
-	public static DSMCCFile getByObjKey(byte[] objKey) {
+	public DSMCCObject getByObjKey(byte[] objKey) {
 		for (int i = 0; i < contentList.size(); i++)
-			if (((DSMCCFile)contentList.get(i)).isTheSame(objKey))
-				return (DSMCCFile)contentList.get(i);
+			if (((DSMCCObject)contentList.get(i)).isTheSame(objKey))
+				return (DSMCCObject)contentList.get(i);
 		return null;
 	}
 	
-	public static DSMCCFile setName(byte[] objKey, String name) {
-		DSMCCFile f = getByObjKey(objKey);
+//	public void mkDir(byte[] objKey) {
+//		DSMCCFile f = getByObjKey(objKey);
+//		if (f == null) {
+//			f = new DSMCCDir(objKey);
+//			add(f);
+//		}
+//	}
+	
+	public DSMCCObject setName(byte[] objKey, String name) {
+		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
-			f = new DSMCCFile(objKey);
+			f = new DSMCCObject(objKey);
 			add(f);
 		}
 		f.setName(name);
 		return f;
 	}
 	
-	public static void setContent(byte[] objKey, byte[] contents, int startOffset, int lenght) {
-		DSMCCFile f = getByObjKey(objKey);
+	public void setContent(byte[] objKey, byte[] contents, int startOffset, int lenght) {
+		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
-			f = new DSMCCFile(objKey);
+			f = new DSMCCObject(objKey);
 			add(f);
 		}
 		f.setContent(contents, startOffset, lenght);
 	}
 
-	public static void add(byte[] objKey, DSMCCFile file) {
-		DSMCCFile f = getByObjKey(objKey);
+	public void addChildren(byte[] objKey, DSMCCObject file) {
+		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
-			f = new DSMCCDir(objKey);
+			f = new DSMCCObject(objKey);
 			add(f);
 		}
-		if (f instanceof DSMCCDir)
-			((DSMCCDir)f).add(file);
+		f.addChildren(file);
 	}
 }
 

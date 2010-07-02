@@ -34,7 +34,7 @@ public class Table {
 	public String name = null;
 
 	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF,
-			crcFails = 0, versionNumber = -1;
+			crcFails = 0, versionNumber = -1, crc;
 
 	int section_syntax_indicator = 0, section_length = 0, bufWriteIndx = 0,
 			idExt, versionInfo, sectionNumber, lastSectionNumber, readTableID,
@@ -151,6 +151,7 @@ public class Table {
 //			bw.printBuffer(0, 20);
 			return false;
 		}
+		crc = (ba[section_length-1]<<24)|(ba[section_length]<<16)|(ba[section_length+1]<<8)|ba[section_length+2];
 		if (readyToParse())
 			return true;
 		if (readTableID < id || readTableID > idLimit) { // EITs have ranges
@@ -234,7 +235,7 @@ public class Table {
 		if (layer != 0)
 			addSubItem("layer: " + "ABC".charAt(layer - 1), sectionInfo);
 		addSubItem("Id: "+ bw.toHex(readTableID), sectionInfo);
-		addSubItem("section CRC: OK", sectionInfo);
+		addSubItem("section CRC: "+bw.toHex(crc), sectionInfo);
 		if (crcFails > 0)
 			addSubItem("CRC failures: " + crcFails, sectionInfo);
 		addSubItem("section_length: " + section_length, sectionInfo);

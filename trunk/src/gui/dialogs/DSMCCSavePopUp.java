@@ -36,8 +36,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 
 import sys.LogicTree;
-import dsmcc.DSMCCDir;
-import dsmcc.DSMCCFile;
+import dsmcc.DSMCCObject;
+import dsmcc.Module;
+import dsmcc.ModuleList;
 
 public class DSMCCSavePopUp implements Listener, SelectionListener {
 
@@ -73,7 +74,7 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 			MenuItem saveOpt = new MenuItem(menu, SWT.PUSH);
 			saveOpt.setText(save);
 			saveOpt.addSelectionListener(this);
-			if (!(data instanceof DSMCCDir)) {
+			if (data instanceof DSMCCObject && !((DSMCCObject)data).isDirectory()) {
 				MenuItem openOpt = new MenuItem(menu, SWT.PUSH);
 				openOpt.setText(open);
 				openOpt.addSelectionListener(this);
@@ -96,18 +97,20 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 		if (((MenuItem)e.getSource()).getText() == save) {
 			FileDialog fd = new FileDialog(s, SWT.SAVE);
 			fd.setText("Salvar");
-			fd.setFileName(((DSMCCFile)data).name);
+			fd.setFileName(data.toString());
 			String selected = fd.open();
 			if (selected == null)
 				return;
 			File f = new File(selected);
-			if (data instanceof DSMCCFile) {
-				((DSMCCFile)data).save(f);
-			} else {
-				((DSMCCDir)data).save(f);
-			}
+			if (data instanceof Module)
+				((Module)data).save(f);
+				else
+				if (data instanceof ModuleList)
+					((ModuleList)data).save(f);
+				else
+					((DSMCCObject)data).save(f);
 		} else
-			((DSMCCFile)data).open();
+			((DSMCCObject)data).open();
 	}
 
 }

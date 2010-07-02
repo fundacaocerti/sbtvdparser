@@ -26,6 +26,7 @@ section_syntax_indicator is '1', except that the CRC_32 field is replaced with t
 
 package mpeg.psi;
 
+import sys.Log;
 import gui.GuiMethods;
 import gui.MainPanel;
 import mpeg.psi.descriptors.Compatibility;
@@ -36,7 +37,7 @@ public class DSMCC extends Table {
 	
 	static final int DII_MESSAGE = 0x1002, DDB_MESSAGE = 0x1003, DSI_MESSAGE = 0x1006;
 	int totalLenght = 0, downloaded = 0;
-	public int progressLvl = 0;
+	public int progressLvl = 0, downloadId = -1;
 	ModuleList moduleList;
 
 	public DSMCC(int pid) {
@@ -55,10 +56,12 @@ public class DSMCC extends Table {
 	public void updateProgress(int bytes) {
 		downloaded += bytes;
 		if (totalLenght == 0)
-			return;
-		GuiMethods.runMethod(GuiMethods.CHANGEITEM,  
-				new Object[] {"parsing pid "+pid+" "+
-				(downloaded*100/totalLenght)+"%", new Integer(progressLvl)}, true);
+			GuiMethods.runMethod(GuiMethods.CHANGEITEM,  
+					new Object[] {"parsing pid "+pid+" 0%", new Integer(progressLvl)}, true);
+		else
+			GuiMethods.runMethod(GuiMethods.CHANGEITEM,  
+					new Object[] {"parsing pid "+pid+" "+
+					(downloaded*100/totalLenght)+"%", new Integer(progressLvl)}, true);
 	}
 
 	public boolean printDescription(byte[] ba) {
@@ -122,13 +125,22 @@ public class DSMCC extends Table {
 //		System.out.println("privateDataLength: "+bw.toHex(privateDataLength));
 	}
 	
-	int lastSectionVersion = -1;
+	int lastSectionVersion = -1, lastCrc = -1;
 	private void downloadInfoIndication() {
-		if (lastSectionVersion == versionNumber)
-			return; //may cause data lost
+		if (lastSectionVersion == versionNumber
+				&& crc == lastCrc)
+				return;
+		lastCrc = crc;
+		if (lastSectionVersion != -1) {
+			Log.printWarning("DII has changed, rebuilding modules!");
+			totalLenght = 0;
+			downloaded = 0;
+			updateProgress(0);
+			moduleList.reset();
+		}
 		lastSectionVersion = versionNumber;
 		int diiLvl = addSubItem("downloadInfoIndication", progressLvl);
-		int downloadId = bw.pop16()<<16+bw.pop16();
+		downloadId = bw.pop16()<<16+bw.pop16();
 		addSubItem("downloadId: "+bw.toHex(downloadId), diiLvl);
 		int blockSize = bw.pop16();
 		addSubItem("blockSize: "+bw.toHex(blockSize), diiLvl);
@@ -146,8 +158,10 @@ public class DSMCC extends Table {
 //		bw.pop16();
 		int numberOfModules = bw.pop16();
 		int moduleLvl = addSubItem("modules ("+numberOfModules+")", diiLvl);
+		MainPanel.setTreeData(moduleLvl, moduleList);
 		for(int i=0;i< numberOfModules;i++)
 			moduleList.createModule(bw, moduleLvl);
+		moduleList.loadCache();
 		int privateDataLength = bw.pop16();
 		if (privateDataLength > 0) {
 			int pdLvl = addSubItem("privateData: "+bw.toHex(privateDataLength), diiLvl);
@@ -156,26 +170,30 @@ public class DSMCC extends Table {
 	}
 	
 	void downloadDataMessage() {
-		int ddmLvl = 0;
 //		int ddmLvl = addSubItem("downloadDataMessage");
 		//DownloadDataBlock 
-		if (dsmccMsgHeader(ddmLvl) != 0x1003)
+		if (dsmccMsgHeader(0) != 0x1003)
 			return; //its not a DDB message
 		int moduleId = bw.pop16();
 		Module m = moduleList.getById(moduleId);
-		if (m == null || m.isComplete())
-			return;
-		ddmLvl = addSubItem("downloadDataMessage", 
-				m.partLvl);
 //		addSubItem("moduleId: "+bw.toHex(moduleId), ddmLvl);
 		int moduleVersion = bw.pop();
 //		addSubItem("moduleVersion: "+bw.toHex(moduleVersion), ddmLvl);
 		bw.pop(); //reserved
 		int blockNumber = bw.pop16();
 		
-		addSubItem("blockNumber: "+bw.toHex(blockNumber), ddmLvl);
-		moduleList.feedData(moduleId, bw.buf, bw.getAbsolutePosition(),
-				bw.getAvailableSize()+1, blockNumber, ddmLvl);
+		if (m != null) {
+			if (m.isComplete())
+				return;
+			int ddmLvl = addSubItem("downloadDataMessage", 
+					m.partLvl);
+			addSubItem("blockNumber: "+bw.toHex(blockNumber), ddmLvl);
+			moduleList.feedData(m, bw.buf, bw.getAbsolutePosition(),
+					bw.getAvailableSize()+1, blockNumber, ddmLvl);
+		} else {
+			moduleList.cacheData(moduleId, bw.buf, bw.getAbsolutePosition(),
+					bw.getAvailableSize()+1, blockNumber);
+		}
 	}
 	
 	int messageLength;

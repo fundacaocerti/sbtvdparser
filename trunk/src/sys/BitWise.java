@@ -41,7 +41,7 @@ public class BitWise {
 	 * @param offset
 	 *            1 to 8
 	 */
-	public/* unsigned */int stripBits(int b, int offset, int count) {
+	public static int stripBits(int b, int offset, int count) {
 		if (b < 0)
 			b += 256;
 		int mask = (1 << count) - 1;
@@ -52,7 +52,7 @@ public class BitWise {
 		return -1;
 	}
 
-	public int toInt(byte b) {
+	public static int toInt(byte b) {
 		int i = b;
 		if (i < 0)
 			i += 256;
@@ -108,7 +108,7 @@ public class BitWise {
 		return (pop() << 8) | pop();
 	}
 
-	public String toHex(int i) {
+	public static String toHex(int i) {
 		String s = Integer.toHexString(i);
 		if (s.length() % 2 == 1)
 			return "0x0" + Integer.toHexString(i);
@@ -119,7 +119,7 @@ public class BitWise {
 		int i = buf[readPtr];
 		if (i < 0)
 			i += 256;
-		if (readPtr + bytes <= bufSize)
+		if (readPtr < bufSize-bytes)
 			readPtr += bytes;
 		else
 			loopTrap();
@@ -240,6 +240,8 @@ public class BitWise {
 	}
 
 	public String getHexSequence(int size) {
+		if (getAvailableSize() < size)
+			size = getAvailableSize();
 		StringBuffer sb = new StringBuffer(size);
 		sb.append("[");
 		int b;
