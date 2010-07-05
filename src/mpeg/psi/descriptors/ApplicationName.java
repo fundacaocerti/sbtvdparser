@@ -36,7 +36,6 @@ public class ApplicationName extends AITDescriptor {
 		for (int i = 0; i < descriptor_length; i += 4+name_lenght) {
 			// ISO_639_language_code
 			addSubItem(Component.parseISO639(bw), level);
-			System.out.println("name");
 			// text 
 			name_lenght = bw.pop();
 			StringBuffer sb = new StringBuffer();
