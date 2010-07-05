@@ -64,6 +64,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -301,7 +302,7 @@ public class MainPanel {
 	}
 
 	private void createDND() {
-		int dndOps = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_DEFAULT;
+		int dndOps = DND.DROP_LINK | DND.DROP_COPY | DND.DROP_DEFAULT;
 		DropTarget target = new DropTarget(sShell, dndOps);
 		target.setTransfer(new Transfer[] { fileTransfer });
 		target.addDropListener(new FileDropListener());
