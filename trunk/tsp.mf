@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: gui.MainPanel
-Class-Path: swt.jar
+Class-Path: /usr/share/java/swt.jar swt.jar
 
 
