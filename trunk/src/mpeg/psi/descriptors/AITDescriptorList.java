@@ -26,7 +26,7 @@ import sys.Log;
 
 public class AITDescriptorList {
 
-	static Class[] descList = { ApplicationName.class };
+	static Class[] descList = { ApplicationName.class, TransportProtocol.class };
 
 	static boolean exception;
 
