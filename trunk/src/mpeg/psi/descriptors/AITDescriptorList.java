@@ -26,7 +26,7 @@ import sys.Log;
 
 public class AITDescriptorList {
 
-	static Class[] descList = { ApplicationName.class, TransportProtocol.class };
+	static Class[] descList = { ApplicationName.class, GingaJAppLocation.class, GingaJApp.class, TransportProtocol.class, Application.class, GingaNCLAppLocation.class, GingaNCLApp.class};
 
 	static boolean exception;
 
