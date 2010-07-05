@@ -24,6 +24,7 @@ package gui.dialogs;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.FileTransfer;
 
 import parsers.Parameters;
 
@@ -35,6 +36,17 @@ public class FileDropListener implements DropTargetListener {
 				event.detail = DND.DROP_COPY;
 			else
 				event.detail = DND.DROP_NONE;
+		// will accept text but prefer to have files dropped
+		for (int i = 0; i < event.dataTypes.length; i++) {
+			if (FileTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
+				event.currentDataType = event.dataTypes[i];
+				// files should only be copied
+				if (event.detail != DND.DROP_COPY) {
+					event.detail = DND.DROP_NONE;
+				}
+				break;
+			}
+		}
 	}
 
 	public void dragOver(DropTargetEvent event) {
@@ -47,18 +59,27 @@ public class FileDropListener implements DropTargetListener {
 			else
 				event.detail = DND.DROP_NONE;
 		}
+		// allow text to be moved but files should only be copied
+		if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+			if (event.detail != DND.DROP_COPY) {
+				event.detail = DND.DROP_NONE;
+			}
+		}
 	}
 
 	public void dragLeave(DropTargetEvent event) {
 	}
 
 	public void drop(DropTargetEvent event) {
-		String[] files = (String[]) event.data;
-		Parameters.startParser(new String[] { files[0] });
+		if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+			if (event.data == null) // Ubuntu+Nautilus puts null data when the source file is in a remote location
+				return;
+			String[] files = (String[]) event.data;
+			Parameters.startParser(new String[] { files[0] });
+		}
 	}
 
 	public void dropAccept(DropTargetEvent event) {
 	}
 
 }
-
