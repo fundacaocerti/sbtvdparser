@@ -62,7 +62,10 @@ public class DSMCCDescriptor {
 		int descIndx = addSubItem(descriptorName + " descriptor", tableIndx);
 		addSubItem("descriptor semantic unknown", descIndx);
 		addSubItem("tag = " + bw.toHex(parsedTag), descIndx);
-		addSubItem("content: " + bw.getHexSequence(descriptor_length), descIndx);
+		if (descriptor_length > 0 && descriptor_length < 100)
+			addSubItem("content: " + bw.getHexSequence(descriptor_length), descIndx);
+		else
+			addSubItem("lenght seems invalid: "+descriptor_length, descIndx);
 	}
 
 	public static int preparse(BitWise bw) {

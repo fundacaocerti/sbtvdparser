@@ -119,7 +119,7 @@ public class BitWise {
 		int i = buf[readPtr];
 		if (i < 0)
 			i += 256;
-		if (readPtr < bufSize-bytes)
+		if (readPtr <= bufSize-bytes)
 			readPtr += bytes;
 		else
 			loopTrap();
