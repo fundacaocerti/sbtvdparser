@@ -21,9 +21,8 @@
  */
 package mpeg.psi;
 
-import parsers.Packet;
 import gui.MainPanel;
-import mpeg.sbtvd.SpecialSemantic;
+import parsers.Packet;
 import sys.BitWise;
 import sys.CRC32;
 import sys.Log;
@@ -229,7 +228,7 @@ public class Table {
 					eitGroup = addSubItem("One-seg EITs", 0);
 			treeIndx = addSubItem(name, eitGroup);
 		} else
-			treeIndx = addSubItem(name, 0);
+			treeIndx = addSubItem(name+" (pid "+BitWise.toHex(pid)+")", 0);
 		sectionInfo = addSubItem("Section info");
 		MainPanel.setTreeData(treeIndx, bw);
 		if (layer != 0)
