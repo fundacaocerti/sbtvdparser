@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 
 public class TransportProtocol extends AITDescriptor {
 
@@ -33,19 +35,19 @@ public class TransportProtocol extends AITDescriptor {
 		String[] ids = {"reserved", "object carousel", "IP over DVB", "data piping", "data carousel"};
 		int id = bw.pop16();
 		if (id < ids.length)
-			addSubItem("protocol_id: "+bw.toHex(id)+" - "+ids[id], level);
+			addSubItem("protocol_id: "+BitWise.toHex(id)+" - "+ids[id], level);
 		else
-			addSubItem("protocol_id: "+bw.toHex(id)+" - "+ids[0], level);
-		addSubItem("transport_protocol_label: "+bw.toHex(bw.pop()), level);
+			addSubItem("protocol_id: "+BitWise.toHex(id)+" - "+ids[0], level);
+		addSubItem("transport_protocol_label: "+BitWise.toHex(bw.pop()), level);
 		if (id == 1 || id == 4 || id == 2) {
 			boolean rc = (bw.pop() & 1) > 0;
 			addSubItem("remote connection: "+(rc ? "true" : "false"), level);
 			if (rc) {
-				addSubItem("onid: "+bw.toHex(bw.pop16()), level);
-				addSubItem("tsid: "+bw.toHex(bw.pop16()), level);
-				addSubItem("service_id: "+bw.toHex(bw.pop16()), level);
+				addSubItem("onid: "+BitWise.toHex(bw.pop16()), level);
+				addSubItem("tsid: "+BitWise.toHex(bw.pop16()), level);
+				addSubItem("service_id: "+BitWise.toHex(bw.pop16()), level);
 			}
-			addSubItem("component_tag: "+bw.toHex(bw.pop16()), level);
+			addSubItem("component_tag: "+BitWise.toHex(bw.pop16()), level);
 		}
 		if (id == 2) {
 			addSubItem("alignment_indication: "+(((bw.pop() & 1) > 0) ? "true" : "false"), level);
