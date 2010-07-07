@@ -240,7 +240,7 @@ public class BitWise {
 	}
 
 	public String getHexSequence(int size) {
-		if (getAvailableSize() < size)
+		if (getAvailableSize() < size-1) //TODO: checar as consequências disso
 			size = getAvailableSize();
 		StringBuffer sb = new StringBuffer(size);
 		sb.append("[");
