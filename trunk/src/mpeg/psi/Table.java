@@ -150,7 +150,9 @@ public class Table {
 //			bw.printBuffer(0, 20);
 			return false;
 		}
-		crc = (ba[section_length-1]<<24)|(ba[section_length]<<16)|(ba[section_length+1]<<8)|ba[section_length+2];
+		crc = 0;
+		for (int i = -1; i < 2; i++)
+			crc = (crc << 8) | (((int)ba[section_length+i]) & 0xff);
 		if (readyToParse())
 			return true;
 		if (readTableID < id || readTableID > idLimit) { // EITs have ranges
