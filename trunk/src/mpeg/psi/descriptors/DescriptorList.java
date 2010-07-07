@@ -31,7 +31,8 @@ public class DescriptorList {
 			StreamIdentifier.class, DataComponent.class, Component.class,
 			ApplicationSignaling.class, NetworkName.class,
 			ParentalRating.class, ShortEvent.class, Service.class,
-			DataContent.class, AudioComponent.class, CarouselID.class };
+			DataContent.class, AudioComponent.class, CarouselID.class,
+			AssociationTag.class};
 
 	static boolean exception;
 
