@@ -40,14 +40,14 @@ public class TransportProtocol extends AITDescriptor {
 			addSubItem("protocol_id: "+BitWise.toHex(id)+" - "+ids[0], level);
 		addSubItem("transport_protocol_label: "+BitWise.toHex(bw.pop()), level);
 		if (id == 1 || id == 4 || id == 2) {
-			boolean rc = (bw.pop() & 1) > 0;
+			boolean rc = (bw.stripBits(bw.pop(), 8, 1) & 1) > 0;
 			addSubItem("remote connection: "+(rc ? "true" : "false"), level);
 			if (rc) {
 				addSubItem("onid: "+BitWise.toHex(bw.pop16()), level);
 				addSubItem("tsid: "+BitWise.toHex(bw.pop16()), level);
 				addSubItem("service_id: "+BitWise.toHex(bw.pop16()), level);
 			}
-			addSubItem("component_tag: "+BitWise.toHex(bw.pop16()), level);
+			addSubItem("component_tag: "+BitWise.toHex(bw.pop()), level);
 		}
 		if (id == 2) {
 			addSubItem("alignment_indication: "+(((bw.pop() & 1) > 0) ? "true" : "false"), level);
