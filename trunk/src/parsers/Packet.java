@@ -70,7 +70,17 @@ public class Packet extends Thread {
 	void parsePacket() throws IOException {
 		int sync = 0;
 		int i = 0;
-		byteCount += bis.skip(skipSize);
+		if (is204b) {
+			bis.read();
+			layer = bis.read() >> 4;
+			byteCount += 2;
+			byteCount += bis.skip(14);
+			if (layer == 8 && !iipAdded) {
+				TableList.addTable(new IIP(TSP.pid));
+				iipAdded = true;
+			}
+		} else
+			byteCount += bis.skip(skipSize);
 		while (sync != TSP.SYNC_BYTE && (MainPanel.isOpen || Parameters.noGui) && sync != -1) {
 			sync = bis.read();
 			i++;
@@ -121,17 +131,6 @@ public class Packet extends Thread {
 		TSP.parse(buffer);
 		if (TSP.transportErrorIndicator == 1)
 			TEIerrors++;
-
-		if (is204b) {
-			bis.read();
-			layer = bis.read() >> 4;
-			byteCount += 2;
-			byteCount += bis.skip(14);
-			if (layer == 8 && !iipAdded) {
-				TableList.addTable(new IIP(TSP.pid));
-				iipAdded = true;
-			}
-		}
 	}
 
 	public void run() {
