@@ -32,6 +32,7 @@ import java.io.InputStream;
 import mpeg.pes.CC;
 import mpeg.psi.EIT;
 import mpeg.psi.TOT;
+import mpeg.psi.Table;
 import mpeg.psi.TableList;
 import sys.Log;
 
@@ -184,11 +185,13 @@ public class Parameters {
 				continuityCount += TableList.continuityErrorCounters[i];
 			}
 			int cntLvl = MainPanel.addTreeItem("Continuity error counter: " + continuityCount, 0, MainPanel.STATS_TREE);
-			for (int i = 0; i < TableList.continuityErrorCounters.length; i++) {
-				if (TableList.continuityErrorCounters[i] != 1)
-					MainPanel.addTreeItem(TableList.getByIndex(i).name + ": " +
-							TableList.continuityErrorCounters[i], cntLvl, MainPanel.STATS_TREE);;
-			}
+			for (int i = 0; i < TableList.continuityErrorCounters.length; i++)
+				if (TableList.continuityErrorCounters[i] != 1) {
+					Table t = TableList.getByIndex(i);
+					if (t != null)
+						MainPanel.addTreeItem(t.name + ": " +
+								TableList.continuityErrorCounters[i], cntLvl, MainPanel.STATS_TREE);;
+					}
 		}
 		// MainPanel.addTreeItem("parsing done", 0);
 		if (!noTree)
