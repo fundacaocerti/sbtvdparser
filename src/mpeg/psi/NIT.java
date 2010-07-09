@@ -24,6 +24,7 @@ package mpeg.psi;
 
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.sbtvd.SpecialSemantic;
+import sys.BitWise;
 
 public class NIT extends Table {
 
@@ -37,7 +38,7 @@ public class NIT extends Table {
 		if (!verifyMultiSection(ba))
 			return false;
 		printSectionInfo();
-		int netDescriptorsLenght = bw.stripBits(bw.pop16(), 12, 12);
+		int netDescriptorsLenght = BitWise.stripBits(bw.pop16(), 12, 12);
 		int netDescIndx = addSubItem("network descriptors: (lenght "
 				+ netDescriptorsLenght + ")");
 		bw.mark();
@@ -46,21 +47,21 @@ public class NIT extends Table {
 			DescriptorList.print(bw, netDescIndx);
 
 		int byteCount = 0;
-		int tsLoopLenght = bw.stripBits(bw.pop16(), 12, 12);
+		int tsLoopLenght = BitWise.stripBits(bw.pop16(), 12, 12);
 		int tsLoopIndx = addSubItem("TS loop: (lenght " + tsLoopLenght + ")");
 		while ((byteCount < tsLoopLenght) && (bw.getAvailableSize() > 0)) {
 			// TS_id 16 uimsbf
-			int tsIdIndx = addSubItem("TS_id: " + bw.toHex(bw.pop16()),
+			int tsIdIndx = addSubItem("TS_id: " + BitWise.toHex(bw.pop16()),
 					tsLoopIndx);
 			int onid = bw.pop16();
 			addSubItem("Original Net ID: "
 					+ SpecialSemantic.parseNetworkID(onid), tsIdIndx);
 
-			int tsDescriptorsLenght = bw.stripBits(bw.pop16(), 12, 12);
+			int tsDescriptorsLenght = BitWise.stripBits(bw.pop16(), 12, 12);
 			byteCount += tsDescriptorsLenght + 6;
 			bw.mark();
 			int tsDescIndx = addSubItem("TS Descriptors (lenght "
-					+ bw.toHex(tsDescriptorsLenght) + ")", tsIdIndx);
+					+ BitWise.toHex(tsDescriptorsLenght) + ")", tsIdIndx);
 			while ((bw.getByteCount() < tsDescriptorsLenght)
 					&& (bw.getAvailableSize() > 0))
 				DescriptorList.print(bw, tsDescIndx);

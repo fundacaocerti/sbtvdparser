@@ -48,8 +48,8 @@ public class PES {
 		esId = bw.pop();
 		if (esId != id) {
 			int errMsg = addSubItem("ES content not recognized: TID = "
-					+ bw.toHex(esId));
-			addSubItem("expected TID: " + bw.toHex(id) + " - " + name, errMsg);
+					+ BitWise.toHex(esId));
+			addSubItem("expected TID: " + BitWise.toHex(id) + " - " + name, errMsg);
 			// addSubItem("content: ["+bw.getHexSequence(section_length)+"]",
 			// errMsg);
 			return;

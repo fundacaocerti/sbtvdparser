@@ -53,7 +53,7 @@ public class Link {
 			in.read(ba);
 			BitWise bw = new BitWise(ba);
 			int flags = bw.pop16();
-			boolean hasShellItems = bw.stripBits(flags, 16, 1) == 1;
+			boolean hasShellItems = BitWise.stripBits(flags, 16, 1) == 1;
 			bw.pop(54);
 			if (hasShellItems)
 				bw.pop(bw.pop() + bw.pop() * 256); // skip the itemlist
@@ -72,11 +72,11 @@ public class Link {
 			bw.pop(4);
 			int remoteFname = bw.pop() + bw.pop() * 256;
 			bw.pop16();
-			// System.out.println("localVinfo "+bw.toHex(localVinfo));
-			// System.out.println("localFname "+bw.toHex(localFname));
-			// System.out.println("remoteVinfo "+bw.toHex(remoteVinfo));
-			// System.out.println("remoteFname "+bw.toHex(remoteFname));
-			// System.out.println("off "+bw.toHex(bw.getByteCount()));
+			// System.out.println("localVinfo "+BitWise.toHex(localVinfo));
+			// System.out.println("localFname "+BitWise.toHex(localFname));
+			// System.out.println("remoteVinfo "+BitWise.toHex(remoteVinfo));
+			// System.out.println("remoteFname "+BitWise.toHex(remoteFname));
+			// System.out.println("off "+BitWise.toHex(bw.getByteCount()));
 
 			// System.out.println("slen: "+(bw.pop()+bw.pop()*256));
 			int c = 0;

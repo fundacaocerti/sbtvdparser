@@ -44,14 +44,14 @@ public class TSP {
 	static BitWise bw = new BitWise(null);
 
 	public static void parse(byte[] content) {
-		transportErrorIndicator = bw.stripBits(content[0], 8, 1);
-		payloadUnitStartIndicator = bw.stripBits(content[0], 7, 1);
-		transportPriority = bw.stripBits(content[0], 6, 1);
-		pid = bw.stripBits(content[0], 5, 5) << 8;
-		pid = pid | bw.toInt(content[1]);
-		transportScramblingControl = bw.stripBits(content[2], 8, 2);
-		adaptationFieldControl = bw.stripBits(content[2], 6, 2);
-		continuityCounter = bw.stripBits(content[2], 4, 4);
+		transportErrorIndicator = BitWise.stripBits(content[0], 8, 1);
+		payloadUnitStartIndicator = BitWise.stripBits(content[0], 7, 1);
+		transportPriority = BitWise.stripBits(content[0], 6, 1);
+		pid = BitWise.stripBits(content[0], 5, 5) << 8;
+		pid = pid | BitWise.toInt(content[1]);
+		transportScramblingControl = BitWise.stripBits(content[2], 8, 2);
+		adaptationFieldControl = BitWise.stripBits(content[2], 6, 2);
+		continuityCounter = BitWise.stripBits(content[2], 4, 4);
 		AdaptationField.lenght = 0;
 		/*
 		 * 00 Reserved for future use by ISO/IEC 01 No adaptation_field, payload
@@ -72,7 +72,7 @@ public class TSP {
 		System.out.println("payloadUnitStartIndicator: "
 				+ payloadUnitStartIndicator);
 		System.out.println("transportPriority: " + transportPriority);
-		System.out.println("pid: " + bw.toHex(pid));
+		System.out.println("pid: " + BitWise.toHex(pid));
 		System.out.println("transportScramblingControl: "
 				+ transportScramblingControl);
 		System.out.println("adaptationFieldControl: " + adaptationFieldControl);

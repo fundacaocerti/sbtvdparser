@@ -24,6 +24,7 @@ package mpeg.psi;
 
 import mpeg.psi.descriptors.AITDescriptorList;
 import mpeg.psi.descriptors.DescriptorList;
+import sys.BitWise;
 
 public class AIT extends Table {
 
@@ -41,10 +42,10 @@ public class AIT extends Table {
 				"ACAP-J", "ARIB - BML", "Ginga - Bridge", "Ginga-NCL"};
 		if (idExt < appTypes.length)
 			addSubItem("application_type: "
-					+ bw.toHex(idExt) + " > "+appTypes[idExt]);
+					+ BitWise.toHex(idExt) + " > "+appTypes[idExt]);
 		else
-			addSubItem("application_type: "	+ bw.toHex(idExt)+" > unknown");
-		int commonDescriptorsLength = bw.stripBits(bw.pop16(), 12, 12);
+			addSubItem("application_type: "	+ BitWise.toHex(idExt)+" > unknown");
+		int commonDescriptorsLength = BitWise.stripBits(bw.pop16(), 12, 12);
 		int commonDescLvl = addSubItem("common descriptors: (lenght "
 				+ commonDescriptorsLength + ")");
 		bw.mark();
@@ -52,7 +53,7 @@ public class AIT extends Table {
 				&& (bw.getAvailableSize() > 0)) {
 			DescriptorList.print(bw, commonDescLvl);
 		}
-		int applicationLoopLength = bw.stripBits(bw.pop16(), 12, 12);
+		int applicationLoopLength = BitWise.stripBits(bw.pop16(), 12, 12);
 		int appLvl = addSubItem("application loop: (lenght "
 				+ applicationLoopLength + ")");
 		bw.mark();
@@ -60,7 +61,7 @@ public class AIT extends Table {
 				&& (bw.getAvailableSize() > 0)) {
 //			application_identifier ()
 //			organization_id 32 bslbf
-			addSubItem("organization_id: " + bw.toHex(bw.pop32()), appLvl);
+			addSubItem("organization_id: " + BitWise.toHex(bw.pop32()), appLvl);
 			int appId = bw.pop16();
 			String appIdSemantic = "";
 			if (appId <= 0x3ff)
@@ -77,19 +78,19 @@ public class AIT extends Table {
 						else
 							appIdSemantic = "any app. for this org.";
 				
-			addSubItem("application_id: " + bw.toHex(appId)+ " > " +appIdSemantic, appLvl);
+			addSubItem("application_id: " + BitWise.toHex(appId)+ " > " +appIdSemantic, appLvl);
 //			application_control_code 8 uimsbf
 			String[] appCC = {"reserved", "autostart", "present", "destroy", "kill", 
 					"prefetch", "remote", "unbound"};
 			int appCtrlCode = bw.pop();
 			if (appCtrlCode < appCC.length)
 				addSubItem("application_control_code: "
-						+ bw.toHex(appCtrlCode) + " > "+appCC[appCtrlCode], appLvl);
+						+ BitWise.toHex(appCtrlCode) + " > "+appCC[appCtrlCode], appLvl);
 			else
-				addSubItem("application_control_code: " + bw.toHex(appCtrlCode), appLvl);
+				addSubItem("application_control_code: " + BitWise.toHex(appCtrlCode), appLvl);
 //			reserved_future_use 4 bslbf
 //			application_descriptors_loop_length 12 uimsbf
-			int appDescLoopLenght = bw.stripBits(bw.pop16(), 12, 12);
+			int appDescLoopLenght = BitWise.stripBits(bw.pop16(), 12, 12);
 			int mark = bw.getByteCount();
 			int appDescLvl = addSubItem("application descriptors: (lenght "
 					+ appDescLoopLenght + ")", appLvl);

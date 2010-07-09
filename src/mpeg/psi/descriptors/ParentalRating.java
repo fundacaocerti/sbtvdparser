@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class ParentalRating extends Descriptor {
 
 	public static int tag = 0x55;
@@ -42,15 +44,15 @@ public class ParentalRating extends Descriptor {
 			// rating 8
 			int rating = bw.pop();
 			String content = "";
-			if (bw.stripBits(rating, 5, 1) == 1)
+			if (BitWise.stripBits(rating, 5, 1) == 1)
 				content += " Drugs";
-			if (bw.stripBits(rating, 6, 1) == 1)
+			if (BitWise.stripBits(rating, 6, 1) == 1)
 				content += " Violence";
-			if (bw.stripBits(rating, 7, 1) == 1)
+			if (BitWise.stripBits(rating, 7, 1) == 1)
 				content += " Sex";
 			String[] age = { "invalid", "Free", "10 years", "12 years",
 					"14 years", "16 years", "18 years", "invalid" };
-			ratingTxt = age[bw.stripBits(rating, 3, 3)] + " - " + content;
+			ratingTxt = age[BitWise.stripBits(rating, 3, 3)] + " - " + content;
 			addSubItem("rating: " + ratingTxt, level);
 		}
 	}

@@ -37,7 +37,7 @@ public class NetworkName extends Descriptor {
 		byte[] ba = new byte[descriptor_length];
 		for (int i = 0; i < ba.length; i++) {
 			ba[i] = (byte) bw.pop();
-			// System.out.print(" "+bw.toHex(ba[i]));
+			// System.out.print(" "+BitWise.toHex(ba[i]));
 		}
 		try {
 			InputStreamReader isr = new InputStreamReader(

@@ -24,6 +24,7 @@ package mpeg.psi;
 
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.sbtvd.SpecialSemantic;
+import sys.BitWise;
 
 //Software_download_trigger_section
 public class SDTT extends Table {
@@ -60,9 +61,9 @@ public class SDTT extends Table {
 		while (contentCount-- > 0 && bw.getAvailableSize() > 0) {
 			int gtv =  bw.pop16();
 //			Group	4
-			addSubItem("group: " + bw.stripBits(gtv, 16, 4));
+			addSubItem("group: " + BitWise.stripBits(gtv, 16, 4));
 //			target_version	12
-			addSubItem("target_version: " + bw.stripBits(gtv, 12, 12));
+			addSubItem("target_version: " + BitWise.stripBits(gtv, 12, 12));
 //			new_version	12
 			addSubItem("new_version: " + bw.consumeBits(2));
 //			download_level	2

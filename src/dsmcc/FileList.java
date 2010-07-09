@@ -27,6 +27,12 @@ public class FileList {
 	
 	Vector contentList = new Vector();
 	
+	private byte[] svcGatewayObjKey = null;
+	
+	public DSMCCObject getRoot() {
+		return getByObjKey(svcGatewayObjKey);
+	}
+	
 	public void reset() {
 		contentList.removeAllElements();
 	}
@@ -76,6 +82,10 @@ public class FileList {
 			add(f);
 		}
 		f.addChildren(file);
+	}
+
+	public void setSvcGatewayObjKey(byte[] svcGatewayObjKey) {
+		this.svcGatewayObjKey = svcGatewayObjKey;
 	}
 }
 

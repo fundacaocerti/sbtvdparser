@@ -25,6 +25,7 @@ package mpeg.psi;
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.psi.descriptors.TSinformation;
 import mpeg.sbtvd.SpecialSemantic;
+import sys.BitWise;
 
 public class SDT extends Table {
 
@@ -49,12 +50,12 @@ public class SDT extends Table {
 		while (bw.getAvailableSize() > 0) {
 			// service_id 16 uimsbf
 			int service_id = bw.pop16();
-			int svcIdLevel = addSubItem("service_id: " + bw.toHex(service_id),
+			int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(service_id),
 					svcLoopLevel);
 			addSubItem("type: "
-					+ TSinformation.svcTypes[bw.stripBits(service_id, 5, 2)],
+					+ TSinformation.svcTypes[BitWise.stripBits(service_id, 5, 2)],
 					svcIdLevel);
-			addSubItem("number: " + (bw.stripBits(service_id, 3, 3) + 1),
+			addSubItem("number: " + (BitWise.stripBits(service_id, 3, 3) + 1),
 					svcIdLevel);
 
 			// reserved_future_use 6 bslbf
@@ -71,9 +72,9 @@ public class SDT extends Table {
 			onid = bw.pop16();
 			String[] rs = { "undefined", "off", "in a few minutes", "paused",
 					"running" };
-			addSubItem("running_status: " + rs[bw.stripBits(onid, 16, 3) % 5],
+			addSubItem("running_status: " + rs[BitWise.stripBits(onid, 16, 3) % 5],
 					svcIdLevel);
-			int descriptorsLenght = bw.stripBits(onid, 12, 12);
+			int descriptorsLenght = BitWise.stripBits(onid, 12, 12);
 			int netDescIndx = addSubItem("network descriptors: (lenght "
 					+ descriptorsLenght + ")", svcIdLevel);
 			int mark = bw.getByteCount();

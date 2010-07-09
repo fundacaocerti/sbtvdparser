@@ -57,7 +57,7 @@ public class PCR {
 		pcr_base = (pcr_base << 16) + bw.pop16();
 		int pcr_extension = bw.pop16();
 		pcr_base = (pcr_base << 1) + (pcr_extension & 0x80);
-		pcr_extension = bw.stripBits(pcr_extension, 9, 9);
+		pcr_extension = BitWise.stripBits(pcr_extension, 9, 9);
 		long pcr = pcr_base * 300 + pcr_extension;
 		// System.out.println(pcr+" - "+pcr_base+":"+pcr_extension);
 		float timeStamp = ((float) pcr) / 27000000;

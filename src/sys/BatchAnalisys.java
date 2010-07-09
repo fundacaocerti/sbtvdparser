@@ -24,7 +24,6 @@ package sys;
 import gui.MainPanel;
 
 import java.io.File;
-import java.io.FilenameFilter;
 
 import parsers.Parameters;
 

@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 /*
  cd 17 07 2e 89 0e 54 56 52 45 43 4f 52 44 00 0f 02 04 30 04 31 af 01 05 b0
  cd 15 05 26 0e 54 56 20 47 6c 6f 62 6f 0f 02 e7 40 e7 41 af 01 e7 58
@@ -42,10 +44,10 @@ public class TSinformation extends Descriptor {
 
 		// length_of_ts_name 6 uimsbf
 		int aux = bw.pop();
-		int length_of_ts_name = bw.stripBits(aux, 8, 6);
+		int length_of_ts_name = BitWise.stripBits(aux, 8, 6);
 
 		// transmission_type_count 2 uimsbf
-		int transmission_type_count = bw.stripBits(aux, 2, 2);
+		int transmission_type_count = BitWise.stripBits(aux, 2, 2);
 
 		// ts_name
 		char[] str = new char[length_of_ts_name];
@@ -67,18 +69,18 @@ public class TSinformation extends Descriptor {
 			int svcLoopLevel = addSubItem("Service loop", loopLevel);
 			String type = "ABC-";
 			addSubItem("transmission_type: "
-					+ type.charAt(bw.stripBits(ttInfo, 8, 2)), svcLoopLevel);
+					+ type.charAt(BitWise.stripBits(ttInfo, 8, 2)), svcLoopLevel);
 			String[] mod = { "64QAM", "16QAM", "QPSK", "reserved" };
-			addSubItem("modulation: " + mod[bw.stripBits(ttInfo, 6, 2)],
+			addSubItem("modulation: " + mod[BitWise.stripBits(ttInfo, 6, 2)],
 					svcLoopLevel);
 			for (int k = 0; k < num_of_service; k++) {
 				// service_id 16 uimsbf
 				int service_id = bw.pop16();
 				int svcIdLevel = addSubItem("service_id: "
-						+ bw.toHex(service_id), svcLoopLevel);
-				addSubItem("type: " + svcTypes[bw.stripBits(service_id, 5, 2)],
+						+ BitWise.toHex(service_id), svcLoopLevel);
+				addSubItem("type: " + svcTypes[BitWise.stripBits(service_id, 5, 2)],
 						svcIdLevel);
-				addSubItem("number: " + (bw.stripBits(service_id, 3, 3) + 1),
+				addSubItem("number: " + (BitWise.stripBits(service_id, 3, 3) + 1),
 						svcIdLevel);
 			}
 		}

@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class StreamIdentifier extends Descriptor {
 
 	public static int tag = 0x52, cTag;
@@ -42,7 +44,7 @@ public class StreamIdentifier extends Descriptor {
 	public void printDescription() {
 		int level = addSubItem(name, tableIndx);
 		cTag = bw.pop();
-		addSubItem("component_tag: " + bw.toHex(cTag) + " - " + getType(cTag),
+		addSubItem("component_tag: " + BitWise.toHex(cTag) + " - " + getType(cTag),
 				level);
 	}
 

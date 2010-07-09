@@ -65,7 +65,7 @@ public class CC extends PES {
 				if (mgmtCrcs[i] == crc)
 					return;
 			mgmtCrcs[mgmtCount++] = crc;
-			thisPacket = addSubItem("ES packet " + bw.toHex(crc), mgmtPackets);
+			thisPacket = addSubItem("ES packet " + BitWise.toHex(crc), mgmtPackets);
 			addSubItem("packet_lenght: " + bigBuffer.length, thisPacket);
 			parse();
 		}
@@ -109,7 +109,7 @@ public class CC extends PES {
 			int readCrc = bw.pop16();
 			int crc = CRC16.calc(bigBuffer, crcStart, data_group_size + 5); // 5
 			// bytes no header
-			addSubItem("CRC16: " + bw.toHex(crc) +" "+ (readCrc == crc), dataGroupLvl);
+			addSubItem("CRC16: " + BitWise.toHex(crc) +" "+ (readCrc == crc), dataGroupLvl);
 		}
 		// System.out.println("available: " + bw.getAvailableSize());
 	}
@@ -126,14 +126,14 @@ public class CC extends PES {
 		if (tmd == 2 || (parseFree && tmd == 1)) {
 			StringBuffer sb = new StringBuffer();
 			// OTM 36
-			sb.append(bw.toHex(bw.pop()).substring(2));
+			sb.append(BitWise.toHex(bw.pop()).substring(2));
 			sb.append(':');
-			sb.append(bw.toHex(bw.pop()).substring(2));
+			sb.append(BitWise.toHex(bw.pop()).substring(2));
 			sb.append(':');
-			sb.append(bw.toHex(bw.pop()).substring(2));
+			sb.append(BitWise.toHex(bw.pop()).substring(2));
 			sb.append('.');
-			sb.append(bw.toHex(bw.pop()).substring(2));
-			sb.append(bw.toHex(bw.consumeBits(4)).substring(3));
+			sb.append(BitWise.toHex(bw.pop()).substring(2));
+			sb.append(BitWise.toHex(bw.consumeBits(4)).substring(3));
 			// Reserved 4
 			bw.consumeBits(4);
 			addSubItem("OTM: " + sb.toString(), dataGroupLvl);
@@ -188,7 +188,7 @@ public class CC extends PES {
 			int dmf = bw.consumeBits(4);
 			String[] dispType = { "Auto", "Non", "Select", "Specific" };
 			addSubItem(
-					"dmf: " + dispType[bw.stripBits(dmf, 4, 2)] + " display",
+					"dmf: " + dispType[BitWise.stripBits(dmf, 4, 2)] + " display",
 					dataGroupLvl);
 			if (dmf == 12 || dmf == 13 || dmf == 14)
 				addSubItem("dc: " + bw.pop());

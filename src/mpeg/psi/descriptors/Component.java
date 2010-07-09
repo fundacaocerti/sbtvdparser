@@ -31,13 +31,13 @@ public class Component extends Descriptor {
 
 	public void printDescription() {
 		int level = addSubItem(name, tableIndx);
-		int streamContent = bw.stripBits(bw.pop(), 4, 4);
-		addSubItem("stream_content: " + bw.toHex(streamContent), level);
+		int streamContent = BitWise.stripBits(bw.pop(), 4, 4);
+		addSubItem("stream_content: " + BitWise.toHex(streamContent), level);
 		int componentType = bw.pop();
-		addSubItem("component_type: " + bw.toHex(componentType), level);
+		addSubItem("component_type: " + BitWise.toHex(componentType), level);
 
 		int componentTag = bw.pop();
-		addSubItem("component_tag: " + bw.toHex(componentTag), level);
+		addSubItem("component_tag: " + BitWise.toHex(componentTag), level);
 		// component_tag: This 8-bit field has the same value as the
 		// component_tag field in the stream identifier descriptor (if
 		// present in the PSI program map section) for the component stream.

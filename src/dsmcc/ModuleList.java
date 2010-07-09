@@ -67,7 +67,7 @@ public class ModuleList {
 	}
 	
 	public void mountFS() {
-		DSMCCObject root = fileList.getByObjKey(BIOP.svcGatewayObjKey);
+		DSMCCObject root = fileList.getRoot();
 		if (root != null) {
 			root.name = "Carrossel "+BitWise.toHex(parent.downloadId);
 			root.mountTree(parent.progressLvl);
@@ -120,7 +120,7 @@ public class ModuleList {
 	public void createModule(BitWise bw, int treeLvl) {
 		bw.printBuffer(bw.getAbsolutePosition(), bw.getAbsolutePosition()+6);
 		int moduleId = bw.pop16();
-		int aModuleLvl = MainPanel.addTreeItem("moduleId: "+bw.toHex(moduleId), treeLvl);
+		int aModuleLvl = MainPanel.addTreeItem("moduleId: "+BitWise.toHex(moduleId), treeLvl);
 		int moduleSize = bw.pop16()<<16 | bw.pop16();
 		if (moduleSize > 0xa00000 || moduleSize < 0) {
 			Log.printWarning("DSMCC module is too large (>1Mb) - not creating");
@@ -129,25 +129,25 @@ public class ModuleList {
 		if (moduleSize == 0)
 			increaseCompleted();
 		parent.updateDlSize(moduleSize);
-		MainPanel.addTreeItem("moduleSize: "+bw.toHex(moduleSize), aModuleLvl);
+		MainPanel.addTreeItem("moduleSize: "+BitWise.toHex(moduleSize), aModuleLvl);
 		int moduleVersion = bw.pop();
-		MainPanel.addTreeItem("moduleVersion: "+bw.toHex(moduleVersion), aModuleLvl);
+		MainPanel.addTreeItem("moduleVersion: "+BitWise.toHex(moduleVersion), aModuleLvl);
 		
 		int moduleInfoLength = bw.pop();
-		int miLvl = MainPanel.addTreeItem("moduleInfo: lenght "+bw.toHex(moduleInfoLength), aModuleLvl);
-		MainPanel.addTreeItem("ModuleTimeOut: "+bw.toHex(bw.pop32()), miLvl);
-		MainPanel.addTreeItem("BlockTimeOut: "+bw.toHex(bw.pop32()), miLvl);
-		MainPanel.addTreeItem("MinBlockTime: "+bw.toHex(bw.pop32()), miLvl);
+		int miLvl = MainPanel.addTreeItem("moduleInfo: lenght "+BitWise.toHex(moduleInfoLength), aModuleLvl);
+		MainPanel.addTreeItem("ModuleTimeOut: "+BitWise.toHex(bw.pop32()), miLvl);
+		MainPanel.addTreeItem("BlockTimeOut: "+BitWise.toHex(bw.pop32()), miLvl);
+		MainPanel.addTreeItem("MinBlockTime: "+BitWise.toHex(bw.pop32()), miLvl);
 		int taps = bw.pop();
 		int tapLvl = MainPanel.addTreeItem("taps_count: "+taps, miLvl);
 		for (int i = 0; i < taps; i++) {
-			int aTapLvl = MainPanel.addTreeItem("id: "+bw.toHex(bw.pop16()), tapLvl);
-			MainPanel.addTreeItem("use: "+bw.toHex(bw.pop16()), aTapLvl);
-			MainPanel.addTreeItem("association_tag: "+bw.toHex(bw.pop16()), aTapLvl);
-			MainPanel.addTreeItem("selector_length: "+bw.toHex(bw.pop()), aTapLvl);
+			int aTapLvl = MainPanel.addTreeItem("id: "+BitWise.toHex(bw.pop16()), tapLvl);
+			MainPanel.addTreeItem("use: "+BitWise.toHex(bw.pop16()), aTapLvl);
+			MainPanel.addTreeItem("association_tag: "+BitWise.toHex(bw.pop16()), aTapLvl);
+			MainPanel.addTreeItem("selector_length: "+BitWise.toHex(bw.pop()), aTapLvl);
 		} 				
 		int userInfoLength 	= bw.pop();
-		int uiLvl = MainPanel.addTreeItem("userInfo: lenght "+bw.toHex(userInfoLength), aModuleLvl);
+		int uiLvl = MainPanel.addTreeItem("userInfo: lenght "+BitWise.toHex(userInfoLength), aModuleLvl);
 		
 		// for(i=0,i<N,i++){ uimsbf
 		// descriptor()

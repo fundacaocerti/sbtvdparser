@@ -83,7 +83,7 @@ public class Module {
 		if (remainingParts == 0 || blockNumber >= receivedParts.length
 				|| receivedParts[blockNumber])
 			return;
-		int pLvl = MainPanel.addTreeItem("part: "+blockNumber+" size: "+dataLenght, partLvl);
+		MainPanel.addTreeItem("part: "+blockNumber+" size: "+dataLenght, partLvl);
 //		MainPanel.addTreeItem("["+
 //		printHex(contents, startOffset, startOffset+4);
 //		System.out.print("...");

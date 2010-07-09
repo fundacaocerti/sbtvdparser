@@ -120,8 +120,8 @@ public class Table {
 			idLimit = id;
 		name = getTableName(readTableID);
 		int tmp = bw.pop16();
-		section_length = bw.stripBits(tmp, 12, 12);
-		section_syntax_indicator = bw.stripBits(tmp, 16, 1);
+		section_length = BitWise.stripBits(tmp, 12, 12);
+		section_syntax_indicator = BitWise.stripBits(tmp, 16, 1);
 		// TODO section_lenght conta 1 byte a mais, weird
 		bw.setBufferSize(section_length - 1);
 		if (ba.length < section_length + 3) {// 3 bytes são de table header
@@ -139,7 +139,7 @@ public class Table {
 		if (CRC32.calc(ba, 0, section_length + 3) != 0) {
 			StringBuffer sb = new StringBuffer();
 			sb.append("Section CRC failure for pid ");
-			sb.append(bw.toHex(pid));
+			sb.append(BitWise.toHex(pid));
 			sb.append(" at ");
 			sb.append(sectionStart);
 			sb.append(":");
@@ -158,9 +158,9 @@ public class Table {
 		if (readTableID < id || readTableID > idLimit) { // EITs have ranges
 			// of ids
 			int errMsg = addSubItem("Table content not recognized: TID = "
-					+ bw.toHex(readTableID));
+					+ BitWise.toHex(readTableID));
 			addSubItem("TID correspondece: " + name, errMsg);
-			addSubItem("expected TID: " + bw.toHex(id) + " - " + name, errMsg);
+			addSubItem("expected TID: " + BitWise.toHex(id) + " - " + name, errMsg);
 			addSubItem("content: [" + bw.getHexSequence(section_length) + "]",
 					errMsg);
 			return true;
@@ -235,8 +235,8 @@ public class Table {
 		MainPanel.setTreeData(treeIndx, bw);
 		if (layer != 0)
 			addSubItem("layer: " + "ABC".charAt(layer - 1), sectionInfo);
-		addSubItem("Id: "+ bw.toHex(readTableID), sectionInfo);
-		addSubItem("section CRC: "+bw.toHex(crc), sectionInfo);
+		addSubItem("Id: "+ BitWise.toHex(readTableID), sectionInfo);
+		addSubItem("section CRC: "+BitWise.toHex(crc), sectionInfo);
 		if (crcFails > 0)
 			addSubItem("CRC failures: " + crcFails, sectionInfo);
 		addSubItem("section_length: " + section_length, sectionInfo);
@@ -246,14 +246,14 @@ public class Table {
 
 	public void printSectionInfo() {
 		printBasicInfo();
-		addSubItem("Id extension: " + bw.toHex(idExt),
+		addSubItem("Id extension: " + BitWise.toHex(idExt),
 				sectionInfo);
-		addSubItem("version number: " + bw.toHex(versionNumber), sectionInfo);
+		addSubItem("version number: " + BitWise.toHex(versionNumber), sectionInfo);
 		String[] cn = { "next", "current" };
-		addSubItem("current/next: " + cn[bw.stripBits(versionInfo, 1, 1)],
+		addSubItem("current/next: " + cn[BitWise.stripBits(versionInfo, 1, 1)],
 				sectionInfo);
-		addSubItem("section number: " + bw.toHex(sectionNumber), sectionInfo);
-		addSubItem("last section number: " + bw.toHex(lastSectionNumber),
+		addSubItem("section number: " + BitWise.toHex(sectionNumber), sectionInfo);
+		addSubItem("last section number: " + BitWise.toHex(lastSectionNumber),
 				sectionInfo);
 	}
 
@@ -263,8 +263,8 @@ public class Table {
 		bw.mark();
 		idExt = bw.pop16();
 		versionInfo = bw.pop();
-		versionNumber = bw.stripBits(versionInfo, 6, 5);
-		//currentNextIndicator = bw.stripBits(versionInfo, 1, 1);
+		versionNumber = BitWise.stripBits(versionInfo, 6, 5);
+		//currentNextIndicator = BitWise.stripBits(versionInfo, 1, 1);
 		sectionNumber = bw.pop();
 		lastSectionNumber = bw.pop();
 		return true;

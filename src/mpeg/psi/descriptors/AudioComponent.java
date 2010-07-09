@@ -22,6 +22,7 @@
 package mpeg.psi.descriptors;
 
 import mpeg.psi.PMT;
+import sys.BitWise;
 
 public class AudioComponent extends Descriptor {
 
@@ -38,18 +39,18 @@ public class AudioComponent extends Descriptor {
 		bw.consumeBits(4);
 		// stream_content 4 uimsbf
 		int tmp = bw.consumeBits(4);
-		int cntlvl = addSubItem("stream_content: " + bw.toHex(tmp), level);
+		int cntlvl = addSubItem("stream_content: " + BitWise.toHex(tmp), level);
 		if (tmp == 0x06)
 			addSubItem("audio", cntlvl);
 		// component_type 8
 		//TODO: use table below
-		addSubItem("component_type: " + bw.toHex(bw.pop()), level);
+		addSubItem("component_type: " + BitWise.toHex(bw.pop()), level);
 		// component_tag 8 
-		addSubItem("component_tag: " + bw.toHex(bw.pop()), level);
+		addSubItem("component_tag: " + BitWise.toHex(bw.pop()), level);
 		// stream_type 8
 		addSubItem("stream_type: " + PMT.getStreamType(bw.pop()), level);
 		// simulcast_group_tag 8
-		addSubItem("simulcast_group_tag: " + bw.toHex(bw.pop()), level);
+		addSubItem("simulcast_group_tag: " + BitWise.toHex(bw.pop()), level);
 		// ES_multi_lingual_flag 1
 		addSubItem("ES_multi_lingual_flag: " + bw.consumeBits(1), level);
 		// main_component_flag 1

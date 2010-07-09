@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class ApplicationSignaling extends Descriptor {
 
 	public static int tag = 0x6f;
@@ -33,11 +35,11 @@ public class ApplicationSignaling extends Descriptor {
 		// for( i=0; i<N; i++ ){
 		for (int i = 0; i < descriptor_length; i += 3) {
 			// application_type 16 uimsbf
-			addSubItem("application_type: " + bw.toHex(bw.pop16()), level);
+			addSubItem("application_type: " + BitWise.toHex(bw.pop16()), level);
 			// reserved_future_use 3 bslbf
 			// AIT_version_number 5 uimsbf
 			addSubItem("AIT_version_number: "
-					+ bw.toHex(bw.stripBits(bw.pop(), 5, 5)), level);
+					+ BitWise.toHex(BitWise.stripBits(bw.pop(), 5, 5)), level);
 		}
 	}
 }
