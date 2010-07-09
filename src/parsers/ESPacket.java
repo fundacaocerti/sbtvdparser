@@ -27,7 +27,7 @@ import mpeg.pes.PESList;
 import mpeg.psi.TableList;
 
 public class ESPacket {
-	int continuityOld = 0;
+	int continuityOld = -1;
 
 	PES pes;
 
@@ -37,7 +37,8 @@ public class ESPacket {
 			return;
 		// TSP.print();
 		if ((TSP.continuityCounter - continuityOld != 1)
-				&& (continuityOld - TSP.continuityCounter != 15))
+				&& (continuityOld - TSP.continuityCounter != 15)
+				&& (continuityOld != -1))
 			TableList.continuityErrorCounters[PESList.pesCount]++;
 		continuityOld = TSP.continuityCounter;
 

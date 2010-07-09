@@ -29,7 +29,6 @@ import mpeg.psi.Table;
 import mpeg.psi.TableList;
 
 public class Section {
-	int continuityOld = 0;
 
 	Table table;
 
@@ -57,11 +56,12 @@ public class Section {
 		//TODO: debug the continuity counter
 //		if (TSP.pid == 0)
 //			System.out.println(TSP.continuityCounter+" "+continuityOld+" "+this);
-		if ((TSP.continuityCounter - continuityOld != 1)
-				&& (continuityOld - TSP.continuityCounter != 15))
+		if ((TSP.continuityCounter - table.continuityOld != 1)
+				&& (table.continuityOld - TSP.continuityCounter != 15)
+				&& (table.continuityOld != -1))
 			TableList.continuityErrorCounters[TableList.tableIndex]++;
-		continuityOld = TSP.continuityCounter;
-
+		table.continuityOld = TSP.continuityCounter;
+		
 		if (Packet.layer > 0 && Packet.layer < 4)
 			table.layer = Packet.layer;
 
