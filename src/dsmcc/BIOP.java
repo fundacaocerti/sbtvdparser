@@ -194,6 +194,7 @@ BIOP::StreamEvent Base, Access, Stream, Event
 	
 	String parseName(BitWise bw) {
 //		BIOP::Name(){
+		String name = null;
 		int nameComponents_count = bw.pop();
 		System.out.println("nameComponents_count: "+nameComponents_count);
 		for (int i=0; i<nameComponents_count; i++) {
@@ -210,9 +211,10 @@ BIOP::StreamEvent Base, Access, Stream, Event
 				System.out.print((char)bw.pop());
 			bw.pop();//null terminated
 			System.out.println("]");
-			return sb.toString();
+			if (name == null)
+				name = sb.toString();
 		}
-		return null;
+		return name;
 	}
 
 
