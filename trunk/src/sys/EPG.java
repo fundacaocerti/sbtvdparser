@@ -58,7 +58,7 @@ public class EPG {
 	public void addEvent(int id, int[] start, String duration, String name,
 			String description, String rating) {
 		String[] desc = new String[6];
-		desc[0] = bw.toHex(id);
+		desc[0] = BitWise.toHex(id);
 		desc[1] = duration;
 		desc[2] = name;
 		desc[3] = description;

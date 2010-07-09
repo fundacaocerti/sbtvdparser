@@ -26,10 +26,11 @@ section_syntax_indicator is '1', except that the CRC_32 field is replaced with t
 
 package mpeg.psi;
 
-import sys.Log;
 import gui.GuiMethods;
 import gui.MainPanel;
 import mpeg.psi.descriptors.Compatibility;
+import sys.BitWise;
+import sys.Log;
 import dsmcc.Module;
 import dsmcc.ModuleList;
 
@@ -71,7 +72,7 @@ public class DSMCC extends Table {
 			return false;
 //		printSectionInfo();
 //		bw.printBuffer(0, 20);
-//		addSubItem("pid: "+bw.toHex(pid));
+//		addSubItem("pid: "+BitWise.toHex(pid));
 
 		if (section_syntax_indicator == 0)
 			System.out.println("checksum used");
@@ -121,8 +122,8 @@ public class DSMCC extends Table {
 //		compatibilityDescriptor()
 		new Compatibility().parse(bw);
 //		privateDataLength
-		int privateDataLength = bw.pop16();
-//		System.out.println("privateDataLength: "+bw.toHex(privateDataLength));
+		bw.pop16();
+//		System.out.println("privateDataLength: "+BitWise.toHex(privateDataLength));
 	}
 	
 	int lastSectionVersion = -1, lastCrc = -1;
@@ -141,17 +142,17 @@ public class DSMCC extends Table {
 		lastSectionVersion = versionNumber;
 		int diiLvl = addSubItem("downloadInfoIndication", progressLvl);
 		downloadId = bw.pop16()<<16+bw.pop16();
-		addSubItem("downloadId: "+bw.toHex(downloadId), diiLvl);
+		addSubItem("downloadId: "+BitWise.toHex(downloadId), diiLvl);
 		int blockSize = bw.pop16();
-		addSubItem("blockSize: "+bw.toHex(blockSize), diiLvl);
+		addSubItem("blockSize: "+BitWise.toHex(blockSize), diiLvl);
 //		int windowSize = bw.pop();
-//		addSubItem("windowSize: "+bw.toHex(windowSize), unmLvl);
+//		addSubItem("windowSize: "+BitWise.toHex(windowSize), unmLvl);
 //		int ackPeriod = bw.pop();
-//		addSubItem("ackPeriod: "+bw.toHex(ackPeriod), unmLvl);
+//		addSubItem("ackPeriod: "+BitWise.toHex(ackPeriod), unmLvl);
 //		int tCDownloadWindow = bw.pop16()<<16+bw.pop16();
-//		addSubItem("tCDownloadWindow: "+bw.toHex(tCDownloadWindow), unmLvl);
+//		addSubItem("tCDownloadWindow: "+BitWise.toHex(tCDownloadWindow), unmLvl);
 //		int tCDownloadScenario = bw.pop16()<<16+bw.pop16();
-//		addSubItem("tCDownloadScenario: "+bw.toHex(tCDownloadScenario), unmLvl);
+//		addSubItem("tCDownloadScenario: "+BitWise.toHex(tCDownloadScenario), unmLvl);
 		System.out.println("00's: "+bw.getHexSequence(10));
 //		compatibilityDescriptor()
 		new Compatibility().parse(bw);
@@ -164,7 +165,7 @@ public class DSMCC extends Table {
 		moduleList.loadCache();
 		int privateDataLength = bw.pop16();
 		if (privateDataLength > 0) {
-			int pdLvl = addSubItem("privateData: "+bw.toHex(privateDataLength), diiLvl);
+			int pdLvl = addSubItem("privateData: "+BitWise.toHex(privateDataLength), diiLvl);
 			addSubItem(bw.getHexSequence(privateDataLength), pdLvl);
 		}
 	}
@@ -176,9 +177,9 @@ public class DSMCC extends Table {
 			return; //its not a DDB message
 		int moduleId = bw.pop16();
 		Module m = moduleList.getById(moduleId);
-//		addSubItem("moduleId: "+bw.toHex(moduleId), ddmLvl);
-		int moduleVersion = bw.pop();
-//		addSubItem("moduleVersion: "+bw.toHex(moduleVersion), ddmLvl);
+//		addSubItem("moduleId: "+BitWise.toHex(moduleId), ddmLvl);
+//		addSubItem("moduleVersion: "+BitWise.toHex(moduleVersion), ddmLvl);
+		bw.pop();
 		bw.pop(); //reserved
 		int blockNumber = bw.pop16();
 		
@@ -187,7 +188,7 @@ public class DSMCC extends Table {
 				return;
 			int ddmLvl = addSubItem("downloadDataMessage", 
 					m.partLvl);
-			addSubItem("blockNumber: "+bw.toHex(blockNumber), ddmLvl);
+			addSubItem("blockNumber: "+BitWise.toHex(blockNumber), ddmLvl);
 			moduleList.feedData(m, bw.buf, bw.getAbsolutePosition(),
 					bw.getAvailableSize()+1, blockNumber, ddmLvl);
 		} else {
@@ -210,18 +211,18 @@ public class DSMCC extends Table {
 			return -1;
 		}
 		int messageId = bw.pop16();
-//		addSubItem("messageId: "+bw.toHex(messageId), ddmLvl);
-//		System.out.println("messageId: "+bw.toHex(messageId));
+//		addSubItem("messageId: "+BitWise.toHex(messageId), ddmLvl);
+//		System.out.println("messageId: "+BitWise.toHex(messageId));
 //		transaction_id 32 uimsbf - 2x 16
-		int transactionId = bw.pop16()<<16 | bw.pop16();
-//		System.out.println(bw.toHex(transactionId));
-//		addSubItem("transaction_id: "+bw.toHex(downloadId), ddmLvl);
+		/*int transactionId =*/ bw.pop32();
+//		System.out.println(BitWise.toHex(transactionId));
+//		addSubItem("transaction_id: "+BitWise.toHex(downloadId), ddmLvl);
 		bw.pop(); //reserved
 		int adaptationLength = bw.pop();
 //		System.out.println("adaptationLength: "+adaptationLength);
 		messageLength = bw.pop16();
 //		System.out.println("messageLength: "+messageLength);
-//		addSubItem("messageLength: "+bw.toHex(messageLength), ddmLvl);
+//		addSubItem("messageLength: "+BitWise.toHex(messageLength), ddmLvl);
 		if (adaptationLength > 0)
 			bw.pop(adaptationLength);
 		return messageId;

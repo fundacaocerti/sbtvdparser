@@ -23,6 +23,7 @@
 package mpeg.psi;
 
 import mpeg.sbtvd.SpecialSemantic;
+import sys.BitWise;
 
 public class PAT extends Table {
 
@@ -43,17 +44,17 @@ public class PAT extends Table {
 			// program_number 16 uimsbf
 			int programNumber = bw.pop16();
 			int progIndx = addSubItem("program_number: "
-					+ bw.toHex(programNumber));
+					+ BitWise.toHex(programNumber));
 
 			// Reserved 3 bslbf
 			if (programNumber == 0) {
 				// network_PID 13 uimsbf
 				addSubItem("network_PID: "
-						+ bw.toHex(bw.stripBits(bw.pop16(), 13, 13)), progIndx);
+						+ BitWise.toHex(BitWise.stripBits(bw.pop16(), 13, 13)), progIndx);
 			} else {
 				// program_map_PID 13 uimsbf
-				int pid = bw.stripBits(bw.pop16(), 13, 13);
-				addSubItem("program_map_PID: " + bw.toHex(pid), progIndx);
+				int pid = BitWise.stripBits(bw.pop16(), 13, 13);
+				addSubItem("program_map_PID: " + BitWise.toHex(pid), progIndx);
 				TableList.addTable(new PMT(pid));
 				serviceCount++;
 			}

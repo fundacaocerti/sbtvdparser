@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class PartialReception extends Descriptor {
 
 	public static int tag = 0xFB;
@@ -33,7 +35,7 @@ public class PartialReception extends Descriptor {
 
 		// service ID
 		for (int i = 0; i < descriptor_length; i += 2) {
-			addSubItem("partial_service_id: " + bw.toHex(bw.pop16()), level);
+			addSubItem("partial_service_id: " + BitWise.toHex(bw.pop16()), level);
 		}
 	}
 }

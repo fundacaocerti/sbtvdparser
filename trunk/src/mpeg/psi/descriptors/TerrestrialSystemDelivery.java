@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class TerrestrialSystemDelivery extends Descriptor {
 
 	public static int tag = 0xFA;
@@ -33,15 +35,15 @@ public class TerrestrialSystemDelivery extends Descriptor {
 
 		// area_code 12 uimsbf
 		int tmp = bw.pop16();
-		addSubItem("area_code: " + bw.stripBits(tmp, 16, 12), level);
+		addSubItem("area_code: " + BitWise.stripBits(tmp, 16, 12), level);
 
 		// guard_interval 2 uimsbf
-		addSubItem("guard_interval: 1/" + (32 >> (bw.stripBits(tmp, 4, 2))),
+		addSubItem("guard_interval: 1/" + (32 >> (BitWise.stripBits(tmp, 4, 2))),
 				level);
 
 		// tx_mode 2 uimsbf
 		addSubItem(
-				"transmission_mode: mode " + (1 + (bw.stripBits(tmp, 2, 2))),
+				"transmission_mode: mode " + (1 + (BitWise.stripBits(tmp, 2, 2))),
 				level);
 
 		// frequency loop

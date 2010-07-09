@@ -144,7 +144,7 @@ public class Descriptor {
 
 		int descIndx = addSubItem(descriptorName + " descriptor", tableIndx);
 		addSubItem("descriptor semantic unknown", descIndx);
-		addSubItem("tag = " + bw.toHex(parsedTag), descIndx);
+		addSubItem("tag = " + BitWise.toHex(parsedTag), descIndx);
 		addSubItem("content: " + bw.getHexSequence(descriptor_length), descIndx);
 	}
 

@@ -35,7 +35,7 @@ public class IIP extends Table {
 		bw = new BitWise(ba);
 		bw.setBufferSize(22);
 		// 7F DD 3D 25 8B 4B 3F FF 25 8B 4B 3F FF FF FF FF 73 3A DA 83
-		treeIndx = addSubItem("IIP (pid " + bw.toHex(pid) + ")");
+		treeIndx = addSubItem("IIP (pid " + BitWise.toHex(pid) + ")");
 		// IIP_packet_pointer 16 - mas perdi algum byte no caminho
 		bw.pop(); // sem uso no momento
 
@@ -62,11 +62,11 @@ public class IIP extends Table {
 		// initialization_timing_indicator 4
 		bw.pop();
 		// current_mode 2
-		currentMode = bw.stripBits(bw.pop(0), 8, 2);
+		currentMode = BitWise.stripBits(bw.pop(0), 8, 2);
 		addSubItem("current_mode: " + currentMode);
 		// current_guard_interval 2
 		addSubItem("current_guard_interval: 1/"
-				+ (32 >> bw.stripBits(bw.pop(), 6, 2)));
+				+ (32 >> BitWise.stripBits(bw.pop(), 6, 2)));
 		// next_mode 2
 		// next_guard_interval 2
 		// }
@@ -74,10 +74,10 @@ public class IIP extends Table {
 		// system_identifier 2
 		// count_down_Index 4
 		// switch-on_control_flag_used_for_alert_broadcasting 1
-		addSubItem("alert_broadcasting_flag: " + bw.stripBits(bw.pop(), 2, 1));
+		addSubItem("alert_broadcasting_flag: " + BitWise.stripBits(bw.pop(), 2, 1));
 		// current_configuration_information{
 		// partial_reception_flag 1
-		addSubItem("partial_reception_flag: " + bw.stripBits(bw.pop(0), 1, 1));
+		addSubItem("partial_reception_flag: " + BitWise.stripBits(bw.pop(0), 1, 1));
 		// transmission_parameters_for_layer_A{
 		int tmp = addSubItem("tx_parameters_for_layer_A");
 		txParametersForLayer(tmp);

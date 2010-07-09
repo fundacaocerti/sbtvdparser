@@ -37,7 +37,6 @@ DSM::Stream Base, Access, Stream
 DSM::ServiceGateway Access, ServiceGateway - Root Dir
 BIOP::StreamEvent Base, Access, Stream, Event
  */
-	static byte[] svcGatewayObjKey = null;
 	public static int carouselPID = 0;
 	int msgNumb = 0;
 	FileList fl;
@@ -76,22 +75,22 @@ BIOP::StreamEvent Base, Access, Stream, Event
 		//byte_order
 		if (bw.pop() != 0x00) //big endian byte ordering
 			return false;
-		int message_type = bw.pop();
+		/*int message_type =*/ bw.pop();
 		int message_size = bw.pop32();
 		int mark = bw.getAbsolutePosition();
 		byte[] objKey = parseObjKey(bw, msglvl);
 		//objectKind_length == 4
 		bw.pop(4);
 		int objKind = bw.pop32();
-		MainPanel.addTreeItem("objKind: "+(char)(bw.stripBits(objKind, 32, 8))+(char)(bw.stripBits(objKind, 24, 8))
-				+(char)(bw.stripBits(objKind, 16, 8)), msglvl);
-		System.out.println("objKind "+bw.toHex(objKind));
+		MainPanel.addTreeItem("objKind: "+(char)(BitWise.stripBits(objKind, 32, 8))+(char)(BitWise.stripBits(objKind, 24, 8))
+				+(char)(BitWise.stripBits(objKind, 16, 8)), msglvl);
+		System.out.println("objKind "+BitWise.toHex(objKind));
 		int objectInfo_length;
 		
 		switch (objKind) {
 		case 0x73726700: //"srg" == ServiceGateway
 			System.out.println("ServiceGateway");
-			svcGatewayObjKey = objKey;
+			fl.setSvcGatewayObjKey(objKey);
 		case 0x64697200: //"dir" == Directory
 			System.out.println("Directory");
 //			fl.setToDir(objKey); //for empty directories
@@ -104,14 +103,14 @@ BIOP::StreamEvent Base, Access, Stream, Event
 //				bw.pop32();// ctxId
 //				bw.pop(bw.pop16()); //ctx datalengh
 //			}
-			int messageBody_length = bw.pop32();
+			/*int messageBody_length = */bw.pop32();
 			int bindings = bw.pop16();
 //			System.out.println("messageBody_length: "+messageBody_length);
 			int bindLvl = MainPanel.addTreeItem("bindings: "+bindings, msglvl);
 			for (int i = 0; i < bindings; i++) {
 				String name = parseName(bw);//path
 				int nameLvl = MainPanel.addTreeItem("name: "+name, bindLvl);
-				int bindingType = bw.pop(); //0x01 == ncontext > bound to a Directory or ServiceGateway
+				/*int bindingType =*/ bw.pop(); //0x01 == ncontext > bound to a Directory or ServiceGateway
 //				System.out.println("bindingType: "+bindingType);
 //				bw.pop(0x49);
 				DSMCCObject f = fl.setName(parseIOR(bw, nameLvl), name);
@@ -133,7 +132,7 @@ BIOP::StreamEvent Base, Access, Stream, Event
 			//messageBody_length
 			bw.pop32();
 			int content_length = bw.pop32();
-			MainPanel.addTreeItem("file size "+bw.toHex(content_length), msglvl);
+			MainPanel.addTreeItem("file size "+BitWise.toHex(content_length), msglvl);
 			fl.setContent(objKey, bw.buf, bw.getAbsolutePosition(), content_length);
 			break;
 		case 0x73747200: //"str" == Stream
@@ -170,7 +169,7 @@ BIOP::StreamEvent Base, Access, Stream, Event
 		for (int j=0; j<taggedProfiles_count; j++) {
 			int profileId_tag = bw.pop32();
 			System.out.print("id: ");
-			System.out.print(bw.toHex(profileId_tag));
+			System.out.print(BitWise.toHex(profileId_tag));
 			int profile_data_length = bw.pop32();
 			bw.mark();
 			//0x49534F06 == TAG_BIOP
@@ -180,8 +179,8 @@ BIOP::StreamEvent Base, Access, Stream, Event
 				//0x49534F50 == TAG_ObjectLocation
 				if (bw.pop32() == 0x49534F50) {
 					bw.pop();//component_data_length
-					MainPanel.addTreeItem("carouselId: "+bw.toHex(bw.pop32()), iorLvl);
-					MainPanel.addTreeItem("moduleId: "+bw.toHex(bw.pop16()), iorLvl);
+					MainPanel.addTreeItem("carouselId: "+BitWise.toHex(bw.pop32()), iorLvl);
+					MainPanel.addTreeItem("moduleId: "+BitWise.toHex(bw.pop16()), iorLvl);
 					bw.pop16(); //BIOP version
 					objKey = parseObjKey(bw, iorLvl);
 				}
@@ -220,8 +219,6 @@ BIOP::StreamEvent Base, Access, Stream, Event
 
 
 	public static void main(String[] cmdArgs) {
-		BitWise btw = new BitWise(new byte[] {});
-		byte[] svcGatewayObjKey = null;
 		FileList fl = new FileList();
 		File f =  new File("K:\\TS\\ModuleListB");
 		File[] modules = f.listFiles();
@@ -237,16 +234,12 @@ BIOP::StreamEvent Base, Access, Stream, Event
 					BIOP me = new BIOP(fl);
 					me.parseModule(bw, 0);
 					fis.close();
-					if (me.svcGatewayObjKey != null) {
-						svcGatewayObjKey = me.svcGatewayObjKey;
-						System.out.println("gateway found");
-					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		DSMCCObject rd = fl.getByObjKey(svcGatewayObjKey);
+		DSMCCObject rd = fl.getRoot();
 		rd.name = "root";
 		File root =  new File("K:\\TS\\ModuleListB\\fs");
 		root.mkdir();

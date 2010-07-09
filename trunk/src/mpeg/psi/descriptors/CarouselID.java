@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class CarouselID extends Descriptor {
 
 	public static int tag = 0x13;
@@ -30,9 +32,9 @@ public class CarouselID extends Descriptor {
 	public void printDescription() {
 		int level = addSubItem(name, tableIndx);
 		addSubItem("descriptor_length: " + descriptor_length, level);
-		addSubItem("carousel_id: " + bw.toHex(bw.pop32()), level);
+		addSubItem("carousel_id: " + BitWise.toHex(bw.pop32()), level);
 		int fid = bw.pop();
-		int fidLvl = addSubItem("format_id: " + bw.toHex(fid), level);
+		int fidLvl = addSubItem("format_id: " + BitWise.toHex(fid), level);
 		if (fid == 0)
 			addSubItem("No FormatSpecifier - the location of the ServiceGateway is through DSI and DII", fidLvl);
 		else

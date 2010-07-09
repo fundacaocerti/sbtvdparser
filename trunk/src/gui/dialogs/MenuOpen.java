@@ -106,7 +106,7 @@ public class MenuOpen implements SelectionListener {
 		}
 	}
 
-	private String popQuery() {
+	/*private String popQuery() {
 		QueryDialog qDialog = new QueryDialog(shell, false);
 		qDialog.setText("Filtro de resultados");
 		String filter = qDialog.open();
@@ -114,7 +114,7 @@ public class MenuOpen implements SelectionListener {
 		System.out.println(qDialog.isRecursive());
 		System.out.println(qDialog.getFilterLimit());
 		return filter;
-	}
+	}*/
 }
 
 

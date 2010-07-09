@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class DataComponent extends Descriptor {
 
 	public static int tag = 0xfd;
@@ -34,7 +36,7 @@ public class DataComponent extends Descriptor {
 		// descriptor_length 8 uimsbf
 		// data_component_id 16 uimsbf
 		int id = bw.pop16();
-		addSubItem("data_component_id: " + bw.toHex(id), level);
+		addSubItem("data_component_id: " + BitWise.toHex(id), level);
 		// for(i=0;i<N;i++){
 		// additional_data_component_info 8 uimsbf
 		// if (id == 8) {

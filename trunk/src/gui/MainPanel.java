@@ -64,7 +64,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -605,6 +604,7 @@ public class MainPanel {
 	
 	public static void setFilterAsRegex() {
 		filterIsRegex = true;
+		System.out.println("filterIsRegex "+filterIsRegex);
 	}
 	
 	public static void listOnlyMatches() {

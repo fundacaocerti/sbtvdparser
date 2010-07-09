@@ -40,7 +40,7 @@ public class TransportProtocol extends AITDescriptor {
 			addSubItem("protocol_id: "+BitWise.toHex(id)+" - "+ids[0], level);
 		addSubItem("transport_protocol_label: "+BitWise.toHex(bw.pop()), level);
 		if (id == 1 || id == 4 || id == 2) {
-			boolean rc = (bw.stripBits(bw.pop(), 8, 1) & 1) > 0;
+			boolean rc = (BitWise.stripBits(bw.pop(), 8, 1) & 1) > 0;
 			addSubItem("remote connection: "+(rc ? "true" : "false"), level);
 			if (rc) {
 				addSubItem("onid: "+BitWise.toHex(bw.pop16()), level);

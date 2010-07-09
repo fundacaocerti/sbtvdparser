@@ -21,6 +21,8 @@
  */
 package mpeg.psi.descriptors;
 
+import sys.BitWise;
+
 public class DataContent extends Descriptor {
 
 	public static int tag = 0xc7;
@@ -33,9 +35,9 @@ public class DataContent extends Descriptor {
 		// descriptor_tag 8 uimsbf
 		// descriptor_length 8 uimsbf
 		// data_component_id 16 uimsbf
-		addSubItem("data_component_id: " + bw.toHex(bw.pop16()), level);
+		addSubItem("data_component_id: " + BitWise.toHex(bw.pop16()), level);
 		int entryComp = bw.pop();
-		addSubItem("entry_component: " + bw.toHex(entryComp) + " ("
+		addSubItem("entry_component: " + BitWise.toHex(entryComp) + " ("
 				+ StreamIdentifier.getType(entryComp) + ")", level);
 		int loopLen = bw.pop();
 		if (loopLen == 5 && entryComp >= 0x30 && entryComp <= 0x38)
@@ -45,7 +47,7 @@ public class DataContent extends Descriptor {
 		// for(i=0;i<N;i++){
 		// additional_data_component_info 8 uimsbf
 		loopLen = bw.pop();
-		int compRef = addSubItem("component_ref: " + bw.toHex(loopLen), level);
+		int compRef = addSubItem("component_ref: " + BitWise.toHex(loopLen), level);
 		loopLen += bw.getByteCount();
 		while (bw.getByteCount() < loopLen)
 			parseCompRef(compRef);
@@ -54,7 +56,7 @@ public class DataContent extends Descriptor {
 	}
 
 	void parseCompRef(int level) {
-		addSubItem("ref: " + bw.toHex(bw.pop()), level);
+		addSubItem("ref: " + BitWise.toHex(bw.pop()), level);
 	}
 
 	void parseAribCCInfo(int level) {

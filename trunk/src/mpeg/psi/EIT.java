@@ -23,10 +23,11 @@
 package mpeg.psi;
 
 import gui.MainPanel;
-import parsers.Packet;
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.psi.descriptors.ParentalRating;
 import mpeg.psi.descriptors.ShortEvent;
+import parsers.Packet;
+import sys.BitWise;
 import sys.EPG;
 
 public class EIT extends Table {
@@ -103,11 +104,11 @@ public class EIT extends Table {
 		printSectionInfo();
 		// System.out.println(name);
 
-		addSubItem("transport_stream_id: " + bw.toHex(transport_stream_id));
-		addSubItem("original_network_id: " + bw.toHex(original_network_id));
+		addSubItem("transport_stream_id: " + BitWise.toHex(transport_stream_id));
+		addSubItem("original_network_id: " + BitWise.toHex(original_network_id));
 		addSubItem("segment_last_section_number: "
-				+ bw.toHex(segment_last_section_number));
-		addSubItem("last_table_id: " + bw.toHex(last_table_id));
+				+ BitWise.toHex(segment_last_section_number));
+		addSubItem("last_table_id: " + BitWise.toHex(last_table_id));
 		bw.mark();
 		addSubItem("Event info. lenght: " + bw.getAvailableSize());// TODO não é loop lenght?
 		int loopLevel = addSubItem("Event loop:");
@@ -125,7 +126,7 @@ public class EIT extends Table {
 					duration.append(":");
 			}
 
-			int evtLevel = addSubItem("event_id: " + bw.toHex(id), loopLevel);
+			int evtLevel = addSubItem("event_id: " + BitWise.toHex(id), loopLevel);
 			addSubItem("start_time: " + TOT.formatMJD(start), evtLevel);
 			addSubItem("duration: " + duration.toString(), evtLevel);
 

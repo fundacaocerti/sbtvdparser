@@ -22,13 +22,14 @@
 //Program Association Table;
 package mpeg.psi;
 
-import sys.PIDStats;
 import mpeg.AdaptationField;
 import mpeg.pes.CC;
 import mpeg.pes.PESList;
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.psi.descriptors.StreamIdentifier;
 import mpeg.psi.descriptors.TSinformation;
+import sys.BitWise;
+import sys.PIDStats;
 
 public class PMT extends Table {
 
@@ -42,22 +43,22 @@ public class PMT extends Table {
 		if (!verifyMultiSection(ba))
 			return false;
 		printSectionInfo();
-		addSubItem("PID: " + bw.toHex(pid));
-		int svcIdLevel = addSubItem("service_id: " + bw.toHex(idExt));
+		addSubItem("PID: " + BitWise.toHex(pid));
+		int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(idExt));
 		addSubItem(
-				"type: " + TSinformation.svcTypes[bw.stripBits(idExt, 5, 2)],
+				"type: " + TSinformation.svcTypes[BitWise.stripBits(idExt, 5, 2)],
 				svcIdLevel);
-		addSubItem("number: " + (bw.stripBits(idExt, 3, 3) + 1), svcIdLevel);
+		addSubItem("number: " + (BitWise.stripBits(idExt, 3, 3) + 1), svcIdLevel);
 		// reserved 3 - não tá na norma
 		// PCR_PID 13 uimsbf
-		int pcrPid = bw.stripBits(bw.pop16(), 13, 13);
-		addSubItem("PCR_PID: " + bw.toHex(pcrPid), svcIdLevel);
-		PIDStats.setIdentification(pcrPid, "prog. " + bw.toHex(idExt) + " PCR");
+		int pcrPid = BitWise.stripBits(bw.pop16(), 13, 13);
+		addSubItem("PCR_PID: " + BitWise.toHex(pcrPid), svcIdLevel);
+		PIDStats.setIdentification(pcrPid, "prog. " + BitWise.toHex(idExt) + " PCR");
 		if (AdaptationField.pcrPid == -1)
 			AdaptationField.pcrPid = pcrPid;
 		// Reserved 4 bslbf
 		// program_info_length 12 uimsbf
-		int programInfoLength = bw.stripBits(bw.pop16(), 12, 12);
+		int programInfoLength = BitWise.stripBits(bw.pop16(), 12, 12);
 		int programInfoLevel = addSubItem("program info descriptors: (lenght "
 				+ programInfoLength + ")", svcIdLevel);
 		bw.mark();
@@ -79,17 +80,17 @@ public class PMT extends Table {
 			
 			// Reserved 3 bslbf
 			// elementary_PID 13 uimsbf
-			int esPid = bw.stripBits(bw.pop16(), 13, 13);
+			int esPid = BitWise.stripBits(bw.pop16(), 13, 13);
 			if (streamType == 0x0b || streamType == 0x0d)
 				TableList.addTable(new DSMCC(esPid));
 			if (streamType == 0x05)
 				TableList.addTable(new AIT(esPid));
-			int esInfoLevel = addSubItem("ES_PID: " + bw.toHex(esPid)
-					+ "   type: " + bw.toHex(streamType) + "- " + streamDesc,
+			int esInfoLevel = addSubItem("ES_PID: " + BitWise.toHex(esPid)
+					+ "   type: " + BitWise.toHex(streamType) + "- " + streamDesc,
 					esLoopLevel);
 			// Reserved 4 bslbf
 			// ES_info_length 12 uimsbf
-			int esInfoLenght = bw.stripBits(bw.pop16(), 12, 12)
+			int esInfoLenght = BitWise.stripBits(bw.pop16(), 12, 12)
 					+ bw.getByteCount();
 			// for(i=0,i<N2,i++){
 			// Descriptor()
@@ -102,12 +103,12 @@ public class PMT extends Table {
 			if (StreamIdentifier.cTag != -1)
 				PIDStats
 						.setIdentification(esPid, "prog. "
-								+ bw.toHex(idExt)
+								+ BitWise.toHex(idExt)
 								+ " "
 								+ StreamIdentifier
 										.getType(StreamIdentifier.cTag));
 			else
-				PIDStats.setIdentification(esPid, "prog. " + bw.toHex(idExt)
+				PIDStats.setIdentification(esPid, "prog. " + BitWise.toHex(idExt)
 						+ " " + streamDesc);
 			StreamIdentifier.cTag = -1;
 		}
