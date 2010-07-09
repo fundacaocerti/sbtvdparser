@@ -28,7 +28,7 @@ public class TSP {
 
 	public final static int TS_PACKET_LEN = 188;
 
-	public final static byte SYNC_BYTE = 0x47;
+	public final static int SYNC_BYTE = 0x47;
 
 	// fields are listed in order of appearence
 	// 4-byte prefix
