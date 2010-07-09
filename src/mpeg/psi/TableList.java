@@ -62,6 +62,8 @@ public class TableList {
 	}
 
 	public static Table getByIndex(int index) {
+		if (index >= tableList.size())
+			return null;
 		return (Table) tableList.get(index);
 	}
 	
