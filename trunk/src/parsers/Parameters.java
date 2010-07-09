@@ -185,7 +185,7 @@ public class Parameters {
 			}
 			int cntLvl = MainPanel.addTreeItem("Continuity error counter: " + continuityCount, 0, MainPanel.STATS_TREE);
 			for (int i = 0; i < TableList.continuityErrorCounters.length; i++) {
-				if (TableList.continuityErrorCounters[i] != 0)
+				if (TableList.continuityErrorCounters[i] != 1)
 					MainPanel.addTreeItem(TableList.getByIndex(i).name + ": " +
 							TableList.continuityErrorCounters[i], cntLvl, MainPanel.STATS_TREE);;
 			}

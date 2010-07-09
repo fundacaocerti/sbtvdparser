@@ -33,7 +33,7 @@ public class Table {
 	public String name = null;
 
 	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF,
-			crcFails = 0, versionNumber = -1, crc;
+			crcFails = 0, versionNumber = -1, crc, continuityOld = -1;
 
 	int section_syntax_indicator = 0, section_length = 0, bufWriteIndx = 0,
 			idExt, versionInfo, sectionNumber, lastSectionNumber, readTableID,
