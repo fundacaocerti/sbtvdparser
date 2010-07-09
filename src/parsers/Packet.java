@@ -68,12 +68,11 @@ public class Packet extends Thread {
 	}
 
 	void parsePacket() throws IOException {
-		byte sync;
-		sync = 0;
+		int sync = 0;
 		int i = 0;
 		byteCount += bis.skip(skipSize);
 		while (sync != TSP.SYNC_BYTE && (MainPanel.isOpen || Parameters.noGui) && sync != -1) {
-			sync = (byte) bis.read();
+			sync = bis.read();
 			i++;
 		}
 //		if (sync == -1)
