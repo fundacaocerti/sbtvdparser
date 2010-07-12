@@ -38,7 +38,7 @@ public class Section {
 		table = TableList.getByPid(TSP.pid);
 		if (table == null)
 			return;
-		
+
 		int matches = 0;
 		if (table.searchBytes != null) {
 			int i;
@@ -48,27 +48,25 @@ public class Section {
 				else
 					matches = 0;
 			if (matches == table.searchBytes.length)
-				System.out.println("lowLevelSearch found at filepos: 0x"+
-						Long.toHexString((Packet.byteCount+i-matches-Packet.realPktLenght+1))
-						+" packet: 0x"+Long.toHexString(Packet.packetCount));
+				System.out.println("lowLevelSearch found at filepos: 0x"
+						+ Long.toHexString((Packet.byteCount + i - matches - Packet.realPktLenght + 1)) + " packet: 0x"
+						+ Long.toHexString(Packet.packetCount));
 		}
-		
-		//TODO: debug the continuity counter
-//		if (TSP.pid == 0)
-//			System.out.println(TSP.continuityCounter+" "+continuityOld+" "+this);
-		if ((TSP.continuityCounter - table.continuityOld != 1)
-				&& (table.continuityOld - TSP.continuityCounter != 15)
+
+		// TODO: debug the continuity counter
+		// if (TSP.pid == 0)
+		// System.out.println(TSP.continuityCounter+" "+continuityOld+" "+this);
+		if ((TSP.continuityCounter - table.continuityOld != 1) && (table.continuityOld - TSP.continuityCounter != 15)
 				&& (table.continuityOld != -1))
 			TableList.continuityErrorCounters[TableList.tableIndex]++;
 		table.continuityOld = TSP.continuityCounter;
-		
+
 		if (Packet.layer > 0 && Packet.layer < 4)
 			table.layer = Packet.layer;
 
 		if (TSP.payloadUnitStartIndicator == 1) {
 			// inicio da seção
-			if (TSP.adaptationFieldControl != 1
-					&& TSP.adaptationFieldControl != 3)
+			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
 				System.out.println("adaptation present");
 			int pointer_field = 0;
 			if (TSP.dataOffset < Packet.buffer.length)
@@ -87,9 +85,8 @@ public class Section {
 			}
 			if (srcPosition < 182) {
 				int versionNumber = (Packet.buffer[srcPosition + 5] & 0x3f) >> 1;
-				//TODO: opção pra filtrar tabelas repetidas por
-				if (table.versionNumber == versionNumber
-						&& !(table instanceof EIT) && !(table instanceof DSMCC))
+				// TODO: opção pra filtrar tabelas repetidas por
+				if (table.versionNumber == versionNumber && !(table instanceof EIT) && !(table instanceof DSMCC))
 					return;
 			}
 			int length = TSP.TS_PACKET_LEN - 1 - srcPosition;
@@ -98,11 +95,9 @@ public class Section {
 			sectionPayload = new byte[length];
 			if (srcPosition + length <= Packet.buffer.length)
 				try {
-					System.arraycopy(Packet.buffer, srcPosition,
-							sectionPayload, 0, length);
+					System.arraycopy(Packet.buffer, srcPosition, sectionPayload, 0, length);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					Log.printStackTrace(new Exception("StreamParser err: "
-							+ srcPosition + ", " + length + ", "
+					Log.printStackTrace(new Exception("StreamParser err: " + srcPosition + ", " + length + ", "
 							+ pointer_field + ", " + TSP.dataOffset));
 					Log.printStackTrace(e);
 				}
@@ -110,15 +105,11 @@ public class Section {
 			// "+list.continuityErrorCounters[list.tableIndex],
 			// 0);
 			table.resetMultissection();
-			TableList.tablesParsed[TableList.tableIndex] = table
-					.printDescription(sectionPayload);
+			TableList.tablesParsed[TableList.tableIndex] = table.printDescription(sectionPayload);
 		} else {
-			if (TSP.adaptationFieldControl != 1
-					&& TSP.adaptationFieldControl != 3)
+			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
 				System.out.println("adaptation present");
-			table.feedPart(Packet.buffer, TSP.dataOffset, Packet.buffer.length
-					- TSP.dataOffset);
+			table.feedPart(Packet.buffer, TSP.dataOffset, Packet.buffer.length - TSP.dataOffset);
 		}
 	}
 }
-

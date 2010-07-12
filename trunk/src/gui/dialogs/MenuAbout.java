@@ -42,10 +42,10 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-public class MenuAbout  extends Dialog implements SelectionListener {
+public class MenuAbout extends Dialog implements SelectionListener {
 
 	private Label imageLabel = null;
-	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,62"
+	private Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,62"
 	private Label infoLabel = null;
 	private Button btOK = null;
 	private Link warrantyLink = null;
@@ -53,7 +53,7 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 	private Label gplImg = null;
 	private Link certiLink = null;
 	private Label certiLogoLabel = null;
-	
+
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
@@ -64,7 +64,7 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 			sShell.close();
 		try {
 			if (e.widget == warrantyLink)
-				java.awt.Desktop.getDesktop().browse(new URI("http://www.gnu.org/licenses/gpl.html#section15")); 
+				java.awt.Desktop.getDesktop().browse(new URI("http://www.gnu.org/licenses/gpl.html#section15"));
 			if (e.widget == condLink) {
 				Desktop desk = Desktop.getDesktop();
 				if (!java.awt.Desktop.isDesktopSupported())
@@ -79,7 +79,7 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 					}
 			}
 			if (e.widget == certiLink)
-				java.awt.Desktop.getDesktop().browse(new URI("http://www.certi.org.br")); 
+				java.awt.Desktop.getDesktop().browse(new URI("http://www.certi.org.br"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (URISyntaxException f) {
@@ -89,10 +89,10 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 
 	public MenuAbout(Shell parent) {
 		super(parent);
-//		sShell = parent;
+		// sShell = parent;
 		initialize();
 	}
-	
+
 	public void open() {
 		initialize();
 		sShell.open();
@@ -113,7 +113,7 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 		GridData info1gd = new GridData();
 		GridData btOkGd = new GridData();
 		GridLayout gridLayout = new GridLayout();
-		
+
 		gridLayout.numColumns = 3;
 		infoImgGd.widthHint = 60;
 		info1gd.horizontalSpan = 1;
@@ -125,42 +125,39 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 		gplGd.horizontalAlignment = org.eclipse.swt.layout.GridData.END;
 		btOkGd.horizontalSpan = 3;
 		btOkGd.horizontalAlignment = org.eclipse.swt.layout.GridData.CENTER;
-		
+
 		if (getParent() == null)
-			sShell = new Shell(); //to use the visual editor
+			sShell = new Shell(); // to use the visual editor
 		else {
 			sShell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-			sShell.setLocation(getParent().getLocation().x + 50,
-				getParent().getLocation().y + 50);
+			sShell.setLocation(getParent().getLocation().x + 50, getParent().getLocation().y + 50);
 		}
 		imageLabel = new Label(sShell, SWT.NONE);
 		imageLabel.setImage(sShell.getDisplay().getSystemImage(SWT.ICON_WORKING));
 		imageLabel.setLayoutData(infoImgGd);
 		infoLabel = new Label(sShell, SWT.NONE);
-		infoLabel.setText("SBTVD Transport Stream Parser\n" +
-        		"Copyright © 2010 Gabriel A. G. Marques\n" +
-        		"gabriel.marques@gmail.com");
+		infoLabel.setText("SBTVD Transport Stream Parser v0.2\n" + "Copyright © 2010 Gabriel A. G. Marques\n"
+				+ "gabriel.marques@gmail.com");
 		infoLabel.setLayoutData(info1gd);
 		gplImg = new Label(sShell, SWT.NONE);
-		//License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+		// License GPLv3+: GNU GPL version 3 or later
+		// <http://gnu.org/licenses/gpl.html>
 		certiLink = new Link(sShell, SWT.NONE);
 		certiLink.setText("Initial development kindly supported by <a>CERTI Foundation</a>");
 		certiLink.setLayoutData(gridData);
 		certiLink.addSelectionListener(this);
 		certiLogoLabel = new Label(sShell, SWT.NONE);
-		certiLogoLabel.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream(
-		"/res/certi.png")));
+		certiLogoLabel.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream("/res/certi.png")));
 		warrantyLink = new Link(sShell, SWT.NONE);
 		warrantyLink.setText("This program comes with <a>ABSOLUTELY NO WARRANTY.</a>");
 		warrantyLink.setLayoutData(wrLinkGd);
 		warrantyLink.addSelectionListener(this);
 		gplImg.setText("Label");
-		gplImg.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream(
-				"/res/gplv3-88x31.png")));
+		gplImg.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream("/res/gplv3-88x31.png")));
 		gplImg.setLayoutData(gplGd);
 		condLink = new Link(sShell, SWT.NONE);
-		condLink.setText("This is free software, and you are welcome to redistribute " +
-				"it under <a>certain conditions.</a>");
+		condLink.setText("This is free software, and you are welcome to redistribute "
+				+ "it under <a>certain conditions.</a>");
 		condLink.setLayoutData(condLinkGd);
 		condLink.addSelectionListener(this);
 		btOK = new Button(sShell, SWT.NONE);
@@ -174,4 +171,3 @@ public class MenuAbout  extends Dialog implements SelectionListener {
 	}
 
 }
-

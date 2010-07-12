@@ -65,8 +65,7 @@ public class IIP extends Table {
 		currentMode = BitWise.stripBits(bw.pop(0), 8, 2);
 		addSubItem("current_mode: " + currentMode);
 		// current_guard_interval 2
-		addSubItem("current_guard_interval: 1/"
-				+ (32 >> BitWise.stripBits(bw.pop(), 6, 2)));
+		addSubItem("current_guard_interval: 1/" + (32 >> BitWise.stripBits(bw.pop(), 6, 2)));
 		// next_mode 2
 		// next_guard_interval 2
 		// }
@@ -131,8 +130,7 @@ public class IIP extends Table {
 		if (tmp == 0)
 			addSubItem("length_of_time_interleaving: 0", treeLevel);
 		else if (tmp < 4)
-			addSubItem("length_of_time_interleaving: "
-					+ ((32 >> (3 - tmp)) >> currentMode), treeLevel);
+			addSubItem("length_of_time_interleaving: " + ((32 >> (3 - tmp)) >> currentMode), treeLevel);
 		// number_of_segments 4
 		tmp = bw.consumeBits(4);
 		if (tmp > 0 && tmp < 14)
@@ -140,4 +138,3 @@ public class IIP extends Table {
 
 	}
 }
-

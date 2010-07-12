@@ -90,4 +90,3 @@ public class CRC16 {
 		return crc;
 	}
 }
-

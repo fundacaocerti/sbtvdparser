@@ -67,17 +67,13 @@ public class TSP {
 	}
 
 	public static void print() {
-		System.out.println("transportErrorIndicator: "
-				+ transportErrorIndicator);
-		System.out.println("payloadUnitStartIndicator: "
-				+ payloadUnitStartIndicator);
+		System.out.println("transportErrorIndicator: " + transportErrorIndicator);
+		System.out.println("payloadUnitStartIndicator: " + payloadUnitStartIndicator);
 		System.out.println("transportPriority: " + transportPriority);
 		System.out.println("pid: " + BitWise.toHex(pid));
-		System.out.println("transportScramblingControl: "
-				+ transportScramblingControl);
+		System.out.println("transportScramblingControl: " + transportScramblingControl);
 		System.out.println("adaptationFieldControl: " + adaptationFieldControl);
 		System.out.println("continuityCounter: " + continuityCounter);
 		System.out.println();
 	}
 }
-

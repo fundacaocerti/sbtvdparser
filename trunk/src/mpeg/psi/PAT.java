@@ -37,20 +37,18 @@ public class PAT extends Table {
 		if (!verifyMultiSection(ba))
 			return false;
 		printSectionInfo();
-		addSubItem("tx_network: "+SpecialSemantic.parseNetworkID(idExt));
+		addSubItem("tx_network: " + SpecialSemantic.parseNetworkID(idExt));
 		int serviceCount = 0;
 		// for(i=0;i<N;i++){
 		while (bw.getAvailableSize() > 0) {
 			// program_number 16 uimsbf
 			int programNumber = bw.pop16();
-			int progIndx = addSubItem("program_number: "
-					+ BitWise.toHex(programNumber));
+			int progIndx = addSubItem("program_number: " + BitWise.toHex(programNumber));
 
 			// Reserved 3 bslbf
 			if (programNumber == 0) {
 				// network_PID 13 uimsbf
-				addSubItem("network_PID: "
-						+ BitWise.toHex(BitWise.stripBits(bw.pop16(), 13, 13)), progIndx);
+				addSubItem("network_PID: " + BitWise.toHex(BitWise.stripBits(bw.pop16(), 13, 13)), progIndx);
 			} else {
 				// program_map_PID 13 uimsbf
 				int pid = BitWise.stripBits(bw.pop16(), 13, 13);
@@ -63,4 +61,3 @@ public class PAT extends Table {
 		return true;
 	}
 }
-

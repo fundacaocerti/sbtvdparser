@@ -36,8 +36,7 @@ public class ESPacket {
 		if (pes == null)
 			return;
 		// TSP.print();
-		if ((TSP.continuityCounter - continuityOld != 1)
-				&& (continuityOld - TSP.continuityCounter != 15)
+		if ((TSP.continuityCounter - continuityOld != 1) && (continuityOld - TSP.continuityCounter != 15)
 				&& (continuityOld != -1))
 			TableList.continuityErrorCounters[PESList.pesCount]++;
 		continuityOld = TSP.continuityCounter;
@@ -47,8 +46,7 @@ public class ESPacket {
 
 		if (TSP.payloadUnitStartIndicator == 1) {
 			// início da seção
-			if (TSP.adaptationFieldControl != 1
-					&& TSP.adaptationFieldControl != 3)
+			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
 				System.out.println("adaptation present");
 			int pointer_field = 0;
 			if (TSP.dataOffset < Packet.buffer.length)
@@ -79,10 +77,8 @@ public class ESPacket {
 			if (pointer_field < 0)
 				pointer_field += 256;
 			int srcPosition = TSP.dataOffset + 1 + pointer_field;
-			pes.feedPart(Packet.buffer, srcPosition, Packet.buffer.length
-					- srcPosition);
+			pes.feedPart(Packet.buffer, srcPosition, Packet.buffer.length - srcPosition);
 			// }
 		}
 	}
 }
-

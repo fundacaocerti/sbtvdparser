@@ -34,8 +34,7 @@ public class GingaNCLApp extends AITDescriptor {
 
 	private void printSubItem(String label, byte[] value) {
 		try {
-			InputStreamReader isr = new InputStreamReader(
-					new ByteArrayInputStream(value), "ISO8859_15_FDIS");
+			InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(value), "ISO8859_15_FDIS");
 			char[] ca = new char[value.length];
 			isr.read(ca);
 			String valueS = new String(ca);
@@ -44,5 +43,5 @@ public class GingaNCLApp extends AITDescriptor {
 			Log.printStackTrace(e);
 		}
 	}
-	
+
 }

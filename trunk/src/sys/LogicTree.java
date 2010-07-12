@@ -44,7 +44,7 @@ public class LogicTree {
 	public Object contents;
 
 	public int indx;
-	
+
 	public boolean isVisible = false;
 
 	public LogicTree(String text, LogicTree parent, int indx) {
@@ -55,7 +55,7 @@ public class LogicTree {
 			parent.sons.add(this);
 		}
 	}
-	
+
 	public Object getData() {
 		return contents;
 	}
@@ -86,14 +86,13 @@ public class LogicTree {
 		return null;
 	}
 
-	public void print(OutputStream out) throws UnsupportedEncodingException,
-			IOException {
+	public void print(OutputStream out) throws UnsupportedEncodingException, IOException {
 		for (int i = 0; i < sons.size(); i++)
 			((LogicTree) sons.get(i)).print("  ", i == sons.size() - 1, out);
 	}
 
-	public String print(String ident, boolean isTheLast, OutputStream out)
-			throws UnsupportedEncodingException, IOException {
+	public String print(String ident, boolean isTheLast, OutputStream out) throws UnsupportedEncodingException,
+			IOException {
 		out.write(ident.getBytes(sysEncoding));
 		if (isTheLast)
 			out.write("  └─".getBytes(sysEncoding));
@@ -103,11 +102,9 @@ public class LogicTree {
 		out.write("\r\n".getBytes(sysEncoding));
 		for (int i = 0; i < sons.size(); i++)
 			if (isTheLast)
-				((LogicTree) sons.get(i)).print(ident + "  ",
-						i == sons.size() - 1, out);
+				((LogicTree) sons.get(i)).print(ident + "  ", i == sons.size() - 1, out);
 			else
-				((LogicTree) sons.get(i)).print(ident + "  │",
-						i == sons.size() - 1, out);
+				((LogicTree) sons.get(i)).print(ident + "  │", i == sons.size() - 1, out);
 		return text;
 	}
 
@@ -201,4 +198,3 @@ public class LogicTree {
 		out.write("\"\n//-->".getBytes());
 	}
 }
-

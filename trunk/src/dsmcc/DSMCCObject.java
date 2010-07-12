@@ -30,52 +30,51 @@ import java.io.IOException;
 import java.util.Vector;
 
 public class DSMCCObject {
-	
+
 	boolean isDirectory;
-	
+
 	byte[] objKey = null;
-	
+
 	public String name = null;
-	
+
 	byte[] contents = null;
-	
+
 	int startOffset, lenght;
-	
+
 	File file = null;
-	
+
 	Vector childrens = new Vector();
-	
+
 	public void addChildren(DSMCCObject file) {
 		isDirectory = true;
 		childrens.add(file);
 	}
-	
+
 	public void mountTree(int msgLvl) {
 		if (isDirectory) {
 			int dirLvl = MainPanel.addTreeItem(name, msgLvl, MainPanel.DSMCC_TREE);
 			MainPanel.setTreeData(dirLvl, this);
 			for (int i = 0; i < childrens.size(); i++)
-				((DSMCCObject)childrens.get(i)).mountTree(dirLvl);
-		}
-		else {
-			int fileLvl = MainPanel.addTreeItem("["+name+"] size: "+lenght, msgLvl, MainPanel.DSMCC_TREE);	
+				((DSMCCObject) childrens.get(i)).mountTree(dirLvl);
+		} else {
+			int fileLvl = MainPanel.addTreeItem("[" + name + "] size: " + lenght, msgLvl, MainPanel.DSMCC_TREE);
 			MainPanel.setTreeData(fileLvl, this);
 		}
 	}
-	
+
 	public void saveIn(File parentDir) {
 		file = new File(parentDir, name);
 		save(file);
 	}
-	
+
 	public static String printObjKey(byte[] ok) {
 		return printHex(ok, 0, ok.length);
 	}
-	
+
 	public String toString() {
 		return name;
 	}
-	
+
 	public static String printHex(byte[] ok, int start, int end) {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
@@ -88,11 +87,11 @@ public class DSMCCObject {
 		sb.append(']');
 		return sb.toString();
 	}
-	
+
 	public DSMCCObject(byte[] objKey) {
 		this.objKey = objKey;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -102,21 +101,21 @@ public class DSMCCObject {
 		this.startOffset = startOffset;
 		this.lenght = lenght;
 		isDirectory = false;
-//		System.out.print("FS: set contents of ");
-//		printObjKey(objKey);
-//		System.out.print(" to [");
-//		printHex(contents, startOffset, startOffset+4);
-//		System.out.print("...");
-//		printHex(contents, startOffset+lenght-4, startOffset+lenght);
-//		System.out.println("]");
+		// System.out.print("FS: set contents of ");
+		// printObjKey(objKey);
+		// System.out.print(" to [");
+		// printHex(contents, startOffset, startOffset+4);
+		// System.out.print("...");
+		// printHex(contents, startOffset+lenght-4, startOffset+lenght);
+		// System.out.println("]");
 	}
-	
+
 	public boolean equals(Object o) {
 		if (!(o instanceof DSMCCObject))
 			return false;
-		return isTheSame(((DSMCCObject)o).objKey);
+		return isTheSame(((DSMCCObject) o).objKey);
 	}
-	
+
 	public boolean isTheSame(byte[] objKey) {
 		if (objKey == null || this.objKey == null)
 			return false;
@@ -133,15 +132,14 @@ public class DSMCCObject {
 		if (file.exists())
 			file.delete();
 		if (isDirectory) {
-	//			try {
-				file.mkdir();
-	//		} catch (IOException e) {
-	//			e.printStackTrace();
-	//		}
+			// try {
+			file.mkdir();
+			// } catch (IOException e) {
+			// e.printStackTrace();
+			// }
 			for (int i = 0; i < childrens.size(); i++)
-				((DSMCCObject)childrens.get(i)).saveIn(file);
-		}
-		else
+				((DSMCCObject) childrens.get(i)).saveIn(file);
+		} else
 			try {
 				file.createNewFile();
 				if (contents != null) {
@@ -154,7 +152,7 @@ public class DSMCCObject {
 				e.printStackTrace();
 			}
 	}
-	
+
 	public void open() {
 		Desktop desk = Desktop.getDesktop();
 		if (!java.awt.Desktop.isDesktopSupported())
@@ -166,7 +164,7 @@ public class DSMCCObject {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-//		java.awt.Desktop
+		// java.awt.Desktop
 	}
 
 	public boolean isDirectory() {

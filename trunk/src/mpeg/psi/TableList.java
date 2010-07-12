@@ -44,8 +44,8 @@ public class TableList {
 		tableList.add(new TOT());
 		tableList.add(new SDTT(SDTT.HIGH_PROTECTION_LAYER_PID));
 		tableList.add(new SDTT(SDTT.LOW_PROTECTION_LAYER_PID));
-//		tableList.add(new DSMCC(0x0384));
-//		tableList.add(new DSMCC(2003));
+		// tableList.add(new DSMCC(0x0384));
+		// tableList.add(new DSMCC(2003));
 		// tableList.add(new TSDT());
 	}
 
@@ -55,8 +55,9 @@ public class TableList {
 		for (int i = 0; i < tableList.size(); i++)
 			if (((Table) tableList.get(i)).pid == pid) {
 				tableIndex = i;
-//				if (!tablesParsed[i]) //TODO: colocar na UI como opção (pegar todas vs. pegar 1a)
-					return (Table) tableList.get(i);
+				// if (!tablesParsed[i]) //TODO: colocar na UI como opção (pegar
+				// todas vs. pegar 1a)
+				return (Table) tableList.get(i);
 			}
 		return null;
 	}
@@ -66,7 +67,7 @@ public class TableList {
 			return null;
 		return (Table) tableList.get(index);
 	}
-	
+
 	public static int getLenght() {
 		return tableList.size();
 	}
@@ -91,4 +92,3 @@ public class TableList {
 		tableIndex = 0;
 	}
 }
-

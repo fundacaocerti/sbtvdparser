@@ -38,9 +38,7 @@ public class ApplicationSignaling extends Descriptor {
 			addSubItem("application_type: " + BitWise.toHex(bw.pop16()), level);
 			// reserved_future_use 3 bslbf
 			// AIT_version_number 5 uimsbf
-			addSubItem("AIT_version_number: "
-					+ BitWise.toHex(BitWise.stripBits(bw.pop(), 5, 5)), level);
+			addSubItem("AIT_version_number: " + BitWise.toHex(BitWise.stripBits(bw.pop(), 5, 5)), level);
 		}
 	}
 }
-

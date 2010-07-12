@@ -21,9 +21,7 @@ public class Application extends AITDescriptor {
 		int application_profiles_lenght = bw.pop();
 
 		if (application_profiles_lenght != 5) {
-			this.printSubItem("Erro: ",
-					"Valor do campo 'application_profiles_lenght' inesperado "
-							.getBytes());
+			this.printSubItem("Erro: ", "Valor do campo 'application_profiles_lenght' inesperado ".getBytes());
 		} else {
 			int app_profile_number = bw.pop16();
 			String application_profile;
@@ -45,8 +43,7 @@ public class Application extends AITDescriptor {
 				application_profile = "";
 			}
 
-			this.printSubItem("Application Profile: ", application_profile
-					.getBytes());
+			this.printSubItem("Application Profile: ", application_profile.getBytes());
 
 			int[] version = new int[] { bw.pop(), bw.pop(), bw.pop() };
 			String versionS = version[0] + "." + version[1] + "." + version[2];
@@ -60,7 +57,7 @@ public class Application extends AITDescriptor {
 
 			int visibility = bw.consumeBits(2);
 			String visiString;
-			
+
 			switch (visibility) {
 			case 0:
 				visiString = "Not visible";
@@ -81,37 +78,29 @@ public class Application extends AITDescriptor {
 
 			this.printSubItem("Visibility: ", visiString.getBytes());
 
-			
-			
 			// Reserved for future use according to 15606-3
 			bw.consumeBits(5);
-			
+
 			int app_priority = bw.pop();
-			String app_priority_S = ""+app_priority;
-			
+			String app_priority_S = "" + app_priority;
+
 			this.printSubItem("Application Priority: ", app_priority_S.getBytes());
-			
-			
+
 			// We read 8 bytes before this point
 			int remaininBytes = descriptor_length - 8;
-			while(remaininBytes > 0){
-				byte[] transport_protocol_label = new byte[]{(byte)bw.pop()};
+			while (remaininBytes > 0) {
+				byte[] transport_protocol_label = new byte[] { (byte) bw.pop() };
 				this.printSubItem("Transport Protocol Label: ", transport_protocol_label);
 				remaininBytes--;
 			}
-			
-			
-		
-			
-			
+
 		}
 
 	}
 
 	private void printSubItem(String label, byte[] value) {
 		try {
-			InputStreamReader isr = new InputStreamReader(
-					new ByteArrayInputStream(value), "ISO8859_15_FDIS");
+			InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(value), "ISO8859_15_FDIS");
 			char[] ca = new char[value.length];
 			isr.read(ca);
 			String valueS = new String(ca);

@@ -9,7 +9,7 @@ public class GingaNCLAppLocation extends AITDescriptor {
 	public static int tag = 0x07;
 
 	static String name = "Ginga-NCL Application Location";
-	
+
 	private int level;
 
 	public void printDescription() {
@@ -34,8 +34,7 @@ public class GingaNCLAppLocation extends AITDescriptor {
 
 		this.printSubItem("Classpath Extension: ", classpath_extension);
 
-		int initial_class_lenght = descriptor_length - base_directory_lenght
-				- classpath_extension_length - 2;
+		int initial_class_lenght = descriptor_length - base_directory_lenght - classpath_extension_length - 2;
 		byte[] initial_class = new byte[initial_class_lenght];
 
 		for (int i = 0; i < initial_class_lenght; i++) {
@@ -48,8 +47,7 @@ public class GingaNCLAppLocation extends AITDescriptor {
 
 	private void printSubItem(String label, byte[] value) {
 		try {
-			InputStreamReader isr = new InputStreamReader(
-					new ByteArrayInputStream(value), "ISO8859_15_FDIS");
+			InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(value), "ISO8859_15_FDIS");
 			char[] ca = new char[value.length];
 			isr.read(ca);
 			String valueS = new String(ca);
@@ -58,5 +56,5 @@ public class GingaNCLAppLocation extends AITDescriptor {
 			Log.printStackTrace(e);
 		}
 	}
-	
+
 }

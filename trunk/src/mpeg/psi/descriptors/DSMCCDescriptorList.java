@@ -47,8 +47,7 @@ public class DSMCCDescriptorList {
 		try {
 			(cl.cast(o)).getClass().getMethod(method, null).invoke(o, null);
 		} catch (Exception e) {
-			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName()
-					+ ", " + o.getClass().getName() + ")"));
+			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName() + ", " + o.getClass().getName() + ")"));
 			Log.printStackTrace(e);
 			exception = true;
 		}
@@ -59,8 +58,7 @@ public class DSMCCDescriptorList {
 		try {
 			d = (DSMCCDescriptor) (cl.getConstructors()[0]).newInstance(null);
 		} catch (Exception e) {
-			System.err.println("getDSMCCDescriptor(" + cl.getName() + ", "
-					+ treeIndex + ")");
+			System.err.println("getDSMCCDescriptor(" + cl.getName() + ", " + treeIndex + ")");
 			System.err.println(e.getLocalizedMessage());
 			exception = true;
 		}
@@ -85,4 +83,3 @@ public class DSMCCDescriptorList {
 		d.print();
 	}
 }
-

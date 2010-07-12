@@ -49,7 +49,7 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 	Shell s;
 
 	int yBias;
-	
+
 	static String save = "Salvar item", open = "Abrir";
 
 	public DSMCCSavePopUp(Shell s, int yBias) {
@@ -63,7 +63,7 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 			x = event.x;
 			y = event.y;
 		}
-		if (event.item != null //&& event.type == SWT.Selection
+		if (event.item != null // && event.type == SWT.Selection
 				&& mouseButton == 3) {
 			// System.out.println("click"+((Integer)event.item.getData()).toString());
 			Menu menu = new Menu(s, SWT.POP_UP);
@@ -74,13 +74,12 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 			MenuItem saveOpt = new MenuItem(menu, SWT.PUSH);
 			saveOpt.setText(save);
 			saveOpt.addSelectionListener(this);
-			if (data instanceof DSMCCObject && !((DSMCCObject)data).isDirectory()) {
+			if (data instanceof DSMCCObject && !((DSMCCObject) data).isDirectory()) {
 				MenuItem openOpt = new MenuItem(menu, SWT.PUSH);
 				openOpt.setText(open);
 				openOpt.addSelectionListener(this);
 			}
-			menu.setLocation(x + s.getLocation().x, y
-					+ yBias + s.getLocation().y);
+			menu.setLocation(x + s.getLocation().x, y + yBias + s.getLocation().y);
 			menu.setVisible(true);
 			while (!menu.isDisposed() && menu.isVisible()) {
 				if (!Display.getDefault().readAndDispatch())
@@ -94,7 +93,7 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		if (((MenuItem)e.getSource()).getText() == save) {
+		if (((MenuItem) e.getSource()).getText() == save) {
 			FileDialog fd = new FileDialog(s, SWT.SAVE);
 			fd.setText("Salvar");
 			fd.setFileName(data.toString());
@@ -103,15 +102,13 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 				return;
 			File f = new File(selected);
 			if (data instanceof Module)
-				((Module)data).save(f);
-				else
-				if (data instanceof ModuleList)
-					((ModuleList)data).save(f);
-				else
-					((DSMCCObject)data).save(f);
+				((Module) data).save(f);
+			else if (data instanceof ModuleList)
+				((ModuleList) data).save(f);
+			else
+				((DSMCCObject) data).save(f);
 		} else
-			((DSMCCObject)data).open();
+			((DSMCCObject) data).open();
 	}
 
 }
-

@@ -26,13 +26,10 @@ import sys.Log;
 
 public class DescriptorList {
 
-	static Class[] descList = { TSinformation.class,
-			TerrestrialSystemDelivery.class, PartialReception.class,
-			StreamIdentifier.class, DataComponent.class, Component.class,
-			ApplicationSignaling.class, NetworkName.class,
-			ParentalRating.class, ShortEvent.class, Service.class,
-			DataContent.class, AudioComponent.class, CarouselID.class,
-			AssociationTag.class};
+	static Class[] descList = { TSinformation.class, TerrestrialSystemDelivery.class, PartialReception.class,
+			StreamIdentifier.class, DataComponent.class, Component.class, ApplicationSignaling.class,
+			NetworkName.class, ParentalRating.class, ShortEvent.class, Service.class, DataContent.class,
+			AudioComponent.class, CarouselID.class, AssociationTag.class };
 
 	static boolean exception;
 
@@ -52,8 +49,7 @@ public class DescriptorList {
 		try {
 			(cl.cast(o)).getClass().getMethod(method, null).invoke(o, null);
 		} catch (Exception e) {
-			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName()
-					+ ", " + o.getClass().getName() + ")"));
+			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName() + ", " + o.getClass().getName() + ")"));
 			Log.printStackTrace(e);
 			exception = true;
 		}
@@ -64,8 +60,7 @@ public class DescriptorList {
 		try {
 			d = (Descriptor) (cl.getConstructors()[0]).newInstance(null);
 		} catch (Exception e) {
-			System.err.println("getDescriptor(" + cl.getName() + ", "
-					+ treeIndex + ")");
+			System.err.println("getDescriptor(" + cl.getName() + ", " + treeIndex + ")");
 			System.err.println(e.getLocalizedMessage());
 			exception = true;
 		}
@@ -90,4 +85,3 @@ public class DescriptorList {
 		d.print();
 	}
 }
-

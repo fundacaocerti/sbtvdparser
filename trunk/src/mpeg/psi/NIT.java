@@ -39,11 +39,9 @@ public class NIT extends Table {
 			return false;
 		printSectionInfo();
 		int netDescriptorsLenght = BitWise.stripBits(bw.pop16(), 12, 12);
-		int netDescIndx = addSubItem("network descriptors: (lenght "
-				+ netDescriptorsLenght + ")");
+		int netDescIndx = addSubItem("network descriptors: (lenght " + netDescriptorsLenght + ")");
 		bw.mark();
-		while ((bw.getByteCount() < netDescriptorsLenght)
-				&& (bw.getAvailableSize() > 0))
+		while ((bw.getByteCount() < netDescriptorsLenght) && (bw.getAvailableSize() > 0))
 			DescriptorList.print(bw, netDescIndx);
 
 		int byteCount = 0;
@@ -51,22 +49,17 @@ public class NIT extends Table {
 		int tsLoopIndx = addSubItem("TS loop: (lenght " + tsLoopLenght + ")");
 		while ((byteCount < tsLoopLenght) && (bw.getAvailableSize() > 0)) {
 			// TS_id 16 uimsbf
-			int tsIdIndx = addSubItem("TS_id: " + BitWise.toHex(bw.pop16()),
-					tsLoopIndx);
+			int tsIdIndx = addSubItem("TS_id: " + BitWise.toHex(bw.pop16()), tsLoopIndx);
 			int onid = bw.pop16();
-			addSubItem("Original Net ID: "
-					+ SpecialSemantic.parseNetworkID(onid), tsIdIndx);
+			addSubItem("Original Net ID: " + SpecialSemantic.parseNetworkID(onid), tsIdIndx);
 
 			int tsDescriptorsLenght = BitWise.stripBits(bw.pop16(), 12, 12);
 			byteCount += tsDescriptorsLenght + 6;
 			bw.mark();
-			int tsDescIndx = addSubItem("TS Descriptors (lenght "
-					+ BitWise.toHex(tsDescriptorsLenght) + ")", tsIdIndx);
-			while ((bw.getByteCount() < tsDescriptorsLenght)
-					&& (bw.getAvailableSize() > 0))
+			int tsDescIndx = addSubItem("TS Descriptors (lenght " + BitWise.toHex(tsDescriptorsLenght) + ")", tsIdIndx);
+			while ((bw.getByteCount() < tsDescriptorsLenght) && (bw.getAvailableSize() > 0))
 				DescriptorList.print(bw, tsDescIndx);
 		}
 		return true;
 	}
 }
-

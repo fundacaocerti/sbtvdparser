@@ -28,19 +28,19 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 
 public class PIDStats {
-	
+
 	static int barCount = 0;
-	
+
 	public static void addBar(int pid, int percent, int maxPercent, String name) {
-//		percent = (int)(Math.log(percent)*100);
-//		maxPercent = (int)(Math.log(maxPercent)*100);
-//		System.out.println(Math.log(percent)+"/"+Math.log(maxPercent)+" "+name);
+		// percent = (int)(Math.log(percent)*100);
+		// maxPercent = (int)(Math.log(maxPercent)*100);
+		// System.out.println(Math.log(percent)+"/"+Math.log(maxPercent)+" "+name);
 		GridData gd = new GridData();
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 		Label label = new Label(MainPanel.pidStats, SWT.NONE);
-		String pidText = "000"+Integer.toHexString(pid);
-		pidText = "0x"+pidText.substring(pidText.length()-4, pidText.length());
+		String pidText = "000" + Integer.toHexString(pid);
+		pidText = "0x" + pidText.substring(pidText.length() - 4, pidText.length());
 		label.setText(pidText);
 		ProgressBar pb = new ProgressBar(MainPanel.pidStats, SWT.SMOOTH);
 		pb.setMaximum(maxPercent);
@@ -50,17 +50,17 @@ public class PIDStats {
 		barCount++;
 		MainPanel.statsTree.pack(true);
 		MainPanel.statsGroup.pack(true);
-		MainPanel.scrComp.setMinSize(400, 100+barCount*24);
-		MainPanel.pidSelector.add(pidText+" - "+name);
+		MainPanel.scrComp.setMinSize(400, 100 + barCount * 24);
+		MainPanel.pidSelector.add(pidText + " - " + name);
 	}
-	
-//	public static void scaleBars() {
-//		for (int i = 0; i < bars.size(); i++) {
-//			((ProgressBar)bars.elementAt(i)).setSelection(10);
-//			
-//		}
-//	}
-	
+
+	// public static void scaleBars() {
+	// for (int i = 0; i < bars.size(); i++) {
+	// ((ProgressBar)bars.elementAt(i)).setSelection(10);
+	//			
+	// }
+	// }
+
 	public static void clear() {
 		barCount = 0;
 		Control[] c = MainPanel.pidStats.getChildren();
@@ -68,4 +68,3 @@ public class PIDStats {
 			c[i].dispose();
 	}
 }
-

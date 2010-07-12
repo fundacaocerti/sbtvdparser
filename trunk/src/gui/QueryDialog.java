@@ -44,7 +44,7 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 		this.showDirOptions = showDirOptions;
 	}
 
-	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="10,62"
+	private Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,62"
 	private Text filter = null;
 	private Text maxResults = null;
 	private Label ftrLabel = null;
@@ -53,7 +53,7 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 	private Button recursive = null;
 	private Label regLabel = null;
 	private Label recLabel = null;
-	private String result;  //  @jve:decl-index=0:
+	private String result; // @jve:decl-index=0:
 	private Button okButton = null;
 	private boolean isRegex = false, isRecursive = false, listAllFiles = true;
 	private static int filterLimit = 0;
@@ -73,19 +73,19 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 
 		return result;
 	}
+
 	/**
 	 * This method initializes sShell
 	 */
 	private void createSShell() {
 		if (getParent() == null)
-			sShell = new Shell(); //to use the visual editor
+			sShell = new Shell(); // to use the visual editor
 		else {
 			sShell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-			sShell.setLocation(getParent().getLocation().x + 50,
-				getParent().getLocation().y + 50);
+			sShell.setLocation(getParent().getLocation().x + 50, getParent().getLocation().y + 50);
 		}
 		sShell.setText("Filtro de resultados");
-		
+
 		GridData gridData4 = new GridData();
 		gridData4.horizontalAlignment = org.eclipse.swt.layout.GridData.END;
 		GridData gridData3 = new GridData();
@@ -104,7 +104,7 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 		gridData.horizontalAlignment = org.eclipse.swt.layout.GridData.CENTER;
 		gridData.widthHint = 100;
 		gridData.horizontalSpan = 4;
-		
+
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 4;
 		sShell.setText("Shell");
@@ -128,23 +128,23 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 		maxResults.setLayoutData(gridData1);
 		maxResults.setToolTipText("Use 0 to grab all occurences.");
 		maxResults.addListener(SWT.Verify, new Listener() {
-		    public void handleEvent(Event e) {
-		        Text t = (Text) e.widget;
-		        if (e.text.length() > 0) {
-		            String string = t.getText() + e.text;
-		            int i = 0;
-		            try {
-		            	i = Integer.parseInt(string);
-		            } catch (NumberFormatException ex) {
-		                e.doit = false;
-		                return;
-		            }
-		            if (i < 0 || i > 500) {
-		                e.doit = false;
-		                return;
-		            }
-		        }
-		    }
+			public void handleEvent(Event e) {
+				Text t = (Text) e.widget;
+				if (e.text.length() > 0) {
+					String string = t.getText() + e.text;
+					int i = 0;
+					try {
+						i = Integer.parseInt(string);
+					} catch (NumberFormatException ex) {
+						e.doit = false;
+						return;
+					}
+					if (i < 0 || i > 500) {
+						e.doit = false;
+						return;
+					}
+				}
+			}
 		});
 		maxResults.addKeyListener(this);
 		filter.addKeyListener(this);
@@ -156,14 +156,14 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 		recLabel.setText("Incluir sub-diretórios");
 		recLabel.setLayoutData(gridData21);
 		recursive = new Button(sShell, SWT.CHECK);
-		
+
 		if (!showDirOptions) {
 			recursive.setVisible(false);
 			recLabel.setVisible(false);
 			labelList.setVisible(false);
 			chkListAllFiles.setVisible(false);
 		}
-		
+
 		okButton = new Button(sShell, SWT.NONE);
 		okButton.setText("OK");
 		okButton.setLayoutData(gridData);
@@ -193,15 +193,15 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 
 	public void keyReleased(KeyEvent e) {
 	}
-	
+
 	public boolean isRecursive() {
 		return isRecursive;
 	}
-	
+
 	public boolean listAllFiles() {
 		return listAllFiles;
 	}
-	
+
 	public boolean isRegex() {
 		return isRegex;
 	}
@@ -210,4 +210,3 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 		return filterLimit;
 	}
 }
-

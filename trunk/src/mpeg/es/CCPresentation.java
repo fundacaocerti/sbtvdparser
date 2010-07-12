@@ -27,30 +27,29 @@ import gui.MainPanel;
 import sys.BitWise;
 
 public class CCPresentation {
-	
-	static final String[] ISO8859_15 = {
-			//   0_   1_   2_   3_   4_   5_   6_   7_   8_   9_   a_   b_   c_   d_   e_   f_
-				" ", " ", " ", "0", "@", "P", "`", "p", " ", " ", " ", "°", "À", "Ð", "à", "ð", //  _0
-				" ", " ", "!", "1", "A", "Q", "a", "q", " ", " ", "¡", "±", "Á", "Ñ", "á", "ñ", //  _1
-			    " ", " ", "\"","2", "B", "R", "b", "r", " ", " ", "¢", "²", "Â", "Ò", "â", "ò", //  _2
-				" ", " ", "#", "3", "C", "S", "c", "s", " ", " ", "£", "³", "Ã", "Ó", "ã", "ó", //  _3
-				" ", " ", "$", "4", "D", "T", "d", "t", " ", " ", "€", "Ž", "Ä", "Ô", "ä", "ô", //  _4
-				" ", " ", "%", "5", "E", "U", "e", "u", " ", " ", "¥", "µ", "Å", "Õ", "å", "õ", //  _5
-				" ", " ", "&", "6", "F", "V", "f", "v", " ", " ", "Š", "¶", "Æ", "Ö", "æ", "ö", //  _6
-				" ", " ", "'", "7", "G", "W", "g", "w", " ", " ", "§", "·", "Ç", "×", "ç", "÷", //  _7
-				" ", " ", "(", "8", "H", "X", "h", "x", " ", " ", "š", "ž", "È", "Ø", "è", "ø", //  _8
-				" ", " ", ")", "9", "I", "Y", "i", "y", " ", " ", "©", "¹", "É", "Ú", "é", "ù", //  _9
-				" ", " ", "*", ":", "J", "Z", "j", "z", " ", " ", "ª", "º", "Ê", "Ú", "ê", "ú", //  _a
-				" ", " ", "+", ";", "K", " ", "k", "{", " ", " ", "«", "»", "Ë", "Û", "ë", "û", //  _b
-				" ", " ", ",", "<", "L", " ", "l", "|", " ", " ", "¬", "Œ", "Ì", "Ü", "ì", "ü", //  _c
-				" ", " ", "-", "=", "M", " ", "m", "}", " ", " ", "ÿ", "œ", "Í", "Ý", "í", "ý", //  _d
-				" ", " ", ".", ">", "N", " ", "n", "¯", " ", " ", "®", "Ÿ", "Î", "Þ", "î", "þ", //  _e
-				" ", " ", "/", "?", "O", " ", "o", " ", " ", " ", "¯", "¿", "Ï", "ß", "ï", " "  //  _f
-		};
 
-	static final String[] extraCP = {"☼", "¦", "¨", "´", "¸", "¼", "½", "¾",
-				" ", " ", " ", " ", " ", " ", " ", " ",
-				 "…", "█", "‘", "’", "“", "”", "•", "™", "⅛", "⅜", "⅝", "⅞", "♪"};
+	static final String[] ISO8859_15 = {
+	// 0_ 1_ 2_ 3_ 4_ 5_ 6_ 7_ 8_ 9_ a_ b_ c_ d_ e_ f_
+			" ", " ", " ", "0", "@", "P", "`", "p", " ", " ", " ", "°", "À", "Ð", "à", "ð", // _0
+			" ", " ", "!", "1", "A", "Q", "a", "q", " ", " ", "¡", "±", "Á", "Ñ", "á", "ñ", // _1
+			" ", " ", "\"", "2", "B", "R", "b", "r", " ", " ", "¢", "²", "Â", "Ò", "â", "ò", // _2
+			" ", " ", "#", "3", "C", "S", "c", "s", " ", " ", "£", "³", "Ã", "Ó", "ã", "ó", // _3
+			" ", " ", "$", "4", "D", "T", "d", "t", " ", " ", "€", "Ž", "Ä", "Ô", "ä", "ô", // _4
+			" ", " ", "%", "5", "E", "U", "e", "u", " ", " ", "¥", "µ", "Å", "Õ", "å", "õ", // _5
+			" ", " ", "&", "6", "F", "V", "f", "v", " ", " ", "Š", "¶", "Æ", "Ö", "æ", "ö", // _6
+			" ", " ", "'", "7", "G", "W", "g", "w", " ", " ", "§", "·", "Ç", "×", "ç", "÷", // _7
+			" ", " ", "(", "8", "H", "X", "h", "x", " ", " ", "š", "ž", "È", "Ø", "è", "ø", // _8
+			" ", " ", ")", "9", "I", "Y", "i", "y", " ", " ", "©", "¹", "É", "Ú", "é", "ù", // _9
+			" ", " ", "*", ":", "J", "Z", "j", "z", " ", " ", "ª", "º", "Ê", "Ú", "ê", "ú", // _a
+			" ", " ", "+", ";", "K", " ", "k", "{", " ", " ", "«", "»", "Ë", "Û", "ë", "û", // _b
+			" ", " ", ",", "<", "L", " ", "l", "|", " ", " ", "¬", "Œ", "Ì", "Ü", "ì", "ü", // _c
+			" ", " ", "-", "=", "M", " ", "m", "}", " ", " ", "ÿ", "œ", "Í", "Ý", "í", "ý", // _d
+			" ", " ", ".", ">", "N", " ", "n", "¯", " ", " ", "®", "Ÿ", "Î", "Þ", "î", "þ", // _e
+			" ", " ", "/", "?", "O", " ", "o", " ", " ", " ", "¯", "¿", "Ï", "ß", "ï", " " // _f
+	};
+
+	static final String[] extraCP = { "☼", "¦", "¨", "´", "¸", "¼", "½", "¾", " ", " ", " ", " ", " ", " ", " ", " ",
+			"…", "█", "‘", "’", "“", "”", "•", "™", "⅛", "⅜", "⅝", "⅞", "♪" };
 
 	private boolean extraCodepage = false;
 
@@ -100,23 +99,20 @@ public class CCPresentation {
 					extraCodepage = false;
 					if (c > 0x2f && c < 0x4c)
 						aChar = extraCP[c - 0x30];
+					else if (c == 0x21)
+						aChar = extraCP[0x1c];
 					else
-						if (c == 0x21)
-							aChar = extraCP[0x1c];
-						else
-							aChar = " ";
-				}
-				else
-					aChar = ISO8859_15[(c >> 4)+((c & 0xf)<<4)];
-				sb.append(aChar); 
-				plainText.append(aChar); 
+						aChar = " ";
+				} else
+					aChar = ISO8859_15[(c >> 4) + ((c & 0xf) << 4)];
+				sb.append(aChar);
+				plainText.append(aChar);
 			}
 		}
 		sb.append('}');
 		addSubItem(sb.toString());
 		plainText.append("|");
-		GuiMethods.runMethod(GuiMethods.CHANGEITEM,  
-				new Object[] {plainText.toString(), new Integer(pktLvl)}, true);
+		GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] { plainText.toString(), new Integer(pktLvl) }, true);
 	}
 
 	void parseActivePosition(BitWise bw) {
@@ -168,8 +164,7 @@ public class CCPresentation {
 		int i = (c >> 4) & 0x7;
 		if (i > 3)
 			sb.append(area[i - 4]);
-		String[] colors = { "black", "red", "green", "yellow", "blue",
-				"magenta", "cyan", "whyte", "transparent" };
+		String[] colors = { "black", "red", "green", "yellow", "blue", "magenta", "cyan", "whyte", "transparent" };
 		i = c & 0xf;
 		sb.append(">");
 		if (i > 8) {
@@ -198,21 +193,18 @@ public class CCPresentation {
 
 	public static final char CSI = 0x9b, ESC = 0x1b, COL = 0x90, APS = 0x1c, SS3 = 0x1d;
 
-	public static final String[] c0Names = { "BEL", "APB", "APF", "APD", "APU",
-			"CS", "APR", "LS1", "LS0", null, null, null, null, null, null,
-			"PAPF", null, "CAN", "SS2", null, "ESC", "APS", "SS3", "RS", "US" };
+	public static final String[] c0Names = { "BEL", "APB", "APF", "APD", "APU", "CS", "APR", "LS1", "LS0", null, null,
+			null, null, null, null, "PAPF", null, "CAN", "SS2", null, "ESC", "APS", "SS3", "RS", "US" };
 
-	public static final String[] c1Names = { "DEL", "BKF", "RDF", "GRF", "YLF",
-			"BLF", "MGF", "CNF", "WHF", "SSZ", "MSZ", "NSZ", "SZX", null, null,
-			null, null, "COL", "FLC", "CDC", "POL", "WMM", "MACRO", null,
-			"HLC", "RPC", "SPL", "STL", "CSI", null, "TIME", null, null };
+	public static final String[] c1Names = { "DEL", "BKF", "RDF", "GRF", "YLF", "BLF", "MGF", "CNF", "WHF", "SSZ",
+			"MSZ", "NSZ", "SZX", null, null, null, null, "COL", "FLC", "CDC", "POL", "WMM", "MACRO", null, "HLC",
+			"RPC", "SPL", "STL", "CSI", null, "TIME", null, null };
 
-	public static final String[] csiNames = { "SWF", "CCC", "RCS", "ACPS",
-			"SDF", "SDP", "SSM", "PLD", "PLU", "SHS", "SVS", "GSM", "GAA",
-			"SRC", "TCC", "CFS", "ORN", "MDF", "XCS", "PRA", "ACS", "SCS" };
+	public static final String[] csiNames = { "SWF", "CCC", "RCS", "ACPS", "SDF", "SDP", "SSM", "PLD", "PLU", "SHS",
+			"SVS", "GSM", "GAA", "SRC", "TCC", "CFS", "ORN", "MDF", "XCS", "PRA", "ACS", "SCS" };
 
-	public static final char[] csiIds = { 83, 84, 110, 97, 86, 95, 87, 75, 92,
-			88, 89, 66, 93, 94, 98, 101, 99, 100, 102, 104, 105 };
+	public static final char[] csiIds = { 83, 84, 110, 97, 86, 95, 87, 75, 92, 88, 89, 66, 93, 94, 98, 101, 99, 100,
+			102, 104, 105 };
 
 	public int addSubItem(String msg, int parent) {
 		return MainPanel.addTreeItem(msg, parent, MainPanel.CC_TREE);
@@ -228,4 +220,3 @@ public class CCPresentation {
 	// "anchor vertical", "anchor horizontal", "row count",
 	// "column count", "locked, visible", "centered", "style ID" };
 }
-

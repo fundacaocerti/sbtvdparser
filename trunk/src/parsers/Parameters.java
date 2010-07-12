@@ -44,15 +44,13 @@ public class Parameters {
 
 	static InputStream bis = null;
 
-	static public boolean noGui = false, noTree = false, noStats = false,
-			batchResults = false;
+	static public boolean noGui = false, noTree = false, noStats = false, batchResults = false;
 
 	public static InputStream getStream() {
 		try {
 			bis = new BufferedInputStream(new FileInputStream(srcFile), 4000000);
 		} catch (FileNotFoundException e) {
-			initialMessage = "File cannot be opened: ["
-					+ srcFile.getAbsolutePath() + "]";
+			initialMessage = "File cannot be opened: [" + srcFile.getAbsolutePath() + "]";
 			Log.printWarning(initialMessage);
 			Log.printStackTrace(new Exception(initialMessage));
 			return null;
@@ -88,8 +86,7 @@ public class Parameters {
 				if (!srcFile.exists())
 					srcFile = new File(lnkp.getAlternatePath());
 			} catch (Exception e) {
-				initialMessage = "File cannot be opened: ["
-						+ srcFile.getAbsolutePath() + "]";
+				initialMessage = "File cannot be opened: [" + srcFile.getAbsolutePath() + "]";
 				Log.printStackTrace(new Exception(initialMessage));
 				Log.printWarning(initialMessage);
 				return;
@@ -97,20 +94,19 @@ public class Parameters {
 		}
 
 		if (!srcFile.exists() || !srcFile.isFile()) {
-			initialMessage = "File not found: [" + srcFile.getAbsolutePath()
-					+ "]";
+			initialMessage = "File not found: [" + srcFile.getAbsolutePath() + "]";
 			Log.printStackTrace(new Exception(initialMessage));
 			Log.printWarning(initialMessage);
 			return;
 		}
-		
+
 		bis = getStream();
-		
+
 		if (srcFile.getName().endsWith(".pes")) {
 			initMainPanel();
 			System.out.println("here we go");
 			IndependentPES pes = new IndependentPES(bis);
-			//TODO: set pes type by user input
+			// TODO: set pes type by user input
 			pes.start();
 			return;
 		}
@@ -189,9 +185,10 @@ public class Parameters {
 				if (TableList.continuityErrorCounters[i] != 1) {
 					Table t = TableList.getByIndex(i);
 					if (t != null)
-						MainPanel.addTreeItem(t.name + ": " +
-								TableList.continuityErrorCounters[i], cntLvl, MainPanel.STATS_TREE);;
-					}
+						MainPanel.addTreeItem(t.name + ": " + TableList.continuityErrorCounters[i], cntLvl,
+								MainPanel.STATS_TREE);
+					;
+				}
 		}
 		// MainPanel.addTreeItem("parsing done", 0);
 		if (!noTree)
@@ -208,4 +205,3 @@ public class Parameters {
 
 	static Packet pp;
 }
-

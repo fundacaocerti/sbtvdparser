@@ -37,9 +37,8 @@ public class Link {
 	public void parse(String fName) {
 		File f = new File(fName);
 		int fSize = (int) f.length();
-		byte[] lnkHeader = { 0x4c, 0x00, 0x00, 0x00, 0x01, 0x14, 0x02, 0x00,
-				0x00, 0x00, 0x00, 0x00, (byte) 0xc0, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x46 };
+		byte[] lnkHeader = { 0x4c, 0x00, 0x00, 0x00, 0x01, 0x14, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, (byte) 0xc0, 0x00,
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x46 };
 		if (!f.canRead() || !f.isFile() || fSize > 5000)
 			return;
 		try {
@@ -84,8 +83,7 @@ public class Link {
 				if ((flags & 1) > 0 && bw.getByteCount() == localFname)
 					filePath = getStr(bw);
 				if ((flags & 2) > 0) {
-					if (bw.getByteCount() == 0x30
-							&& bw.buf[bw.getAbsolutePosition()] != 0)
+					if (bw.getByteCount() == 0x30 && bw.buf[bw.getAbsolutePosition()] != 0)
 						filePath = getStr(bw);
 					if (bw.getByteCount() == remoteFname) {
 						String tmp = getStr(bw);
@@ -127,4 +125,4 @@ public class Link {
 	public String getFilePath() {
 		return filePath;
 	}
-}
+}

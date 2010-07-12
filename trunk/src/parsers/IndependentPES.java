@@ -40,8 +40,7 @@ public class IndependentPES extends Thread {
 
 	InputStream bis = null;
 
-	public static long limit = 0, byteCount = 0,
-			counter = 0, syncLosses = 0;
+	public static long limit = 0, byteCount = 0, counter = 0, syncLosses = 0;
 
 	public static byte[] buffer = new byte[6], bigBuffer;
 
@@ -67,8 +66,7 @@ public class IndependentPES extends Thread {
 				bis.close();
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.printStackTrace(new Exception("dataOffset: "
-						+ TSP.dataOffset));
+				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset));
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
@@ -80,6 +78,7 @@ public class IndependentPES extends Thread {
 	}
 
 	public static boolean limitNotReached = true;
+
 	private void mainLoop() throws InterruptedException, IOException {
 		CC pp = new CC(1);
 		int readBytes = 0;
@@ -98,4 +97,3 @@ public class IndependentPES extends Thread {
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
 	}
 }
-

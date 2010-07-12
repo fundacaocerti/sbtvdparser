@@ -40,8 +40,7 @@ public class NetworkName extends Descriptor {
 			// System.out.print(" "+BitWise.toHex(ba[i]));
 		}
 		try {
-			InputStreamReader isr = new InputStreamReader(
-					new ByteArrayInputStream(ba), "ISO8859_15_FDIS");
+			InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(ba), "ISO8859_15_FDIS");
 			char[] ca = new char[descriptor_length];
 			isr.read(ca);
 			addSubItem(new String(ca), level);
@@ -50,4 +49,3 @@ public class NetworkName extends Descriptor {
 		}
 	}
 }
-

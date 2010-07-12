@@ -32,27 +32,23 @@ public class Table {
 
 	public String name = null;
 
-	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF,
-			crcFails = 0, versionNumber = -1, crc, continuityOld = -1;
+	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF, crcFails = 0, versionNumber = -1, crc,
+			continuityOld = -1;
 
-	int section_syntax_indicator = 0, section_length = 0, bufWriteIndx = 0,
-			idExt, versionInfo, sectionNumber, lastSectionNumber, readTableID,
-			sectionInfo;
+	int section_syntax_indicator = 0, section_length = 0, bufWriteIndx = 0, idExt, versionInfo, sectionNumber,
+			lastSectionNumber, readTableID, sectionInfo;
 
 	BitWise bw;
 
 	byte[] bigBuffer;
 
-	int[] knownTids = { 0x00, 0x01, 0x02, 0x40, 0x41, 0x42, 0x46, 0x4A, 0x4E,
-			0x4F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x7E, 0x7F, 0xC0, 0xC1, 0xC2,
-			0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xD0, 0xD1, 0xD2 };
+	int[] knownTids = { 0x00, 0x01, 0x02, 0x40, 0x41, 0x42, 0x46, 0x4A, 0x4E, 0x4F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x7E,
+			0x7F, 0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xD0, 0xD1, 0xD2 };
 
-	String[] knownNames = { "PAT", "CAT", "PMT", "NIT (actual)", "NIT (other)",
-			"SDT (actual)", "SDT (other)", "BAT", "EIT (now/next actual)",
-			"EIT (now/next other)", "TDT", "RST", "ST", "TOT", "AIT", "DIT",
-			"SIT", "DCT", "DLT", "PCAT", "SDTT", "BIT",
-			"NBIT (net group info.)", "NBIT (reference net group info.)",
-			"LDT", "CDT", "LIT", "ERT", "ITT" };
+	String[] knownNames = { "PAT", "CAT", "PMT", "NIT (actual)", "NIT (other)", "SDT (actual)", "SDT (other)", "BAT",
+			"EIT (now/next actual)", "EIT (now/next other)", "TDT", "RST", "ST", "TOT", "AIT", "DIT", "SIT", "DCT",
+			"DLT", "PCAT", "SDTT", "BIT", "NBIT (net group info.)", "NBIT (reference net group info.)", "LDT", "CDT",
+			"LIT", "ERT", "ITT" };
 
 	boolean onStats = false;
 
@@ -94,12 +90,13 @@ public class Table {
 	boolean headerIncomplete = false;
 	byte[] headerPart;
 	public byte[] searchBytes = null;
+
 	public void setLowLevelSearch(byte[] target) {
 		searchBytes = target;
 	}
-	
+
 	public boolean verifySection(byte[] ba) {
-		if (ba.length < 3) {//não tem nem o tamanho da sessão nos dados
+		if (ba.length < 3) {// não tem nem o tamanho da sessão nos dados
 			headerPart = ba;
 			headerIncomplete = true;
 			return false;
@@ -145,24 +142,22 @@ public class Table {
 			sb.append(":");
 			sb.append(Packet.byteCount);
 			Log.printWarning(sb.toString());
-//			Log.printStackTrace(e);
+			// Log.printStackTrace(e);
 			crcFails++;
-//			bw.printBuffer(0, 20);
+			// bw.printBuffer(0, 20);
 			return false;
 		}
 		crc = 0;
 		for (int i = -1; i < 2; i++)
-			crc = (crc << 8) | (((int)ba[section_length+i]) & 0xff);
+			crc = (crc << 8) | (((int) ba[section_length + i]) & 0xff);
 		if (readyToParse())
 			return true;
 		if (readTableID < id || readTableID > idLimit) { // EITs have ranges
 			// of ids
-			int errMsg = addSubItem("Table content not recognized: TID = "
-					+ BitWise.toHex(readTableID));
+			int errMsg = addSubItem("Table content not recognized: TID = " + BitWise.toHex(readTableID));
 			addSubItem("TID correspondece: " + name, errMsg);
 			addSubItem("expected TID: " + BitWise.toHex(id) + " - " + name, errMsg);
-			addSubItem("content: [" + bw.getHexSequence(section_length) + "]",
-					errMsg);
+			addSubItem("content: [" + bw.getHexSequence(section_length) + "]", errMsg);
 			return true;
 		}
 		// id = table_id;
@@ -188,9 +183,9 @@ public class Table {
 			for (int i = 0; i < headerPart.length; i++)
 				header[i] = headerPart[i];
 			for (int i = headerPart.length; i < 3; i++)
-				header[i] = source[i+srcOffset-headerPart.length];
-			srcOffset += 3-headerPart.length;
-			writeSize -= 3-headerPart.length;
+				header[i] = source[i + srcOffset - headerPart.length];
+			srcOffset += 3 - headerPart.length;
+			writeSize -= 3 - headerPart.length;
 			headerIncomplete = false;
 			verifyMultiSection(header);
 		}
@@ -204,8 +199,7 @@ public class Table {
 		// bwi_"+bufWriteIndx
 		// +", sle_"+source.length+", sof_"+srcOffset);
 		try {
-			System.arraycopy(source, srcOffset, bigBuffer, bufWriteIndx,
-					writeSize);
+			System.arraycopy(source, srcOffset, bigBuffer, bufWriteIndx, writeSize);
 		} catch (RuntimeException e) {
 			Log.printStackTrace(e);
 		}
@@ -230,31 +224,27 @@ public class Table {
 					eitGroup = addSubItem("One-seg EITs", 0);
 			treeIndx = addSubItem(name, eitGroup);
 		} else
-			treeIndx = addSubItem(name+" (pid "+BitWise.toHex(pid)+")", 0);
+			treeIndx = addSubItem(name + " (pid " + BitWise.toHex(pid) + ")", 0);
 		sectionInfo = addSubItem("Section info");
 		MainPanel.setTreeData(treeIndx, bw);
 		if (layer != 0)
 			addSubItem("layer: " + "ABC".charAt(layer - 1), sectionInfo);
-		addSubItem("Id: "+ BitWise.toHex(readTableID), sectionInfo);
-		addSubItem("section CRC: "+BitWise.toHex(crc), sectionInfo);
+		addSubItem("Id: " + BitWise.toHex(readTableID), sectionInfo);
+		addSubItem("section CRC: " + BitWise.toHex(crc), sectionInfo);
 		if (crcFails > 0)
 			addSubItem("CRC failures: " + crcFails, sectionInfo);
 		addSubItem("section_length: " + section_length, sectionInfo);
-		addSubItem("section_syntax_indicator: " + section_syntax_indicator,
-				sectionInfo);
+		addSubItem("section_syntax_indicator: " + section_syntax_indicator, sectionInfo);
 	}
 
 	public void printSectionInfo() {
 		printBasicInfo();
-		addSubItem("Id extension: " + BitWise.toHex(idExt),
-				sectionInfo);
+		addSubItem("Id extension: " + BitWise.toHex(idExt), sectionInfo);
 		addSubItem("version number: " + BitWise.toHex(versionNumber), sectionInfo);
 		String[] cn = { "next", "current" };
-		addSubItem("current/next: " + cn[BitWise.stripBits(versionInfo, 1, 1)],
-				sectionInfo);
+		addSubItem("current/next: " + cn[BitWise.stripBits(versionInfo, 1, 1)], sectionInfo);
 		addSubItem("section number: " + BitWise.toHex(sectionNumber), sectionInfo);
-		addSubItem("last section number: " + BitWise.toHex(lastSectionNumber),
-				sectionInfo);
+		addSubItem("last section number: " + BitWise.toHex(lastSectionNumber), sectionInfo);
 	}
 
 	public boolean verifyMultiSection(byte[] ba) {
@@ -264,7 +254,7 @@ public class Table {
 		idExt = bw.pop16();
 		versionInfo = bw.pop();
 		versionNumber = BitWise.stripBits(versionInfo, 6, 5);
-		//currentNextIndicator = BitWise.stripBits(versionInfo, 1, 1);
+		// currentNextIndicator = BitWise.stripBits(versionInfo, 1, 1);
 		sectionNumber = bw.pop();
 		lastSectionNumber = bw.pop();
 		return true;
@@ -273,7 +263,7 @@ public class Table {
 	public int addSubItem(String msg, int parent, int rootIndx) {
 		return MainPanel.addTreeItem(msg, parent, rootIndx);
 	}
-	
+
 	public int addSubItem(String msg, int parent) {
 		return MainPanel.addTreeItem(msg, parent);
 	}
@@ -282,4 +272,3 @@ public class Table {
 		return MainPanel.addTreeItem(msg, treeIndx);
 	}
 }
-

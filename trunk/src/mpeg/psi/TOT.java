@@ -40,7 +40,7 @@ public class TOT extends Table {
 		pid = 0x14;
 		name = "TOT";
 	}
-	
+
 	public static void reset() {
 		totsParsed = 0;
 	}
@@ -68,8 +68,7 @@ public class TOT extends Table {
 		int mark = bw.getByteCount();
 		// for(j=0;j<N;j++){
 		// Descriptor()
-		while ((bw.getByteCount() - mark < descriptorsLenght)
-				&& (bw.getAvailableSize() > 0)) {
+		while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
 			DescriptorList.print(bw, descLevel);
 		}
 		return false;
@@ -85,16 +84,13 @@ public class TOT extends Table {
 				secondsFromLastTOT = currentTimeStamp - lastTimeStamp;
 			float bitrate;
 			if (Packet.is204b)
-				bitrate = (float) packetsFromLastTOT / secondsFromLastTOT
-					* 204 * 8 / 1000000;
+				bitrate = (float) packetsFromLastTOT / secondsFromLastTOT * 204 * 8 / 1000000;
 			else
-				bitrate = (float) packetsFromLastTOT / secondsFromLastTOT
-					* 188 * 8 / 1000000;
+				bitrate = (float) packetsFromLastTOT / secondsFromLastTOT * 188 * 8 / 1000000;
 			if (lastBitrate == 0)
 				lastBitrate = bitrate;
 			else
-				lastBitrate = (lastBitrate * (totsParsed - 1) + bitrate)
-						/ totsParsed;
+				lastBitrate = (lastBitrate * (totsParsed - 1) + bitrate) / totsParsed;
 		}
 		lastTimeStamp = currentTimeStamp;
 		lastpacketCounter = Packet.packetCount;
@@ -145,13 +141,10 @@ public class TOT extends Table {
 		int secondPerUnit = 3600;
 		for (int i = 0; i < 3; i++) {
 			tmp = bw.pop();
-			currentTimeStamp += Integer.valueOf(Integer.toHexString(tmp))
-					.intValue()
-					* secondPerUnit;
+			currentTimeStamp += Integer.valueOf(Integer.toHexString(tmp)).intValue() * secondPerUnit;
 			secondPerUnit = secondPerUnit / 60;
 			ts[3 + i] = Integer.parseInt(Integer.toHexString(tmp));
 		}
 		return ts;
 	}
 }
-

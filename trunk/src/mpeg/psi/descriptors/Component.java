@@ -149,4 +149,3 @@ public class Component extends Descriptor {
  * Definido pelo usuário 0x06 0xFF Reservado para uso futuro 0x07 – 0x0F 0x00 –
  * 0xFF Reservado para uso futuro
  */
-

@@ -26,15 +26,11 @@ import sys.BitWise;
 
 public class AITDescriptor {
 
-	int[] predefinedTags = {0x00, 0x01, 0x0b, 
-			0x05, 0x02, 0x11, 
-			0x0c, 0x0d, 0x03,
-			0x07, 0x06};
+	int[] predefinedTags = { 0x00, 0x01, 0x0b, 0x05, 0x02, 0x11, 0x0c, 0x0d, 0x03, 0x07, 0x06 };
 
-	String[] predefinedNames = { "application", "application_name", "application_icon", 
-			"external_application_authorisation", "transport_protocol", "ip_signalling", 
-			"prefetch",	"DII_location", "ginga_J_application",
-			"ginga_J_application_location", "ginga_NCL_application"};
+	String[] predefinedNames = { "application", "application_name", "application_icon",
+			"external_application_authorisation", "transport_protocol", "ip_signalling", "prefetch", "DII_location",
+			"ginga_J_application", "ginga_J_application_location", "ginga_NCL_application" };
 
 	String name = null;
 
@@ -65,9 +61,7 @@ public class AITDescriptor {
 				descriptorName = predefinedNames[i];
 		if (parsedTag > 0x79 && parsedTag < 0xC0)
 			descriptorName = "Broadcaster defined";
-		if (parsedTag > 0x07 && parsedTag < 0x80 ||
-				parsedTag > 0xbf && parsedTag < 0xc2 || 
-				parsedTag > 0xc2)
+		if (parsedTag > 0x07 && parsedTag < 0x80 || parsedTag > 0xbf && parsedTag < 0xc2 || parsedTag > 0xc2)
 			descriptorName = "Reserved";
 
 		int descIndx = addSubItem(descriptorName + " descriptor", tableIndx);
@@ -91,4 +85,3 @@ public class AITDescriptor {
 		return null;
 	}
 }
-

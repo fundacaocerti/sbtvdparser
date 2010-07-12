@@ -49,14 +49,12 @@ public class EPG {
 		}
 
 		public String toString() {
-			return description[0] + " - " + TOT.formatMJD(startTime) + " "
-					+ description[1] + " : " + description[2] + "("
-					+ description[4] + ") [" + description[3] + "]";
+			return description[0] + " - " + TOT.formatMJD(startTime) + " " + description[1] + " : " + description[2]
+					+ "(" + description[4] + ") [" + description[3] + "]";
 		}
 	}
 
-	public void addEvent(int id, int[] start, String duration, String name,
-			String description, String rating) {
+	public void addEvent(int id, int[] start, String duration, String name, String description, String rating) {
 		String[] desc = new String[6];
 		desc[0] = BitWise.toHex(id);
 		desc[1] = duration;
@@ -76,7 +74,7 @@ public class EPG {
 		int i = 0;
 		while (i < evtList.size()) {
 			String s = ((Evt) evtList.elementAt(i++)).toString();
-//			MainPanel.addTreeItem(s, epgLevel, MainPanel.EPG_TREE);
+			// MainPanel.addTreeItem(s, epgLevel, MainPanel.EPG_TREE);
 			int leftChars = s.length();
 			int start = 0, end = 100;
 			int indx = 0;
@@ -90,12 +88,11 @@ public class EPG {
 				start = end;
 				if (leftChars > 100)
 					end += 100;
-				else 
+				else
 					end += leftChars;
 				MainPanel.addTreeItem(s.substring(start, end), indx, MainPanel.EPG_TREE);
-				leftChars -= (end-start);
+				leftChars -= (end - start);
 			}
 		}
 	}
 }
-

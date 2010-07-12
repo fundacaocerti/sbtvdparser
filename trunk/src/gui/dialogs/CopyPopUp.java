@@ -67,8 +67,7 @@ public class CopyPopUp implements Listener {
 				}
 			}
 		}
-		if (event.item != null && event.type == SWT.Selection
-				&& mouseButton == 3) {
+		if (event.item != null && event.type == SWT.Selection && mouseButton == 3) {
 			// System.out.println("click"+((Integer)event.item.getData()).toString());
 			Menu menu = new Menu(s, SWT.POP_UP);
 			MenuItem item = new MenuItem(menu, SWT.PUSH);
@@ -76,8 +75,7 @@ public class CopyPopUp implements Listener {
 			text = lt.toString();
 			item.setText("copiar conteúdo?");
 			item.addListener(SWT.Selection, this);
-			menu.setLocation(x + s.getLocation().x, y
-					+ yBias + s.getLocation().y);
+			menu.setLocation(x + s.getLocation().x, y + yBias + s.getLocation().y);
 			menu.setVisible(true);
 			while (!menu.isDisposed() && menu.isVisible()) {
 				if (!Display.getDefault().readAndDispatch())
@@ -87,10 +85,8 @@ public class CopyPopUp implements Listener {
 		}
 		if (event.item == null && event.type == SWT.Selection) {
 			Clipboard clipboard = new Clipboard(Display.getDefault());
-			clipboard.setContents(new Object[] { text },
-					new Transfer[] { TextTransfer.getInstance() });
+			clipboard.setContents(new Object[] { text }, new Transfer[] { TextTransfer.getInstance() });
 		}
 	}
 
 }
-

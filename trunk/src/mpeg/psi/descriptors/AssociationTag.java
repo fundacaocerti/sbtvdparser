@@ -23,7 +23,6 @@ package mpeg.psi.descriptors;
 
 import sys.BitWise;
 
-
 public class AssociationTag extends Descriptor {
 
 	public static int tag = 0x14;
@@ -32,20 +31,20 @@ public class AssociationTag extends Descriptor {
 
 	public void printDescription() {
 		int level = addSubItem(name, tableIndx);
-		addSubItem("association_tag: "+BitWise.toHex(bw.pop16()), level);
+		addSubItem("association_tag: " + BitWise.toHex(bw.pop16()), level);
 		int use = bw.pop16();
-		addSubItem("use: "+BitWise.toHex(use), level);
+		addSubItem("use: " + BitWise.toHex(use), level);
 		if (use == 0) {
-			addSubItem("selector_length: "+BitWise.toHex(bw.pop()), level);
-			addSubItem("transaction_id: "+BitWise.toHex(bw.pop32()), level);
-			addSubItem("timeout: "+BitWise.toHex(bw.pop32()), level);
+			addSubItem("selector_length: " + BitWise.toHex(bw.pop()), level);
+			addSubItem("transaction_id: " + BitWise.toHex(bw.pop32()), level);
+			addSubItem("timeout: " + BitWise.toHex(bw.pop32()), level);
 		} else if (use == 1) {
-			addSubItem("selector_length: "+BitWise.toHex(bw.pop()), level);
+			addSubItem("selector_length: " + BitWise.toHex(bw.pop()), level);
 		} else {
 			int selLen = bw.pop();
-			addSubItem("selector_length: "+BitWise.toHex(selLen), level);
-			addSubItem("selector: "+bw.getHexSequence(selLen), level);
-			addSubItem("private_data: "+bw.getHexSequence(bw.getAvailableSize()), level);
+			addSubItem("selector_length: " + BitWise.toHex(selLen), level);
+			addSubItem("selector: " + bw.getHexSequence(selLen), level);
+			addSubItem("private_data: " + bw.getHexSequence(bw.getAvailableSize()), level);
 		}
 	}
 }

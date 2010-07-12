@@ -39,4 +39,3 @@ public class PartialReception extends Descriptor {
 		}
 	}
 }
-

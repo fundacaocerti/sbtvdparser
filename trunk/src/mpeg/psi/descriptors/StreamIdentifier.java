@@ -30,22 +30,18 @@ public class StreamIdentifier extends Descriptor {
 	static String name = "Stream Identifier Descriptor";
 
 	public static int[] tagValues = { // guia operacional item 12
-	0x0, 0x10, 0x40, 0x30, 0x38, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86,
-			0x87, 0x88 };
+	0x0, 0x10, 0x40, 0x30, 0x38, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88 };
 
 	public static String[] tagAssociations = { // guia operacional item 12
-	"Primary video ES", "Primary audio ES", "Primary data ES",
-			"Primary caption ES", "Main superimposed ES",
-			"Primary data carroussel ES", "Primary video ES",
-			"Secondary video ES", "Primary audio ES 24KHz",
-			"Primary audio ES 48KHz", "Secondary audio ES 24KHz",
-			"Secondary audio ES 48KHz", "Caption ES", "Superimposed", };
+	"Primary video ES", "Primary audio ES", "Primary data ES", "Primary caption ES", "Main superimposed ES",
+			"Primary data carroussel ES", "Primary video ES", "Secondary video ES", "Primary audio ES 24KHz",
+			"Primary audio ES 48KHz", "Secondary audio ES 24KHz", "Secondary audio ES 48KHz", "Caption ES",
+			"Superimposed", };
 
 	public void printDescription() {
 		int level = addSubItem(name, tableIndx);
 		cTag = bw.pop();
-		addSubItem("component_tag: " + BitWise.toHex(cTag) + " - " + getType(cTag),
-				level);
+		addSubItem("component_tag: " + BitWise.toHex(cTag) + " - " + getType(cTag), level);
 	}
 
 	public static String getType(int cTag) {
@@ -66,4 +62,3 @@ public class StreamIdentifier extends Descriptor {
 		return type;
 	}
 }
-
