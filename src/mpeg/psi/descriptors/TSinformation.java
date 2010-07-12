@@ -68,22 +68,16 @@ public class TSinformation extends Descriptor {
 			// service loop
 			int svcLoopLevel = addSubItem("Service loop", loopLevel);
 			String type = "ABC-";
-			addSubItem("transmission_type: "
-					+ type.charAt(BitWise.stripBits(ttInfo, 8, 2)), svcLoopLevel);
+			addSubItem("transmission_type: " + type.charAt(BitWise.stripBits(ttInfo, 8, 2)), svcLoopLevel);
 			String[] mod = { "64QAM", "16QAM", "QPSK", "reserved" };
-			addSubItem("modulation: " + mod[BitWise.stripBits(ttInfo, 6, 2)],
-					svcLoopLevel);
+			addSubItem("modulation: " + mod[BitWise.stripBits(ttInfo, 6, 2)], svcLoopLevel);
 			for (int k = 0; k < num_of_service; k++) {
 				// service_id 16 uimsbf
 				int service_id = bw.pop16();
-				int svcIdLevel = addSubItem("service_id: "
-						+ BitWise.toHex(service_id), svcLoopLevel);
-				addSubItem("type: " + svcTypes[BitWise.stripBits(service_id, 5, 2)],
-						svcIdLevel);
-				addSubItem("number: " + (BitWise.stripBits(service_id, 3, 3) + 1),
-						svcIdLevel);
+				int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(service_id), svcLoopLevel);
+				addSubItem("type: " + svcTypes[BitWise.stripBits(service_id, 5, 2)], svcIdLevel);
+				addSubItem("number: " + (BitWise.stripBits(service_id, 3, 3) + 1), svcIdLevel);
 			}
 		}
 	}
 }
-

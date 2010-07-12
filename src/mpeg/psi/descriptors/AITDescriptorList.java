@@ -26,7 +26,8 @@ import sys.Log;
 
 public class AITDescriptorList {
 
-	static Class[] descList = { ApplicationName.class, GingaJAppLocation.class, GingaJApp.class, TransportProtocol.class, Application.class, GingaNCLAppLocation.class, GingaNCLApp.class};
+	static Class[] descList = { ApplicationName.class, GingaJAppLocation.class, GingaJApp.class,
+			TransportProtocol.class, Application.class, GingaNCLAppLocation.class, GingaNCLApp.class };
 
 	static boolean exception;
 
@@ -46,8 +47,7 @@ public class AITDescriptorList {
 		try {
 			(cl.cast(o)).getClass().getMethod(method, null).invoke(o, null);
 		} catch (Exception e) {
-			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName()
-					+ ", " + o.getClass().getName() + ")"));
+			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName() + ", " + o.getClass().getName() + ")"));
 			Log.printStackTrace(e);
 			exception = true;
 		}
@@ -58,8 +58,7 @@ public class AITDescriptorList {
 		try {
 			d = (AITDescriptor) (cl.getConstructors()[0]).newInstance(null);
 		} catch (Exception e) {
-			System.err.println("getDSMCCDescriptor(" + cl.getName() + ", "
-					+ treeIndex + ")");
+			System.err.println("getDSMCCDescriptor(" + cl.getName() + ", " + treeIndex + ")");
 			System.err.println(e.getLocalizedMessage());
 			exception = true;
 		}
@@ -84,4 +83,3 @@ public class AITDescriptorList {
 		d.print();
 	}
 }
-

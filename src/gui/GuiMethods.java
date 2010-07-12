@@ -36,32 +36,28 @@ public class GuiMethods implements Runnable {
 	Object[] param = null;
 
 	Object returnVal = null;
-	
+
 	private boolean executed;
 
-	public static final int CLEARTREE = 1, ADDTREEITEM = 2, GETLIMITBOX = 3,
-			SETLIMITBOX = 4, SETPROGRESSBAR = 5, SETCURSOR = 6, SETTITLE = 7,
-			ADDTOLOG = 8, ADDPIDBAR = 9, CHANGEITEM = 10;
+	public static final int CLEARTREE = 1, ADDTREEITEM = 2, GETLIMITBOX = 3, SETLIMITBOX = 4, SETPROGRESSBAR = 5,
+			SETCURSOR = 6, SETTITLE = 7, ADDTOLOG = 8, ADDPIDBAR = 9, CHANGEITEM = 10;
 
 	private static GuiMethods thisClass = new GuiMethods();
 
-	static Cursor normalCursor = new Cursor(Display.getCurrent(),
-			SWT.CURSOR_ARROW);
+	static Cursor normalCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_ARROW);
 
 	static Cursor busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
 
 	static Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 
-	public static synchronized void runMethod(int type, Object[] param,
-			boolean sync) {
+	public static synchronized void runMethod(int type, Object[] param, boolean sync) {
 		thisClass.type = type;
 		thisClass.param = param;
 		thisClass.executed = false;
 		MainPanel.guiThreadExec(thisClass, sync);
 	}
 
-	public static synchronized void runMethod(int type, Object param,
-			boolean sync) {
+	public static synchronized void runMethod(int type, Object param, boolean sync) {
 		thisClass.type = type;
 		thisClass.param = new Object[] { param };
 		thisClass.executed = false;
@@ -84,15 +80,16 @@ public class GuiMethods implements Runnable {
 			((Tree) param[0]).removeAll();
 			break;
 		case ADDPIDBAR:
-			PIDStats.addBar(((Integer) param[0]).intValue(), ((Integer) param[1]).intValue(), 
-					((Integer) param[2]).intValue(), param[3].toString());
-//			PIDStats.addBar(((Integer) param[0]).intValue(), ((Integer) param[1]).intValue(), param[2].toString());
+			PIDStats.addBar(((Integer) param[0]).intValue(), ((Integer) param[1]).intValue(), ((Integer) param[2])
+					.intValue(), param[3].toString());
+			// PIDStats.addBar(((Integer) param[0]).intValue(), ((Integer)
+			// param[1]).intValue(), param[2].toString());
 			break;
 		case ADDTREEITEM:
-			((LogicTree) param[0]).addToUI(((Integer)param[1]).intValue());
+			((LogicTree) param[0]).addToUI(((Integer) param[1]).intValue());
 			break;
 		case CHANGEITEM:
-			MainPanel.changeTreeItem(param[0].toString(), ((Integer)param[1]).intValue());
+			MainPanel.changeTreeItem(param[0].toString(), ((Integer) param[1]).intValue());
 			break;
 		case GETLIMITBOX:
 			if (!MainPanel.inputLimit.isDisposed()) {
@@ -143,4 +140,3 @@ public class GuiMethods implements Runnable {
 		}
 	}
 }
-

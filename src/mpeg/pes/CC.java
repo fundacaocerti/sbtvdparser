@@ -30,18 +30,18 @@ import sys.CRC16;
 public class CC extends PES {
 
 	int dataGroupLvl;
-	
+
 	private static int ccTrackNumb = 0;
 
 	public static void reset() {
 		ccTrackNumb = 0;
 	}
-	
+
 	public CC(int pid) {
 		id = 0xbd;
 		this.pid = pid;
 		ccTrackNumb++;
-		name = "Closed Caption "+ccTrackNumb;
+		name = "Closed Caption " + ccTrackNumb;
 		treeIndx = MainPanel.addTreeItem(name, 0, MainPanel.CC_TREE);
 	}
 
@@ -109,7 +109,7 @@ public class CC extends PES {
 			int readCrc = bw.pop16();
 			int crc = CRC16.calc(bigBuffer, crcStart, data_group_size + 5); // 5
 			// bytes no header
-			addSubItem("CRC16: " + BitWise.toHex(crc) +" "+ (readCrc == crc), dataGroupLvl);
+			addSubItem("CRC16: " + BitWise.toHex(crc) + " " + (readCrc == crc), dataGroupLvl);
 		}
 		// System.out.println("available: " + bw.getAvailableSize());
 	}
@@ -149,8 +149,7 @@ public class CC extends PES {
 			return;
 		addSubItem("unit separator: " + (0x1f == bw.pop()), duLvl);
 		int[] typeId = { 0x20, 0x28, 0x2c, 0x30, 0x31, 0x34, 0x35 };
-		String[] typeNames = { "text", "geometric", "sound", "1b DRCS",
-				"2b DRCS", "color map", "bitmap" };
+		String[] typeNames = { "text", "geometric", "sound", "1b DRCS", "2b DRCS", "color map", "bitmap" };
 		String typeName = "Unknown";
 		int type = bw.pop();
 		for (int i = 0; i < typeNames.length; i++)
@@ -173,7 +172,8 @@ public class CC extends PES {
 
 	void parseCCManagement(BitWise bw, int size) {
 		bw.mark();
-//		bw.printBuffer(bw.getAbsolutePosition(), bw.getAbsolutePosition()+10);
+		// bw.printBuffer(bw.getAbsolutePosition(),
+		// bw.getAbsolutePosition()+10);
 		parseTMD(bw, false);
 		// num_languages 8
 		int num_languages = bw.pop();
@@ -187,9 +187,7 @@ public class CC extends PES {
 			// DMF 4 bslbf
 			int dmf = bw.consumeBits(4);
 			String[] dispType = { "Auto", "Non", "Select", "Specific" };
-			addSubItem(
-					"dmf: " + dispType[BitWise.stripBits(dmf, 4, 2)] + " display",
-					dataGroupLvl);
+			addSubItem("dmf: " + dispType[BitWise.stripBits(dmf, 4, 2)] + " display", dataGroupLvl);
 			if (dmf == 12 || dmf == 13 || dmf == 14)
 				addSubItem("dc: " + bw.pop());
 			// if (DMF==’1100’ || DMF==’1101’ || DMF==’1110’){
@@ -200,15 +198,11 @@ public class CC extends PES {
 			// ISO_639_language_code 24 uimsbf
 			int df = bw.consumeBits(4);
 			String[] hv = { "Horizontal", "Vertical" };
-			String[] dens = { "standard dens.", "high density",
-					"western lang.", "1920x1080", "960x540", "720x480",
+			String[] dens = { "standard dens.", "high density", "western lang.", "1920x1080", "960x540", "720x480",
 					"1280x720", "reserved" };
-			addSubItem(
-					"Format: " + hv[df & 1] + " writing in " + dens[df >> 1],
-					dataGroupLvl);
+			addSubItem("Format: " + hv[df & 1] + " writing in " + dens[df >> 1], dataGroupLvl);
 			addSubItem("TCS: " + bw.consumeBits(2), dataGroupLvl);
-			addSubItem("rollup_mode: " + "yn".charAt(bw.consumeBits(2) & 1),
-					dataGroupLvl);
+			addSubItem("rollup_mode: " + "yn".charAt(bw.consumeBits(2) & 1), dataGroupLvl);
 			// Format 4 bslbf
 			// TCS 2 bslbf
 			// rollup_mode 2 bslbf
@@ -218,4 +212,3 @@ public class CC extends PES {
 			parseDataUnit(bw);
 	}
 }
-

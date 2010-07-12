@@ -32,16 +32,14 @@ import sys.EPG;
 
 public class EIT extends Table {
 
-	private static final int sectionPidIndx = 0, sectionSvcIdIndx = 1,
-			sectionNumberIndx = 2, sectionCountIndx = 3, sectionVsnIndx = 4,
-			maxSessions = 800;
+	private static final int sectionPidIndx = 0, sectionSvcIdIndx = 1, sectionNumberIndx = 2, sectionCountIndx = 3,
+			sectionVsnIndx = 4, maxSessions = 800;
 
-	int[][] sectionInfo = { new int[maxSessions], new int[maxSessions],
-			new int[maxSessions], new int[maxSessions], new int[maxSessions] };
+	int[][] sectionInfo = { new int[maxSessions], new int[maxSessions], new int[maxSessions], new int[maxSessions],
+			new int[maxSessions] };
 
-	int transport_stream_id, original_network_id, segment_last_section_number,
-			last_table_id, sectionInfoCount = 0, EITpf = 0, EITbasic = 0,
-			EIText = 0, EITpfFilled = 0, EITbasicFilled = 0, EITextFilled = 0;
+	int transport_stream_id, original_network_id, segment_last_section_number, last_table_id, sectionInfoCount = 0,
+			EITpf = 0, EITbasic = 0, EIText = 0, EITpfFilled = 0, EITbasicFilled = 0, EITextFilled = 0;
 
 	EPG epgNN = new EPG(), epgDaily = new EPG(), epg7d = new EPG();
 
@@ -57,10 +55,8 @@ public class EIT extends Table {
 		if (sectionInfoCount == maxSessions)
 			return true;
 		for (int i = 0; i < sectionInfoCount; i++)
-			if (sectionInfo[sectionNumberIndx][i] == sectionNumber
-					&& sectionInfo[sectionVsnIndx][i] == versionNumber
-					&& sectionInfo[sectionPidIndx][i] == readTableID
-					&& sectionInfo[sectionSvcIdIndx][i] == idExt) {
+			if (sectionInfo[sectionNumberIndx][i] == sectionNumber && sectionInfo[sectionVsnIndx][i] == versionNumber
+					&& sectionInfo[sectionPidIndx][i] == readTableID && sectionInfo[sectionSvcIdIndx][i] == idExt) {
 				sectionInfo[sectionCountIndx][i]++;
 				return true;
 			}
@@ -106,11 +102,12 @@ public class EIT extends Table {
 
 		addSubItem("transport_stream_id: " + BitWise.toHex(transport_stream_id));
 		addSubItem("original_network_id: " + BitWise.toHex(original_network_id));
-		addSubItem("segment_last_section_number: "
-				+ BitWise.toHex(segment_last_section_number));
+		addSubItem("segment_last_section_number: " + BitWise.toHex(segment_last_section_number));
 		addSubItem("last_table_id: " + BitWise.toHex(last_table_id));
 		bw.mark();
-		addSubItem("Event info. lenght: " + bw.getAvailableSize());// TODO não é loop lenght?
+		addSubItem("Event info. lenght: " + bw.getAvailableSize());// TODO não é
+		// loop
+		// lenght?
 		int loopLevel = addSubItem("Event loop:");
 		while (bw.getAvailableSize() > 0) {
 			int id = bw.pop16();
@@ -130,20 +127,16 @@ public class EIT extends Table {
 			addSubItem("start_time: " + TOT.formatMJD(start), evtLevel);
 			addSubItem("duration: " + duration.toString(), evtLevel);
 
-			String[] runningStatus = { "undefined", "not running",
-					"starts soon", "paused", "running", "off-air", "reserved",
-					"reserved" };
-			addSubItem("running_status: " + runningStatus[bw.consumeBits(3)],
-					evtLevel);
+			String[] runningStatus = { "undefined", "not running", "starts soon", "paused", "running", "off-air",
+					"reserved", "reserved" };
+			addSubItem("running_status: " + runningStatus[bw.consumeBits(3)], evtLevel);
 			String[] free_CA_mode = { "not-scrambled", "scrambled" };
-			addSubItem("free_CA_mode: " + free_CA_mode[bw.consumeBits(1)],
-					evtLevel);
+			addSubItem("free_CA_mode: " + free_CA_mode[bw.consumeBits(1)], evtLevel);
 
 			int descriptorsLenght = bw.consumeBits(12);
 			int descLevel = addSubItem("Descriptors loop:", evtLevel);
 			int mark = bw.getByteCount();
-			while ((bw.getByteCount() - mark < descriptorsLenght)
-					&& (bw.getAvailableSize() > 0)) {
+			while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
 				// System.out.println(bw.pop(0));
 				DescriptorList.print(bw, descLevel);
 			}
@@ -154,14 +147,11 @@ public class EIT extends Table {
 			String rating = ParentalRating.ratingTxt;
 			ParentalRating.ratingTxt = "n/d";
 			if (readTableID == 0x4E)
-				epgNN.addEvent(id, start, duration.toString(), evtName,
-						evtDesc, rating);
+				epgNN.addEvent(id, start, duration.toString(), evtName, evtDesc, rating);
 			if (readTableID > 0x4F && readTableID < 0x58)
-				epgDaily.addEvent(id, start, duration.toString(), evtName,
-						evtDesc, rating);
+				epgDaily.addEvent(id, start, duration.toString(), evtName, evtDesc, rating);
 			if (readTableID > 0x57 && readTableID < 0x60)
-				epg7d.addEvent(id, start, duration.toString(), evtName,
-						evtDesc, rating);
+				epg7d.addEvent(id, start, duration.toString(), evtName, evtDesc, rating);
 		}
 		return false;
 	}
@@ -189,23 +179,15 @@ public class EIT extends Table {
 		float duration = (float) (totalPackets / TOT.lastBitrate * 188 * 8 / 1e6);
 		addSubItem("EITs: " + (EITbasic + EIText + EITpf), statLevel);
 		if (duration != 0) {
-			addSubItem("EIT-p/f sections/s: " + ((float) EITpf / duration),
-					statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-8day sections/s: " + ((float) EITbasic / duration),
-					statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-extended sections/s: "
-					+ ((float) EIText / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-p/f sections/s: " + ((float) EITpf / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-8day sections/s: " + ((float) EITbasic / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-extended sections/s: " + ((float) EIText / duration), statLevel, MainPanel.STATS_TREE);
 		}
-		addSubItem("Filled EITs: "
-				+ (EITbasicFilled + EITextFilled + EITpfFilled), statLevel);
+		addSubItem("Filled EITs: " + (EITbasicFilled + EITextFilled + EITpfFilled), statLevel);
 		if (duration != 0) {
-			addSubItem("EIT-p/f sections/s: "
-					+ ((float) EITpfFilled / duration), statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-8day sections/s: "
-					+ ((float) EITbasicFilled / duration), statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-extended sections/s: "
-					+ ((float) EITextFilled / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-p/f sections/s: " + ((float) EITpfFilled / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-8day sections/s: " + ((float) EITbasicFilled / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-extended sections/s: " + ((float) EITextFilled / duration), statLevel, MainPanel.STATS_TREE);
 		}
 	}
 }
-

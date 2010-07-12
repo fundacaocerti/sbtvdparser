@@ -26,13 +26,10 @@ import sys.BitWise;
 
 public class Descriptor {
 
-	int[] predefinedTags = { 0x09, 0x0D, 0x13, 0x14, 0x15, 0x28, 0x2A, 0x40,
-			0x41, 0x42, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
-			0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x58, 0x63, 0xC0, 0xC1, 0xC2,
-			0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD,
-			0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8,
-			0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xE0, 0xF7, 0xF8, 0xFA, 0xFB,
-			0xFC, 0xFD, 0xFE };
+	int[] predefinedTags = { 0x09, 0x0D, 0x13, 0x14, 0x15, 0x28, 0x2A, 0x40, 0x41, 0x42, 0x47, 0x48, 0x49, 0x4A, 0x4B,
+			0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x58, 0x63, 0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5,
+			0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7,
+			0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD, 0xDE, 0xE0, 0xF7, 0xF8, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE };
 
 	// TODO: add 0x06 data_stream_alignment / 0x0a ISO_639_lang._desc / 0x1c
 	// MPEG4_audio
@@ -83,32 +80,22 @@ public class Descriptor {
 	 * DESC_DVB_ECM_REPETITION_RATE 0x78 #define
 	 * DESC_DVB_S2_SATELLITE_DELIVERY_SYSTEM 0x79 #define DESC_DVB_ENHANCED_AC3
 	 * 0x7A #define DESC_DVB_DTS 0x7B #define DESC_DVB_AAC 0x7C
-	 * 
 	 */
 
-	String[] predefinedNames = { "Conditional access", "Copyright",
-			"Carousel ID", "Association tag", "Deferred association tags",
-			"AVC vídeo", "AVC timing and HRD", "Network name", "Service list",
-			"Stuffing", "Bouquet name", "Service", "Country availability",
-			"Linkage", "NVOD reference", "Time shifted service", "Short event",
-			"Extended event", "Time shifted event", "Component", "Mosaic",
-			"Stream identifier", "CA identifier", "Content", "Parental rating",
-			"Local time offset", "Partial transport stream",
-			"Hierarchical transmission", "Digital copy control",
-			"Network identifier", "Partial transport stream time",
-			"Audio component", "Hyperlink", "Target area", "Data contents",
-			"Video decode control", "Download content", "CA EMM TS",
-			"CA contract information", "CA service",
-			"TS information descriptior", "Extended broadcaster",
-			"Logo transmission", "Basic local event", "Reference",
-			"Node relation", "Short node information",
-			"System time clock reference", "Series", "Event group",
-			"SI parameter", "Broadcaster name", "Component group",
-			"SI prime TS", "Board information", "LDT linkage",
-			"Connected transmission", "Content availability", "Service group",
-			"Carousel compatible composite", "Conditional playback",
-			"Terrestrial delivery system", "Partial reception",
-			"Emergency information", "Data component", "System management" };
+	String[] predefinedNames = { "Conditional access", "Copyright", "Carousel ID", "Association tag",
+			"Deferred association tags", "AVC vídeo", "AVC timing and HRD", "Network name", "Service list", "Stuffing",
+			"Bouquet name", "Service", "Country availability", "Linkage", "NVOD reference", "Time shifted service",
+			"Short event", "Extended event", "Time shifted event", "Component", "Mosaic", "Stream identifier",
+			"CA identifier", "Content", "Parental rating", "Local time offset", "Partial transport stream",
+			"Hierarchical transmission", "Digital copy control", "Network identifier", "Partial transport stream time",
+			"Audio component", "Hyperlink", "Target area", "Data contents", "Video decode control", "Download content",
+			"CA EMM TS", "CA contract information", "CA service", "TS information descriptior", "Extended broadcaster",
+			"Logo transmission", "Basic local event", "Reference", "Node relation", "Short node information",
+			"System time clock reference", "Series", "Event group", "SI parameter", "Broadcaster name",
+			"Component group", "SI prime TS", "Board information", "LDT linkage", "Connected transmission",
+			"Content availability", "Service group", "Carousel compatible composite", "Conditional playback",
+			"Terrestrial delivery system", "Partial reception", "Emergency information", "Data component",
+			"System management" };
 
 	String name = null;
 
@@ -163,4 +150,3 @@ public class Descriptor {
 		return null;
 	}
 }
-

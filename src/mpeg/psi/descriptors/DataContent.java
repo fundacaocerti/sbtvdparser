@@ -37,8 +37,8 @@ public class DataContent extends Descriptor {
 		// data_component_id 16 uimsbf
 		addSubItem("data_component_id: " + BitWise.toHex(bw.pop16()), level);
 		int entryComp = bw.pop();
-		addSubItem("entry_component: " + BitWise.toHex(entryComp) + " ("
-				+ StreamIdentifier.getType(entryComp) + ")", level);
+		addSubItem("entry_component: " + BitWise.toHex(entryComp) + " (" + StreamIdentifier.getType(entryComp) + ")",
+				level);
 		int loopLen = bw.pop();
 		if (loopLen == 5 && entryComp >= 0x30 && entryComp <= 0x38)
 			parseAribCCInfo(level);
@@ -64,14 +64,11 @@ public class DataContent extends Descriptor {
 		int nLang = bw.pop();
 		int langLvl = addSubItem("languages:", ccinflvl);
 		for (int i = 0; i < nLang; i++) {
-			addSubItem("language_tag: " + bw.printBin(bw.consumeBits(3), 3),
-					langLvl);
+			addSubItem("language_tag: " + bw.printBin(bw.consumeBits(3), 3), langLvl);
 			bw.consumeBits(1);
 			String[] dispType = { "Auto", "Non", "Select", "Specific" };
-			addSubItem("dmf: " + dispType[bw.consumeBits(4) >> 2] + " display",
-					langLvl);
+			addSubItem("dmf: " + dispType[bw.consumeBits(4) >> 2] + " display", langLvl);
 			addSubItem(Component.parseISO639(bw), langLvl);
 		}
 	}
 }
-

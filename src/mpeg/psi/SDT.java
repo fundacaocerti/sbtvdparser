@@ -41,8 +41,7 @@ public class SDT extends Table {
 		printSectionInfo();
 		// original_network_id 16 uimsbf
 		int onid = bw.pop16();
-		addSubItem("original_network_id: "
-				+ SpecialSemantic.parseNetworkID(onid));
+		addSubItem("original_network_id: " + SpecialSemantic.parseNetworkID(onid));
 
 		// reserved_future_use 8 bslbf
 		bw.pop();
@@ -50,41 +49,31 @@ public class SDT extends Table {
 		while (bw.getAvailableSize() > 0) {
 			// service_id 16 uimsbf
 			int service_id = bw.pop16();
-			int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(service_id),
-					svcLoopLevel);
-			addSubItem("type: "
-					+ TSinformation.svcTypes[BitWise.stripBits(service_id, 5, 2)],
-					svcIdLevel);
-			addSubItem("number: " + (BitWise.stripBits(service_id, 3, 3) + 1),
-					svcIdLevel);
+			int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(service_id), svcLoopLevel);
+			addSubItem("type: " + TSinformation.svcTypes[BitWise.stripBits(service_id, 5, 2)], svcIdLevel);
+			addSubItem("number: " + (BitWise.stripBits(service_id, 3, 3) + 1), svcIdLevel);
 
 			// reserved_future_use 6 bslbf
 			bw.consumeBits(6);
 			// EIT_schedule_flag 1 bslbf
 			// EIT_present_following_flag 1 bslbf
 			addSubItem("EIT_schedule_flag: " + bw.consumeBits(1), svcIdLevel);
-			addSubItem("EIT_present_following_flag: " + bw.consumeBits(1),
-					svcIdLevel);
+			addSubItem("EIT_present_following_flag: " + bw.consumeBits(1), svcIdLevel);
 
 			// running_status 3 uimsbf
 			// free_CA_mode 1 bslbf
 			// descriptors_loop_length 12 uimsbf
 			onid = bw.pop16();
-			String[] rs = { "undefined", "off", "in a few minutes", "paused",
-					"running" };
-			addSubItem("running_status: " + rs[BitWise.stripBits(onid, 16, 3) % 5],
-					svcIdLevel);
+			String[] rs = { "undefined", "off", "in a few minutes", "paused", "running" };
+			addSubItem("running_status: " + rs[BitWise.stripBits(onid, 16, 3) % 5], svcIdLevel);
 			int descriptorsLenght = BitWise.stripBits(onid, 12, 12);
-			int netDescIndx = addSubItem("network descriptors: (lenght "
-					+ descriptorsLenght + ")", svcIdLevel);
+			int netDescIndx = addSubItem("network descriptors: (lenght " + descriptorsLenght + ")", svcIdLevel);
 			int mark = bw.getByteCount();
 			// System.out.println(bw.getByteCount());
-			while ((bw.getByteCount() - mark < descriptorsLenght)
-					&& (bw.getAvailableSize() > 0)) {
+			while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
 				DescriptorList.print(bw, netDescIndx);
 			}
 		}
 		return true;
 	}
 }
-

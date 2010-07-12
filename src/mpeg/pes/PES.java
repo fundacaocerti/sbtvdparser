@@ -28,15 +28,15 @@ public class PES {
 
 	public String name = null;
 
-	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF,
-			crcFails = 0, pidAlt = -1, bufWriteIndx = 0, esId = 0, packetLenght = 0;
+	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF, crcFails = 0, pidAlt = -1,
+			bufWriteIndx = 0, esId = 0, packetLenght = 0;
 
 	BitWise bw;
 
 	byte[] bigBuffer;
 
 	protected int thisPacket;
-	
+
 	public void startPacket(byte[] source, int srcOffset, int writeSize) {
 		// System.out.println("PES start: "+writeSize);
 		bw = new BitWise(source);
@@ -47,8 +47,7 @@ public class PES {
 		}
 		esId = bw.pop();
 		if (esId != id) {
-			int errMsg = addSubItem("ES content not recognized: TID = "
-					+ BitWise.toHex(esId));
+			int errMsg = addSubItem("ES content not recognized: TID = " + BitWise.toHex(esId));
 			addSubItem("expected TID: " + BitWise.toHex(id) + " - " + name, errMsg);
 			// addSubItem("content: ["+bw.getHexSequence(section_length)+"]",
 			// errMsg);
@@ -95,7 +94,7 @@ public class PES {
 	}
 
 	public void printHeader() {
-//		bw.printBuffer();
+		// bw.printBuffer();
 		thisPacket = addSubItem("ES packet");
 		addSubItem("packet_lenght: " + bigBuffer.length, thisPacket);
 		parse();
@@ -262,4 +261,3 @@ public class PES {
 		return MainPanel.addTreeItem(msg, treeIndx);
 	}
 }
-

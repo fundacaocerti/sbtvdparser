@@ -40,16 +40,16 @@ public class PCR {
 	public static PCR getInstance() {
 		return thisInstance;
 	}
-	
+
 	public static float getAverageBitrate() {
-		return  (float)averageBitrate / 1000000;
+		return (float) averageBitrate / 1000000;
 	}
-	
+
 	public static float getCurrentTimestamp() {
-		double bits = (Packet.packetCount - lastPacketCount)*Packet.realPktLenght*8;
+		double bits = (Packet.packetCount - lastPacketCount) * Packet.realPktLenght * 8;
 		if (firstTimestamp == lastTimeStamp)
 			return 0;
-		return (float)(bits/averageBitrate+(lastTimeStamp-firstTimestamp));
+		return (float) (bits / averageBitrate + (lastTimeStamp - firstTimestamp));
 	}
 
 	public void update(BitWise bw) {
@@ -71,15 +71,14 @@ public class PCR {
 			if (timeStamp - lastTimeStamp > 2 || timeStamp - lastTimeStamp < 0) {
 				lastTimeStamp = timeStamp;
 				Log.printWarning("PCR err");
-				Log.printWarning("lts: "+lastTimeStamp);
-				Log.printWarning("ts: "+timeStamp);
+				Log.printWarning("lts: " + lastTimeStamp);
+				Log.printWarning("ts: " + timeStamp);
 				return;
 			}
 			lastTimeStamp = timeStamp;
 			lastPacketCount = Packet.packetCount;
-			averageBitrate = (float) (lastPacketCount - firstPacketCount)
-					/ (timeStamp - firstTimestamp) * Packet.realPktLenght * 8;
+			averageBitrate = (float) (lastPacketCount - firstPacketCount) / (timeStamp - firstTimestamp)
+					* Packet.realPktLenght * 8;
 		}
 	}
 }
-

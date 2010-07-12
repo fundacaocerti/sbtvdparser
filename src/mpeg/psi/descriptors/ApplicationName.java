@@ -21,7 +21,6 @@
  */
 package mpeg.psi.descriptors;
 
-
 public class ApplicationName extends AITDescriptor {
 
 	public static int tag = 0x01;
@@ -33,15 +32,15 @@ public class ApplicationName extends AITDescriptor {
 		// application_signalling_descriptor() {
 		// for( i=0; i<N; i++ ){
 		int name_lenght = 0;
-		for (int i = 0; i < descriptor_length; i += 4+name_lenght) {
+		for (int i = 0; i < descriptor_length; i += 4 + name_lenght) {
 			// ISO_639_language_code
 			addSubItem(Component.parseISO639(bw), level);
-			// text 
+			// text
 			name_lenght = bw.pop();
 			StringBuffer sb = new StringBuffer();
 			for (int j = 0; j < name_lenght; j++)
 				sb.append((char) bw.pop());
-			addSubItem("name: ["+sb.toString()+"]", level);
+			addSubItem("name: [" + sb.toString() + "]", level);
 		}
 	}
 }

@@ -38,4 +38,3 @@ public class CAT extends Table {
 		return true;
 	}
 }
-

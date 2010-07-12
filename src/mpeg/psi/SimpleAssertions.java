@@ -26,12 +26,10 @@ import sys.LogicTree;
 
 public class SimpleAssertions {
 
-	static String[] searchTags = { "remote_control_key_id: ", "ts_name: ",
-			"network_PID: ", "service_id: ", "service_id: ", "service_id: ",
-			"UTC-3_time: ", "service_name: ", "service_name: ",
-			"service_name: ", "service_count: ", "component_tag: 0x00",
-			"component_tag: 0x00", "component_tag: 0x10", "type: 0x1b- H.264",
-			"type: 0x11- ISO/IEC 14496-3 Audio", "component_tag: 0x30" };
+	static String[] searchTags = { "remote_control_key_id: ", "ts_name: ", "network_PID: ", "service_id: ",
+			"service_id: ", "service_id: ", "UTC-3_time: ", "service_name: ", "service_name: ", "service_name: ",
+			"service_count: ", "component_tag: 0x00", "component_tag: 0x00", "component_tag: 0x10",
+			"type: 0x1b- H.264", "type: 0x11- ISO/IEC 14496-3 Audio", "component_tag: 0x30" };
 
 	static boolean[] tagsFound = new boolean[searchTags.length];
 
@@ -41,9 +39,7 @@ public class SimpleAssertions {
 		while (current != null) {
 			String text = current.toString();
 			for (int i = 0; i < searchTags.length; i++)
-				if (!tagsFound[i]
-						&& (text.startsWith(searchTags[i]) || text
-								.indexOf(searchTags[i]) > 0)) {
+				if (!tagsFound[i] && (text.startsWith(searchTags[i]) || text.indexOf(searchTags[i]) > 0)) {
 					MainPanel.addTreeItem(text, digestLevel);
 					tagsFound[i] = true;
 					break;
@@ -57,4 +53,3 @@ public class SimpleAssertions {
 			}
 	}
 }
-

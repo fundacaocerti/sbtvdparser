@@ -61,8 +61,7 @@ public class BitWise {
 
 	public String printBin(int n, int digits) {
 		int mask = 1 << digits;
-		return Integer.toBinaryString(n & (mask - 1) | mask).substring(1,
-				digits + 1);
+		return Integer.toBinaryString(n & (mask - 1) | mask).substring(1, digits + 1);
 	}
 
 	public void push(int i, int pos) {
@@ -99,7 +98,7 @@ public class BitWise {
 		if (maxLoops == 0)
 			throw (new RuntimeException("Infinite loop err:"));
 	}
-	
+
 	public int pop32() {
 		return (pop16() << 16) | pop16();
 	}
@@ -119,7 +118,7 @@ public class BitWise {
 		int i = buf[readPtr];
 		if (i < 0)
 			i += 256;
-		if (readPtr <= bufSize-bytes)
+		if (readPtr <= bufSize - bytes)
 			readPtr += bytes;
 		else
 			loopTrap();
@@ -188,7 +187,7 @@ public class BitWise {
 		if (size > buf.length)
 			bufSize = buf.length;
 	}
-	
+
 	public void reset() {
 		readPtr = readCount;
 	}
@@ -240,7 +239,8 @@ public class BitWise {
 	}
 
 	public String getHexSequence(int size) {
-		if (getAvailableSize() < size-1) //TODO: checar as consequências disso
+		if (getAvailableSize() < size - 1) // TODO: checar as consequências
+			// disso
 			size = getAvailableSize();
 		StringBuffer sb = new StringBuffer(size);
 		sb.append("[");
@@ -273,4 +273,3 @@ public class BitWise {
 		return result;
 	}
 }
-

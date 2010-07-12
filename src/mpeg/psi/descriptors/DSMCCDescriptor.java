@@ -27,7 +27,7 @@ import sys.BitWise;
 
 public class DSMCCDescriptor {
 
-	int[] predefinedTags = {0x09, 0x71};
+	int[] predefinedTags = { 0x09, 0x71 };
 
 	String[] predefinedNames = { "compressed_module", "caching_priority" };
 
@@ -38,12 +38,12 @@ public class DSMCCDescriptor {
 	int descriptor_length = 0;
 
 	BitWise bw;
-	
+
 	ModuleList ml;
 
 	public void setUp(int treeIndex, BitWise tableBw, ModuleList ml) {
 		tableIndx = treeIndex;
-		this.ml = ml; 
+		this.ml = ml;
 		int startIndx = tableBw.getAbsolutePosition();
 		// descriptor_tag 8 uimsbf
 		parsedTag = tableBw.pop();
@@ -65,7 +65,7 @@ public class DSMCCDescriptor {
 		if (descriptor_length > 0 && descriptor_length < 100)
 			addSubItem("content: " + bw.getHexSequence(descriptor_length), descIndx);
 		else
-			addSubItem("lenght seems invalid: "+descriptor_length, descIndx);
+			addSubItem("lenght seems invalid: " + descriptor_length, descIndx);
 	}
 
 	public static int preparse(BitWise bw) {
@@ -83,4 +83,3 @@ public class DSMCCDescriptor {
 		return null;
 	}
 }
-

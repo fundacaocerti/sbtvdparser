@@ -45,9 +45,7 @@ public class PMT extends Table {
 		printSectionInfo();
 		addSubItem("PID: " + BitWise.toHex(pid));
 		int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(idExt));
-		addSubItem(
-				"type: " + TSinformation.svcTypes[BitWise.stripBits(idExt, 5, 2)],
-				svcIdLevel);
+		addSubItem("type: " + TSinformation.svcTypes[BitWise.stripBits(idExt, 5, 2)], svcIdLevel);
 		addSubItem("number: " + (BitWise.stripBits(idExt, 3, 3) + 1), svcIdLevel);
 		// reserved 3 - não tá na norma
 		// PCR_PID 13 uimsbf
@@ -59,13 +57,11 @@ public class PMT extends Table {
 		// Reserved 4 bslbf
 		// program_info_length 12 uimsbf
 		int programInfoLength = BitWise.stripBits(bw.pop16(), 12, 12);
-		int programInfoLevel = addSubItem("program info descriptors: (lenght "
-				+ programInfoLength + ")", svcIdLevel);
+		int programInfoLevel = addSubItem("program info descriptors: (lenght " + programInfoLength + ")", svcIdLevel);
 		bw.mark();
 		// for(i=0,i<N,i++){ uimsbf
 		// descriptor()
-		while ((bw.getByteCount() < programInfoLength)
-				&& (bw.getAvailableSize() > 0)) {
+		while ((bw.getByteCount() < programInfoLength) && (bw.getAvailableSize() > 0)) {
 			DescriptorList.print(bw, programInfoLevel);
 		}
 
@@ -77,7 +73,7 @@ public class PMT extends Table {
 			// 0x80-0xFF Uso privado
 			int streamType = bw.pop();
 			String streamDesc = getStreamType(streamType);
-			
+
 			// Reserved 3 bslbf
 			// elementary_PID 13 uimsbf
 			int esPid = BitWise.stripBits(bw.pop16(), 13, 13);
@@ -85,31 +81,23 @@ public class PMT extends Table {
 				TableList.addTable(new DSMCC(esPid));
 			if (streamType == 0x05)
 				TableList.addTable(new AIT(esPid));
-			int esInfoLevel = addSubItem("ES_PID: " + BitWise.toHex(esPid)
-					+ "   type: " + BitWise.toHex(streamType) + "- " + streamDesc,
-					esLoopLevel);
+			int esInfoLevel = addSubItem("ES_PID: " + BitWise.toHex(esPid) + "   type: " + BitWise.toHex(streamType)
+					+ "- " + streamDesc, esLoopLevel);
 			// Reserved 4 bslbf
 			// ES_info_length 12 uimsbf
-			int esInfoLenght = BitWise.stripBits(bw.pop16(), 12, 12)
-					+ bw.getByteCount();
+			int esInfoLenght = BitWise.stripBits(bw.pop16(), 12, 12) + bw.getByteCount();
 			// for(i=0,i<N2,i++){
 			// Descriptor()
-			while ((bw.getByteCount() < esInfoLenght)
-					&& (bw.getAvailableSize() > 0)) {
+			while ((bw.getByteCount() < esInfoLenght) && (bw.getAvailableSize() > 0)) {
 				DescriptorList.print(bw, esInfoLevel);
 			}
 			if (StreamIdentifier.cTag == 0x30)
 				PESList.addElementaryStream(new CC(esPid));
 			if (StreamIdentifier.cTag != -1)
-				PIDStats
-						.setIdentification(esPid, "prog. "
-								+ BitWise.toHex(idExt)
-								+ " "
-								+ StreamIdentifier
-										.getType(StreamIdentifier.cTag));
+				PIDStats.setIdentification(esPid, "prog. " + BitWise.toHex(idExt) + " "
+						+ StreamIdentifier.getType(StreamIdentifier.cTag));
 			else
-				PIDStats.setIdentification(esPid, "prog. " + BitWise.toHex(idExt)
-						+ " " + streamDesc);
+				PIDStats.setIdentification(esPid, "prog. " + BitWise.toHex(idExt) + " " + streamDesc);
 			StreamIdentifier.cTag = -1;
 		}
 		return true;
@@ -126,24 +114,15 @@ public class PMT extends Table {
 		return streamDesc;
 	}
 
-	static String[] streamTypes = { "Undefined", "ISO/IEC 11172-2 Video",
-			"H.262 Video", "ISO/IEC 11172-3 Audio", "ISO/IEC 13818-3 Audio",
-			"ITU-T Rec. H.222.0 | ISO/IEC 13818-1 private_sections",
-			"ITU-T Rec. H.222.0 | ISO/IEC 13818-1 PES with private data",
-			"ISO/IEC 13522-5 MHEG", "H222.0:2002, Annex 1", "H.222.1",
-			"ISO/IEC 13818-6 DSM-CC (type A)",
-			"ISO/IEC 13818-6 DSM-CC (type B)",
-			"ISO/IEC 13818-6 DSM-CC (type C)",
-			"ISO/IEC 13818-6 DSM-CC (type D)", "H222.0 auxiliary data",
-			"ISO/IEC 13818-7 Audio (ADTS transport syntax)", "ISO/IEC 14496-2",
-			"ISO/IEC 14496-3 Audio", "ISO/IEC 14496-1 SL (FlexMux over PES)",
-			"ISO/IEC 14496-1 SL (PES or FlexMux over ISO/IEC 14496)",
-			"ISO/IEC 13818-6 download", "Meta data PES",
-			"Meta data over metadata_sections",
-			"Meta data over ISO/IEC 13818-6 carroussel",
-			"Meta data over ISO/IEC 13818-6 object carroussel",
-			"Meta data over ISO/IEC 13818-6 download",
-			"ISO/IEC 13818-11 IPMP stream", "H.264 - ISO/IEC 14496-10 Video",
-			"Data pipe", "IPMP stream" };
+	static String[] streamTypes = { "Undefined", "ISO/IEC 11172-2 Video", "H.262 Video", "ISO/IEC 11172-3 Audio",
+			"ISO/IEC 13818-3 Audio", "ITU-T Rec. H.222.0 | ISO/IEC 13818-1 private_sections",
+			"ITU-T Rec. H.222.0 | ISO/IEC 13818-1 PES with private data", "ISO/IEC 13522-5 MHEG",
+			"H222.0:2002, Annex 1", "H.222.1", "ISO/IEC 13818-6 DSM-CC (type A)", "ISO/IEC 13818-6 DSM-CC (type B)",
+			"ISO/IEC 13818-6 DSM-CC (type C)", "ISO/IEC 13818-6 DSM-CC (type D)", "H222.0 auxiliary data",
+			"ISO/IEC 13818-7 Audio (ADTS transport syntax)", "ISO/IEC 14496-2", "ISO/IEC 14496-3 Audio",
+			"ISO/IEC 14496-1 SL (FlexMux over PES)", "ISO/IEC 14496-1 SL (PES or FlexMux over ISO/IEC 14496)",
+			"ISO/IEC 13818-6 download", "Meta data PES", "Meta data over metadata_sections",
+			"Meta data over ISO/IEC 13818-6 carroussel", "Meta data over ISO/IEC 13818-6 object carroussel",
+			"Meta data over ISO/IEC 13818-6 download", "ISO/IEC 13818-11 IPMP stream",
+			"H.264 - ISO/IEC 14496-10 Video", "Data pipe", "IPMP stream" };
 }
-

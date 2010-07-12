@@ -31,14 +31,13 @@ import java.util.zip.Inflater;
 
 import sys.BitWise;
 
-
 public class Module {
 	int id, version, lenght, remainingParts, treeLvl, origSize;
 	boolean[] receivedParts;
 	public int partLvl;
 	byte[] data;
 	ModuleList moduleList;
-	
+
 	public Module(int id, int version, int lenght, int treeLvl, ModuleList moduleList, int origSize) {
 		this.id = id;
 		this.version = version;
@@ -49,24 +48,26 @@ public class Module {
 		data = new byte[lenght];
 		remainingParts = lenght / 4066 + 1;
 		receivedParts = new boolean[remainingParts];
-		partLvl = MainPanel.addTreeItem("parts: "+remainingParts, treeLvl);
+		partLvl = MainPanel.addTreeItem("parts: " + remainingParts, treeLvl);
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public boolean isComplete() {
 		return remainingParts == 0;
 	}
-	
+
 	public String toString() {
-		return "000"+Integer.toHexString(id);
+		return "000" + Integer.toHexString(id);
 	}
-	
+
 	public void save(File f) {
 		try {
-//			File f = new File("k:\\modules\\module"+mId.substring(mId.length()-4, mId.length()));
+			// File f = new
+			// File("k:\\modules\\module"+mId.substring(mId.length()-4,
+			// mId.length()));
 			if (f.exists())
 				f.delete();
 			f.createNewFile();
@@ -78,36 +79,35 @@ public class Module {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void feedPart(byte[] data, int dataOffset, int dataLenght, int blockNumber, int partLvl) {
-		if (remainingParts == 0 || blockNumber >= receivedParts.length
-				|| receivedParts[blockNumber])
+		if (remainingParts == 0 || blockNumber >= receivedParts.length || receivedParts[blockNumber])
 			return;
-		MainPanel.addTreeItem("part: "+blockNumber+" size: "+dataLenght, partLvl);
-//		MainPanel.addTreeItem("["+
-//		printHex(contents, startOffset, startOffset+4);
-//		System.out.print("...");
-//		printHex(contents, startOffset+lenght-4, startOffset+lenght);
-//		System.out.println("]");
-//		System.out.print("Module: "+Integer.toHexString(id));
-//		System.out.print("\tsize: "+Integer.toHexString(lenght));
-//		System.out.println("\tfeed: do="+dataOffset+" dl="+dataLenght+" bn="+blockNumber);
-		if ((data.length < dataOffset+dataLenght) 
-				|| (this.data.length < blockNumber*4066+dataLenght)) {
-			System.out.println("Module "+id+" data feed err: inserting "+dataLenght+
-					"b of "+data.length+"b buffer from "+dataOffset+" into "+this.data.length+"b dest. at "+blockNumber*4066+dataLenght);
+		MainPanel.addTreeItem("part: " + blockNumber + " size: " + dataLenght, partLvl);
+		// MainPanel.addTreeItem("["+
+		// printHex(contents, startOffset, startOffset+4);
+		// System.out.print("...");
+		// printHex(contents, startOffset+lenght-4, startOffset+lenght);
+		// System.out.println("]");
+		// System.out.print("Module: "+Integer.toHexString(id));
+		// System.out.print("\tsize: "+Integer.toHexString(lenght));
+		// System.out.println("\tfeed: do="+dataOffset+" dl="+dataLenght+" bn="+blockNumber);
+		if ((data.length < dataOffset + dataLenght) || (this.data.length < blockNumber * 4066 + dataLenght)) {
+			System.out.println("Module " + id + " data feed err: inserting " + dataLenght + "b of " + data.length
+					+ "b buffer from " + dataOffset + " into " + this.data.length + "b dest. at " + blockNumber * 4066
+					+ dataLenght);
 			return;
 		}
-		System.arraycopy(data, dataOffset, this.data, blockNumber*4066, dataLenght);
+		System.arraycopy(data, dataOffset, this.data, blockNumber * 4066, dataLenght);
 		remainingParts--;
 		receivedParts[blockNumber] = true;
 		if (remainingParts == 0) {
 			System.out.println("Module complete");
 			if (origSize != lenght) {
-				 Inflater decompresser = new Inflater();
-				 decompresser.setInput(this.data, 0, lenght);
-				 byte[] result = new byte[origSize];
-				 try {
+				Inflater decompresser = new Inflater();
+				decompresser.setInput(this.data, 0, lenght);
+				byte[] result = new byte[origSize];
+				try {
 					int resultLength = decompresser.inflate(result);
 					decompresser.end();
 					if (resultLength == origSize)
@@ -124,24 +124,24 @@ public class Module {
 			if (moduleList.isReadyToMount())
 				moduleList.mountFS();
 		}
-		
-//		StringBuffer sb =  new StringBuffer();
-//		sb.append(" [");
-//		for (int i = dataOffset; i < dataOffset+5; i++) {
-//			if (data[i] < 0x10 && data[i] >= 0)
-//				sb.append('0');
-//			sb.append(Integer.toHexString(data[i] & 0xff));
-//			sb.append(' ');
-//		}
-//		sb.append("... ");
-//		for (int i = dataLenght+dataOffset-5; i < dataLenght+dataOffset; i++) {
-//			if (data[i] < 0x10 && data[i] >= 0)
-//				sb.append('0');
-//			sb.append(Integer.toHexString(data[i] & 0xff));
-//			sb.append(' ');
-//		}
-//		sb.append(']');
-//		MainPanel.addTreeItem("content: "+sb.toString(), treeLvl);
+
+		// StringBuffer sb = new StringBuffer();
+		// sb.append(" [");
+		// for (int i = dataOffset; i < dataOffset+5; i++) {
+		// if (data[i] < 0x10 && data[i] >= 0)
+		// sb.append('0');
+		// sb.append(Integer.toHexString(data[i] & 0xff));
+		// sb.append(' ');
+		// }
+		// sb.append("... ");
+		// for (int i = dataLenght+dataOffset-5; i < dataLenght+dataOffset; i++)
+		// {
+		// if (data[i] < 0x10 && data[i] >= 0)
+		// sb.append('0');
+		// sb.append(Integer.toHexString(data[i] & 0xff));
+		// sb.append(' ');
+		// }
+		// sb.append(']');
+		// MainPanel.addTreeItem("content: "+sb.toString(), treeLvl);
 	}
 }
-

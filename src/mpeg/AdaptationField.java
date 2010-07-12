@@ -44,10 +44,9 @@ public class AdaptationField {
 			// System.out.println("PCR_Flag: "+pcrFlag);
 			if (pcrFlag) {
 				PCR.getInstance().update(bw);
-//				System.out.println(pid);
+				// System.out.println(pid);
 			}
 		}
 	}
 
 }
-

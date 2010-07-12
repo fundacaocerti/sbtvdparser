@@ -49,8 +49,6 @@ public class DataComponent extends Descriptor {
 		// addSubItem("timing: "+timing[bw.consumeBits(2)], level);
 		// }
 		// else
-		addSubItem("additional_data_component_info: "
-				+ bw.getHexSequence(descriptor_length - 2), level);
+		addSubItem("additional_data_component_info: " + bw.getHexSequence(descriptor_length - 2), level);
 	}
 }
-

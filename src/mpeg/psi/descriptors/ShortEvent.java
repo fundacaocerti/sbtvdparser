@@ -57,4 +57,3 @@ public class ShortEvent extends Descriptor {
 		return ts.toString();
 	}
 }
-

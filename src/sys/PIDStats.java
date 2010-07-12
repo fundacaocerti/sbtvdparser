@@ -75,17 +75,18 @@ public class PIDStats {
 		else {
 			sets[i].counter++;
 			if ((PCR.getCurrentTimestamp() - sets[i].lastTimestamp) > measureRate) {
-				float snapshot = (float)((sets[i].counter-sets[i].lastCount)*Packet.realPktLenght*8/measureRate/1e6);
+				float snapshot = (float) ((sets[i].counter - sets[i].lastCount) * Packet.realPktLenght * 8
+						/ measureRate / 1e6);
 				sets[i].lastCount = sets[i].counter;
 				sets[i].lastTimestamp = PCR.getCurrentTimestamp();
-				int position = (int)(PCR.getCurrentTimestamp()/measureRate);
+				int position = (int) (PCR.getCurrentTimestamp() / measureRate);
 				if (position < 512)
 					sets[i].bitrates[position] = snapshot;
 			}
 		}
 	}
-	
-	static float measureRate = (float)1; // em segundos
+
+	static float measureRate = (float) 1; // em segundos
 
 	static void addPid(int pid) {
 		if (foundPids == MAXPIDS)
@@ -108,31 +109,34 @@ public class PIDStats {
 		PIDStats.setIdentification(0x27, "EIT one-seg");
 
 		QuickSort.sort(sets, foundPids);
-//		int pidStatsLevel = MainPanel.addTreeItem("PID stats", 0, MainPanel.STATS_TREE);
+		// int pidStatsLevel = MainPanel.addTreeItem("PID stats", 0,
+		// MainPanel.STATS_TREE);
 		int i = foundPids - 1;
 		int maxCount = sets[i].counter;
 		while (i >= 0 && sets[i].counter > 1) {
 
-//			MainPanel.addTreeItem("pid " + Integer.toHexString(sets[i].pid)
-//					+ ": " + pidBitrateStr + " " + multiplier + " ("
-//					+ sets[i].name + ")", pidStatsLevel);
-			Object[] bar = {new Integer(sets[i].pid), new Integer(sets[i].counter), new Integer(maxCount),
-					formatScaleFactor((float) sets[i].counter / Packet.packetCount * bitrate) 
-					+ "bps ("	+ sets[i].name + ")"};
+			// MainPanel.addTreeItem("pid " + Integer.toHexString(sets[i].pid)
+			// + ": " + pidBitrateStr + " " + multiplier + " ("
+			// + sets[i].name + ")", pidStatsLevel);
+			Object[] bar = {
+					new Integer(sets[i].pid),
+					new Integer(sets[i].counter),
+					new Integer(maxCount),
+					formatScaleFactor((float) sets[i].counter / Packet.packetCount * bitrate) + "bps (" + sets[i].name
+							+ ")" };
 			GuiMethods.runMethod(GuiMethods.ADDPIDBAR, bar, true);
 			i--;
 		}
 	}
-	
-	
+
 	public static float[] getBitrates(int indx) {
-		return sets[foundPids-indx-1].bitrates;
+		return sets[foundPids - indx - 1].bitrates;
 	}
-	
+
 	public static int getPid(int indx) {
-		return sets[foundPids-indx-1].pid;
+		return sets[foundPids - indx - 1].pid;
 	}
-	
+
 	public static String formatScaleFactor(float mega) {
 		String pidBitrateStr, multiplier = "M";
 		if (mega < 1) {
@@ -144,9 +148,7 @@ public class PIDStats {
 			multiplier = "";
 		}
 		pidBitrateStr = Float.toString(mega) + "00";
-		pidBitrateStr = pidBitrateStr.substring(0, pidBitrateStr
-				.indexOf('.') + 3);
-		return pidBitrateStr+multiplier;
+		pidBitrateStr = pidBitrateStr.substring(0, pidBitrateStr.indexOf('.') + 3);
+		return pidBitrateStr + multiplier;
 	}
 }
-

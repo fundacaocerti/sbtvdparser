@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Slider;
 public class Graph extends Composite {
 
 	private static Canvas canvas = null;
-	private static Paint graphArea =  new Paint();  //  @jve:decl-index=0:
+	private static Paint graphArea = new Paint(); // @jve:decl-index=0:
 	private static float min = 100, max = 0, ratio = 1;
 	private static Zoomer z;
 
@@ -69,7 +69,7 @@ public class Graph extends Composite {
 		vZoom.addSelectionListener(z);
 		sampleTime = new Slider(this, SWT.NONE);
 		sampleTime.setToolTipText("Tempo de amostragem (0.01s a 5s)");
-//		sampleTime.setSize(120, sampleTime.getSize().x);
+		// sampleTime.setSize(120, sampleTime.getSize().x);
 		sampleTime.setSelection(70);
 		sampleTime.setLayoutData(gridData1);
 		info = new Label(this, SWT.NONE);
@@ -86,52 +86,53 @@ public class Graph extends Composite {
 		}
 
 		public void widgetSelected(SelectionEvent e) {
-			float vz = (float)vZoom.getSelection()/10-4;
+			float vz = (float) vZoom.getSelection() / 10 - 4;
 			if (vz < 0)
-				vz = 1/(1-vz);
+				vz = 1 / (1 - vz);
 			else
 				vz += 1;
-			float samp = (float)sampleTime.getSelection()/5;
+			float samp = (float) sampleTime.getSelection() / 5;
 			if (samp < 14)
-				samp = (float)0.1395/((float)13.95-samp);
+				samp = (float) 0.1395 / ((float) 13.95 - samp);
 			else
 				samp -= 13;
-			float offs = (30-vPos.getSelection())*max/30;
+			float offs = (30 - vPos.getSelection()) * max / 30;
 			StringBuilder sb = new StringBuilder();
 			sb.append("Amostra: ");
-			String s = Float.toString(samp)+"000";
+			String s = Float.toString(samp) + "000";
 			sb.append(s.substring(0, 5));
 			sb.append("s     Exibindo de: ");
-			sb.append((Float.toString(offs)+"000").substring(0, 4));
+			sb.append((Float.toString(offs) + "000").substring(0, 4));
 			sb.append(" a ");
 			System.out.println(vz);
-			sb.append((Float.toString(max/vz+offs)+"00").substring(0, 4));
+			sb.append((Float.toString(max / vz + offs) + "00").substring(0, 4));
 			sb.append("Mbps");
 			info.setText(sb.toString());
 			graphArea.setScaling(vz, offs, samp);
 			canvas.redraw();
-		}		
+		}
 	}
-	
+
 	private static int xRes = 230, yRes = 160;
 
 	class graphXYLabel implements MouseMoveListener {
 		int lastColumn = 0;
+
 		public void mouseMove(MouseEvent e) {
 			if (grData == null)
 				return;
-			if(e.x < grData.length && e.x != lastColumn) {
+			if (e.x < grData.length && e.x != lastColumn) {
 				graphArea.setActiveColumn(e.x);
 				if (lastColumn < e.x)
-					canvas.redraw(lastColumn, 0, e.x-lastColumn+1, canvas.getSize().y, true);
+					canvas.redraw(lastColumn, 0, e.x - lastColumn + 1, canvas.getSize().y, true);
 				else
-					canvas.redraw(e.x, 0, lastColumn-e.x+1, canvas.getSize().y, true);
-//				canvas.redraw(lastColumn, 0, 1, canvas.getSize().y, true);
+					canvas.redraw(e.x, 0, lastColumn - e.x + 1, canvas.getSize().y, true);
+				// canvas.redraw(lastColumn, 0, 1, canvas.getSize().y, true);
 				lastColumn = e.x;
 			}
 		}
 	}
-	
+
 	private void createCanvas() {
 		GridData gridData = new GridData();
 		gridData.widthHint = xRes;
@@ -141,13 +142,13 @@ public class Graph extends Composite {
 		canvas.addPaintListener(graphArea);
 		canvas.addMouseMoveListener(new graphXYLabel());
 	}
-	
+
 	static float[] grData = null;
 	private Slider vZoom = null;
 	private Slider vPos = null;
 	private Slider sampleTime = null;
 	private Label info = null;
-	
+
 	public static void plot(float[] data) {
 		grData = data;
 		min = 100;
@@ -158,12 +159,11 @@ public class Graph extends Composite {
 			if (data[i] > max)
 				max = data[i];
 		}
-		
-		ratio = yRes/(max-min);
+
+		ratio = yRes / (max - min);
 		graphArea.setData(data, min, max, ratio);
 		z.widgetSelected(null);
 		canvas.redraw();
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="28,22"
-
+} // @jve:decl-index=0:visual-constraint="28,22"

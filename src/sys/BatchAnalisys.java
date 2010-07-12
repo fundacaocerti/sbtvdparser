@@ -72,22 +72,19 @@ public class BatchAnalisys extends Thread implements Runnable {
 					return;
 				if (files[i].isDirectory() && recursive)
 					parseDir(files[i]);
-				else
-					if (files[i].exists() && files[i].canRead()
-							&& accept(files[i].getName())) {
-						Parameters.batchResults = true;
-						cmdlParams[0] = files[i].getAbsolutePath();
-						Parameters.startParser(cmdlParams);
-						while (Parameters.isAlive())
-							try {
-								sleep(200);
-							} catch (InterruptedException e) {
-							}
-					}
+				else if (files[i].exists() && files[i].canRead() && accept(files[i].getName())) {
+					Parameters.batchResults = true;
+					cmdlParams[0] = files[i].getAbsolutePath();
+					Parameters.startParser(cmdlParams);
+					while (Parameters.isAlive())
+						try {
+							sleep(200);
+						} catch (InterruptedException e) {
+						}
+				}
 			}
 		} else
-			MainPanel.addTreeItem("Diretório "+dir.getAbsolutePath()+"não pode ser lido.", 0);
+			MainPanel.addTreeItem("Diretório " + dir.getAbsolutePath() + "não pode ser lido.", 0);
 	}
 
 }
-

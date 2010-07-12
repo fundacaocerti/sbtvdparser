@@ -55,8 +55,7 @@ public class Log {
 			try {
 				logfile.createNewFile();
 			} catch (IOException e1) {
-				System.err.println("Log file could not be created: ["
-						+ logfile.getAbsolutePath() + "]");
+				System.err.println("Log file could not be created: [" + logfile.getAbsolutePath() + "]");
 				log = System.err;
 				return;
 			}
@@ -64,13 +63,11 @@ public class Log {
 		try {
 			log = new PrintStream(new FileOutputStream(logfile, true));
 			log.println();
-			log.println("Log started at "
-					+ DateFormat.getDateTimeInstance().format(new Date()));
+			log.println("Log started at " + DateFormat.getDateTimeInstance().format(new Date()));
 			if (tsfile != null)
 				log.println("Parsing [" + tsfile.getAbsolutePath() + "]");
 		} catch (IOException e) {
-			System.err.println("Log file could not be written: ["
-					+ logfile.getAbsolutePath() + "]");
+			System.err.println("Log file could not be written: [" + logfile.getAbsolutePath() + "]");
 			log = System.err;
 			return;
 		}
@@ -78,34 +75,33 @@ public class Log {
 
 	public static void printWarning(String msg) {
 		System.out.println(msg);
-//		if (log == null)
-//			createLogFile();
-//		log.println(msg);
-		GuiMethods.runMethod(GuiMethods.ADDTOLOG, new Object[] {msg+"\n\r"}, true);
+		// if (log == null)
+		// createLogFile();
+		// log.println(msg);
+		GuiMethods.runMethod(GuiMethods.ADDTOLOG, new Object[] { msg + "\n\r" }, true);
 	}
 
-//	public static void printStackTrace(Exception e) {
-//		if (log == null)
-//			createLogFile();
-//		log.println();
-//		if (e.getLocalizedMessage() != null)
-//			log.println(e.getLocalizedMessage());
-//		log.println(e.getClass().getName());
-//		StackTraceElement[] ste = e.getStackTrace();
-//		for (int i = 0; i < ste.length; i++)
-//			log.println(ste[i].toString());
-//	}
+	// public static void printStackTrace(Exception e) {
+	// if (log == null)
+	// createLogFile();
+	// log.println();
+	// if (e.getLocalizedMessage() != null)
+	// log.println(e.getLocalizedMessage());
+	// log.println(e.getClass().getName());
+	// StackTraceElement[] ste = e.getStackTrace();
+	// for (int i = 0; i < ste.length; i++)
+	// log.println(ste[i].toString());
+	// }
 	public static void printStackTrace(Exception e) {
 		StringBuffer log = new StringBuffer();
 		log.append("\n");
 		if (e.getLocalizedMessage() != null)
-			log.append(e.getLocalizedMessage()+"\n");
-		log.append(e.getClass().getName()+"\n");
+			log.append(e.getLocalizedMessage() + "\n");
+		log.append(e.getClass().getName() + "\n");
 		StackTraceElement[] ste = e.getStackTrace();
 		for (int i = 0; i < ste.length; i++)
-			log.append(ste[i].toString()+"\n");
+			log.append(ste[i].toString() + "\n");
 		printWarning(log.toString());
 	}
 
 }
-

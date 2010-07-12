@@ -72,7 +72,8 @@ public class FileDropListener implements DropTargetListener {
 
 	public void drop(DropTargetEvent event) {
 		if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
-			if (event.data == null) // Ubuntu+Nautilus puts null data when the source file is in a remote location
+			if (event.data == null) // Ubuntu+Nautilus puts null data when the
+				// source file is in a remote location
 				return;
 			String[] files = (String[]) event.data;
 			Parameters.startParser(new String[] { files[0] });

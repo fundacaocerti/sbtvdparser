@@ -39,8 +39,7 @@ public class ParentalRating extends Descriptor {
 		// for(i=0;i<N;i++){
 		for (int i = 0; i < descriptor_length; i += 4) {
 			// Contry_code 24 Bslbf
-			addSubItem("country_code: " + (char) bw.pop() + (char) bw.pop()
-					+ (char) bw.pop(), level);
+			addSubItem("country_code: " + (char) bw.pop() + (char) bw.pop() + (char) bw.pop(), level);
 			// rating 8
 			int rating = bw.pop();
 			String content = "";
@@ -50,11 +49,9 @@ public class ParentalRating extends Descriptor {
 				content += " Violence";
 			if (BitWise.stripBits(rating, 7, 1) == 1)
 				content += " Sex";
-			String[] age = { "invalid", "Free", "10 years", "12 years",
-					"14 years", "16 years", "18 years", "invalid" };
+			String[] age = { "invalid", "Free", "10 years", "12 years", "14 years", "16 years", "18 years", "invalid" };
 			ratingTxt = age[BitWise.stripBits(rating, 3, 3)] + " - " + content;
 			addSubItem("rating: " + ratingTxt, level);
 		}
 	}
 }
-

@@ -43,20 +43,19 @@ public class Packet extends Thread {
 
 	InputStream bis = null;
 
-	public static long limit = 0, estimate = 0, TEIerrors = 0, byteCount = 0,
-			packetCount = 0, syncLosses = 0;
+	public static long limit = 0, estimate = 0, TEIerrors = 0, byteCount = 0, packetCount = 0, syncLosses = 0;
 
 	public static boolean is204b = false, iipAdded = false;
 
-	int btsPackets = 0, skipSize = 0, customPktCount = 0; 
-	
+	int btsPackets = 0, skipSize = 0, customPktCount = 0;
+
 	public static int realPktLenght = TSP.TS_PACKET_LEN;
 
 	public static int layer = 0;
-	
+
 	final int skipsToSetPktLen = 250;
 	int synclossesToRecalc = 500000;
-	
+
 	int[] skips = new int[skipsToSetPktLen];
 	int[] skipsHisto = new int[skipsToSetPktLen];
 
@@ -85,13 +84,15 @@ public class Packet extends Thread {
 			sync = bis.read();
 			i++;
 		}
-//		if (sync == -1)
-//			counter = limit;
+		// if (sync == -1)
+		// counter = limit;
 		byteCount += i;
 		if (i != 1) {
 			syncLosses++;
 			if (syncLosses % 500 == 0)
-				Log.printWarning("resinc warning (500 re-syncs): " + packetCount+"-"+realPktLenght+"-"+skipSize);
+				Log
+						.printWarning("resinc warning (500 re-syncs): " + packetCount + "-" + realPktLenght + "-"
+								+ skipSize);
 			if (syncLosses > synclossesToRecalc) {
 				customPktCount = 0;
 				synclossesToRecalc += syncLosses;
@@ -101,7 +102,7 @@ public class Packet extends Thread {
 		if (customPktCount < skipsToSetPktLen) {
 			if (i > skipsToSetPktLen)
 				i = skipsToSetPktLen;
-			skips[customPktCount] = i-1;
+			skips[customPktCount] = i - 1;
 			customPktCount++;
 			if (customPktCount == skipsToSetPktLen) {
 				for (int j = 0; j < skipsToSetPktLen; j++)
@@ -112,12 +113,11 @@ public class Packet extends Thread {
 						max = skipsHisto[j];
 						skipSize = j;
 					}
-				
-				realPktLenght = TSP.TS_PACKET_LEN+skipSize;
+
+				realPktLenght = TSP.TS_PACKET_LEN + skipSize;
 				if (realPktLenght % TSP.TS_PACKET_LEN == 0)
 					realPktLenght = TSP.TS_PACKET_LEN;
-				MainPanel.addTreeItem(
-						"Packet lenght set to "+realPktLenght+" bytes.", 0);
+				MainPanel.addTreeItem("Packet lenght set to " + realPktLenght + " bytes.", 0);
 				syncLosses = 0;
 				estimate = (long) (estimate * (float) TSP.TS_PACKET_LEN / realPktLenght);
 				if (skipSize == 16) {
@@ -153,8 +153,7 @@ public class Packet extends Thread {
 				bis.close();
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.printStackTrace(new Exception("dataOffset: "
-						+ TSP.dataOffset));
+				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset));
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
@@ -185,12 +184,13 @@ public class Packet extends Thread {
 					hms[i] = "0" + hms[i];
 				hmsDuration = hmsDuration / 60;
 			}
-			MainPanel.addTreeItem("duration: " + hms[2] + ":" + hms[1] + ":"
-					+ hms[0] + " (" + duration + "s)", 0, MainPanel.STATS_TREE);
+			MainPanel.addTreeItem("duration: " + hms[2] + ":" + hms[1] + ":" + hms[0] + " (" + duration + "s)", 0,
+					MainPanel.STATS_TREE);
 		}
 	}
 
 	public static boolean limitNotReached = true;
+
 	private void mainLoop() throws InterruptedException, IOException {
 		limitNotReached = true;
 		boolean hasBytesToRead;
@@ -205,8 +205,7 @@ public class Packet extends Thread {
 			sp.parseTable();
 			pp.parsePES();
 
-			if (estimate > 100 && !Parameters.noGui
-					&& packetCount % (estimate / 100) == 0)
+			if (estimate > 100 && !Parameters.noGui && packetCount % (estimate / 100) == 0)
 				MainPanel.setProgress((int) (packetCount / (estimate / 100)));
 			hasBytesToRead = byteCount < (estimate * realPktLenght);
 			if (limitNotReached)
@@ -219,8 +218,7 @@ public class Packet extends Thread {
 			if (jump)
 				jump();
 		} while (jump
-				|| (hasBytesToRead && !TableList.tablesCaught()
-						&& (MainPanel.isOpen || Parameters.noGui) && limitNotReached));
+				|| (hasBytesToRead && !TableList.tablesCaught() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached));
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
 		// System.out.println(hasBytesToRead + ","
 		// + !TableList.tablesCaught() + ","
@@ -263,7 +261,7 @@ public class Packet extends Thread {
 	public static boolean isPaused() {
 		return paused;
 	}
-	
+
 	public static void pause(boolean state) {
 		paused = state;
 	}
@@ -276,4 +274,3 @@ public class Packet extends Thread {
 		}
 	}
 }
-

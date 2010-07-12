@@ -78,9 +78,9 @@ public class MenuOpen implements SelectionListener {
 					return;
 				MainPanel.clearTree();
 				String[] parm = new String[] { selected, "-filter", filter, "", "-limitMatches",
-						Integer.toString(qDialog.getFilterLimit())};
+						Integer.toString(qDialog.getFilterLimit()) };
 				if (qDialog.isRegex())
-					parm[3] = "-isRegex"; 
+					parm[3] = "-isRegex";
 				Parameters.startParser(parm);
 			} else {
 				DirectoryDialog fd = new DirectoryDialog(shell, SWT.OPEN);// +SWT.MULTI
@@ -94,27 +94,23 @@ public class MenuOpen implements SelectionListener {
 				if (filter == null || filter.length() == 0)
 					return;
 				MainPanel.clearTree();
-				String[] parm = new String[] { null, "-filter", filter, "", "",
-						"-limitMatches", Integer.toString(qDialog.getFilterLimit())};
+				String[] parm = new String[] { null, "-filter", filter, "", "", "-limitMatches",
+						Integer.toString(qDialog.getFilterLimit()) };
 				if (qDialog.isRegex())
 					parm[3] = "-isRegex";
 				if (!qDialog.listAllFiles())
-					parm[4] = "-listOnlyMatches"; 
+					parm[4] = "-listOnlyMatches";
 				BatchAnalisys ba = new BatchAnalisys(lastDir, qDialog.isRecursive(), parm);
 				ba.start();
 			}
 		}
 	}
 
-	/*private String popQuery() {
-		QueryDialog qDialog = new QueryDialog(shell, false);
-		qDialog.setText("Filtro de resultados");
-		String filter = qDialog.open();
-		System.out.println(qDialog.isRegex());
-		System.out.println(qDialog.isRecursive());
-		System.out.println(qDialog.getFilterLimit());
-		return filter;
-	}*/
+	/*
+	 * private String popQuery() { QueryDialog qDialog = new QueryDialog(shell,
+	 * false); qDialog.setText("Filtro de resultados"); String filter =
+	 * qDialog.open(); System.out.println(qDialog.isRegex());
+	 * System.out.println(qDialog.isRecursive());
+	 * System.out.println(qDialog.getFilterLimit()); return filter; }
+	 */
 }
-
-

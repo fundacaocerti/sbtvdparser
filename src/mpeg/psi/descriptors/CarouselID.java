@@ -38,6 +38,6 @@ public class CarouselID extends Descriptor {
 		if (fid == 0)
 			addSubItem("No FormatSpecifier - the location of the ServiceGateway is through DSI and DII", fidLvl);
 		else
-			addSubItem("TODO: parse the FormatSpecifier: "+bw.getHexSequence(descriptor_length-5), fidLvl);
+			addSubItem("TODO: parse the FormatSpecifier: " + bw.getHexSequence(descriptor_length - 5), fidLvl);
 	}
 }

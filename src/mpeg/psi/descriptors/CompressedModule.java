@@ -33,7 +33,7 @@ public class CompressedModule extends DSMCCDescriptor {
 		int level = addSubItem(name, tableIndx);
 		addSubItem("descriptor_length: " + descriptor_length, level);
 		int cmp = bw.pop();
-		addSubItem("compression_method: " + BitWise.toHex(cmp) +((cmp == 8) ? " ZLIB" : " unknown"), level);
+		addSubItem("compression_method: " + BitWise.toHex(cmp) + ((cmp == 8) ? " ZLIB" : " unknown"), level);
 		int origZize = bw.pop32();
 		addSubItem("original_size: " + BitWise.toHex(origZize), level);
 		if (cmp == 8) {

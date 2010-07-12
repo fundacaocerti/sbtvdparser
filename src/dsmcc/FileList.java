@@ -24,38 +24,38 @@ package dsmcc;
 import java.util.Vector;
 
 public class FileList {
-	
+
 	Vector contentList = new Vector();
-	
+
 	private byte[] svcGatewayObjKey = null;
-	
+
 	public DSMCCObject getRoot() {
 		return getByObjKey(svcGatewayObjKey);
 	}
-	
+
 	public void reset() {
 		contentList.removeAllElements();
 	}
-	
+
 	public void add(DSMCCObject file) {
 		contentList.add(file);
 	}
-	
+
 	public DSMCCObject getByObjKey(byte[] objKey) {
 		for (int i = 0; i < contentList.size(); i++)
-			if (((DSMCCObject)contentList.get(i)).isTheSame(objKey))
-				return (DSMCCObject)contentList.get(i);
+			if (((DSMCCObject) contentList.get(i)).isTheSame(objKey))
+				return (DSMCCObject) contentList.get(i);
 		return null;
 	}
-	
-//	public void mkDir(byte[] objKey) {
-//		DSMCCFile f = getByObjKey(objKey);
-//		if (f == null) {
-//			f = new DSMCCDir(objKey);
-//			add(f);
-//		}
-//	}
-	
+
+	// public void mkDir(byte[] objKey) {
+	// DSMCCFile f = getByObjKey(objKey);
+	// if (f == null) {
+	// f = new DSMCCDir(objKey);
+	// add(f);
+	// }
+	// }
+
 	public DSMCCObject setName(byte[] objKey, String name) {
 		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
@@ -65,7 +65,7 @@ public class FileList {
 		f.setName(name);
 		return f;
 	}
-	
+
 	public void setContent(byte[] objKey, byte[] contents, int startOffset, int lenght) {
 		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
@@ -88,4 +88,3 @@ public class FileList {
 		this.svcGatewayObjKey = svcGatewayObjKey;
 	}
 }
-

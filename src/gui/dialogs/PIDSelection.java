@@ -21,7 +21,6 @@
  */
 package gui.dialogs;
 
-
 import gui.Graph;
 
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,11 +35,10 @@ public class PIDSelection implements SelectionListener {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		int selIndx = ((Combo)e.getSource()).getSelectionIndex();
-//		int pid = PIDStats.getPid(selIndx);
+		int selIndx = ((Combo) e.getSource()).getSelectionIndex();
+		// int pid = PIDStats.getPid(selIndx);
 		float[] bitrates = PIDStats.getBitrates(selIndx);
 		Graph.plot(bitrates);
 	}
 
 }
-

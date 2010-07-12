@@ -26,9 +26,7 @@ public class SpecialSemantic {
 	public static String parseNetworkID(int id) {
 		if (id > 5000)
 			return "0x" + Integer.toHexString(id);
-		return "0x" + Integer.toHexString(id) + " (ZY"
-				+ "ABPQT".charAt(id / 1000) + (id % 1000) + ")";
+		return "0x" + Integer.toHexString(id) + " (ZY" + "ABPQT".charAt(id / 1000) + (id % 1000) + ")";
 	}
 
 }
-
