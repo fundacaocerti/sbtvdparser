@@ -30,6 +30,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 import sys.BitWise;
+import sys.Messages;
 
 public class Module {
 	int id, version, lenght, remainingParts, treeLvl, origSize;
@@ -48,7 +49,7 @@ public class Module {
 		data = new byte[lenght];
 		remainingParts = lenght / 4066 + 1;
 		receivedParts = new boolean[remainingParts];
-		partLvl = MainPanel.addTreeItem("parts: " + remainingParts, treeLvl);
+		partLvl = MainPanel.addTreeItem(Messages.getString("Module.parts") + remainingParts, treeLvl); //$NON-NLS-1$
 	}
 
 	public int getId() {
@@ -60,7 +61,7 @@ public class Module {
 	}
 
 	public String toString() {
-		return "000" + Integer.toHexString(id);
+		return "000" + Integer.toHexString(id); //$NON-NLS-1$
 	}
 
 	public void save(File f) {
@@ -83,7 +84,7 @@ public class Module {
 	public void feedPart(byte[] data, int dataOffset, int dataLenght, int blockNumber, int partLvl) {
 		if (remainingParts == 0 || blockNumber >= receivedParts.length || receivedParts[blockNumber])
 			return;
-		MainPanel.addTreeItem("part: " + blockNumber + " size: " + dataLenght, partLvl);
+		MainPanel.addTreeItem(Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
 		// MainPanel.addTreeItem("["+
 		// printHex(contents, startOffset, startOffset+4);
 		// System.out.print("...");
@@ -93,8 +94,8 @@ public class Module {
 		// System.out.print("\tsize: "+Integer.toHexString(lenght));
 		// System.out.println("\tfeed: do="+dataOffset+" dl="+dataLenght+" bn="+blockNumber);
 		if ((data.length < dataOffset + dataLenght) || (this.data.length < blockNumber * 4066 + dataLenght)) {
-			System.out.println("Module " + id + " data feed err: inserting " + dataLenght + "b of " + data.length
-					+ "b buffer from " + dataOffset + " into " + this.data.length + "b dest. at " + blockNumber * 4066
+			System.out.println("Module " + id + " data feed err: inserting " + dataLenght + "b of " + data.length //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ "b buffer from " + dataOffset + " into " + this.data.length + "b dest. at " + blockNumber * 4066 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					+ dataLenght);
 			return;
 		}
@@ -102,7 +103,7 @@ public class Module {
 		remainingParts--;
 		receivedParts[blockNumber] = true;
 		if (remainingParts == 0) {
-			System.out.println("Module complete");
+			System.out.println("Module complete"); //$NON-NLS-1$
 			if (origSize != lenght) {
 				Inflater decompresser = new Inflater();
 				decompresser.setInput(this.data, 0, lenght);

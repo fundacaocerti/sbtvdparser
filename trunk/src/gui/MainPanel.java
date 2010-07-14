@@ -90,6 +90,7 @@ import parsers.Parameters;
 import sys.CRC32;
 import sys.Log;
 import sys.LogicTree;
+import sys.Messages;
 
 public class MainPanel {
 
@@ -179,14 +180,14 @@ public class MainPanel {
 		bitrateArea = new Group(tabFolder, SWT.BORDER);
 		brGraph = new Graph(bitrateArea, SWT.BORDER);
 		brGraph.setBounds(new Rectangle(3, 28, 288, 211));
-		bitrateArea.setText("Gráficos de bitrates para PIDs relevantes");
+		bitrateArea.setText(Messages.getString("MainPanel.grafTitle")); //$NON-NLS-1$
 		// brGraph.setLayoutData(gridData);
 		createPidSelector();
 		pidLabel = new CLabel(bitrateArea, SWT.NONE);
-		pidLabel.setText("PID para análise:");
+		pidLabel.setText(Messages.getString("MainPanel.pid")); //$NON-NLS-1$
 		pidLabel.setBounds(new Rectangle(3, 268, 93, 19));
 		graphInfo = new CLabel(bitrateArea, SWT.NONE);
-		graphInfo.setText("0.0Mbps - 20.0s");
+		graphInfo.setText("0.0Mbps - 20.0s"); //$NON-NLS-1$
 		graphInfo.setBounds(new Rectangle(3, 238, 289, 23));
 
 		createStatsGroup();
@@ -205,13 +206,13 @@ public class MainPanel {
 		logTab = new TabItem(tabFolder, SWT.NULL);
 		graphTab = new TabItem(tabFolder, SWT.NULL);
 
-		psiTab.setText("Estrutura");
-		epgTab.setText("EPG");
-		statsTab.setText("Stats");
-		ccTab.setText("Caption");
-		dsmccTab.setText("DSM-CC");
-		logTab.setText("Log");
-		graphTab.setText("Bitrates");
+		psiTab.setText(Messages.getString("MainPanel.struct")); //$NON-NLS-1$
+		epgTab.setText(Messages.getString("MainPanel.epg")); //$NON-NLS-1$
+		statsTab.setText(Messages.getString("MainPanel.stats")); //$NON-NLS-1$
+		ccTab.setText(Messages.getString("MainPanel.caption")); //$NON-NLS-1$
+		dsmccTab.setText(Messages.getString("MainPanel.dsmcc")); //$NON-NLS-1$
+		logTab.setText(Messages.getString("MainPanel.log")); //$NON-NLS-1$
+		graphTab.setText(Messages.getString("MainPanel.bitrates")); //$NON-NLS-1$
 
 		psiTab.setControl(mainTree);
 		epgTab.setControl(epgTree);
@@ -255,7 +256,7 @@ public class MainPanel {
 		statsTree.setLayoutData(gridData);
 
 		pidStats = new Group(statsGroup, SWT.V_SCROLL);
-		pidStats.setText("PID bitrates");
+		pidStats.setText(Messages.getString("MainPanel.pidRates")); //$NON-NLS-1$
 		pidStats.setLayoutData(gridData3);
 		pidStats.setLayout(gridLayout1);
 	}
@@ -271,6 +272,7 @@ public class MainPanel {
 	}
 
 	public static void main(String[] cmdArgs) {
+		Messages.load();
 		try {
 			MainPanel thisClass = null;
 			// if (cmdArgs.length == 0)
@@ -317,63 +319,62 @@ public class MainPanel {
 		gridLayout.numColumns = 5;
 
 		sShell = new Shell();
-		sShell.setText("SBTVD Stream Parser");
+		sShell.setText(Messages.getString("MainPanel.shellTitle")); //$NON-NLS-1$
 		sShell.setLayout(gridLayout);
 		sShell.setSize(new Point(800, 600));
 
 		menuBar = new Menu(sShell, SWT.BAR);
 		sShell.setMenuBar(menuBar);
 		MenuItem file = new MenuItem(menuBar, SWT.CASCADE);
-		file.setText("&Arquivo");
+		file.setText(Messages.getString("MainPanel.fileMenu")); //$NON-NLS-1$
 		final Menu fileMenu = new Menu(sShell, SWT.DROP_DOWN);
 		file.setMenu(fileMenu);
 
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
 		MenuItem openFilterItem = new MenuItem(fileMenu, SWT.PUSH);
-		openItem.setText("&Abrir\tCTRL+A");
+		openItem.setText(Messages.getString("MainPanel.open")); //$NON-NLS-1$
 		openItem.setAccelerator(SWT.CTRL + 'A');
 		MenuOpen openFileListener = new MenuOpen(sShell, openItem, openFilterItem);
 		openItem.addSelectionListener(openFileListener);
 
-		openFilterItem.setText("Abrir e &Filtrar\tCTRL+F");
+		openFilterItem.setText(Messages.getString("MainPanel.openFilter")); //$NON-NLS-1$
 		openFilterItem.setAccelerator(SWT.CTRL + 'F');
 		openFilterItem.addSelectionListener(openFileListener);
 
 		MenuItem openDirItem = new MenuItem(fileMenu, SWT.PUSH);
-		openDirItem.setText("Analisar &Diretório\tCTRL+D");
+		openDirItem.setText(Messages.getString("MainPanel.openDir")); //$NON-NLS-1$
 		openDirItem.setAccelerator(SWT.CTRL + 'D');
 		openDirItem.addSelectionListener(openFileListener);
 
 		MenuItem saveItem = new MenuItem(fileMenu, SWT.PUSH);
-		saveItem.setText("&Salvar\tCTRL+S");
+		saveItem.setText(Messages.getString("MainPanel.save")); //$NON-NLS-1$
 		saveItem.setAccelerator(SWT.CTRL + 'S');
 		MenuSave saveFileListener = new MenuSave(sShell);
 
 		MenuItem about = new MenuItem(fileMenu, SWT.PUSH);
-		about.setText("S&obre");
+		about.setText(Messages.getString("MainPanel.about")); //$NON-NLS-1$
 		about.addSelectionListener(new MenuAbout(sShell));
 
 		limitLabel = new CLabel(sShell, SWT.NONE);
-		limitLabel.setText("Limite:");
+		limitLabel.setText(Messages.getString("MainPanel.limit")); //$NON-NLS-1$
 		inputLimit = new Text(sShell, SWT.BORDER);
-		inputLimit
-				.setToolTipText("Limita o número de pacotes (TSP) a serem lidos da stream. Use 0 ou vazio para ler o arquivo completo.");
+		inputLimit.setToolTipText(Messages.getString("MainPanel.limitTip")); //$NON-NLS-1$
 		inputLimit.setTextLimit(10);
 		btPause = new Button(sShell, SWT.NONE);
-		InputStream isPause = this.getClass().getClassLoader().getResourceAsStream("res/bot_pause.png");
+		InputStream isPause = this.getClass().getClassLoader().getResourceAsStream("res/bot_pause.png"); //$NON-NLS-1$
 		imPause = new Image(Display.getCurrent(), isPause);
 		btPause.setImage(imPause);
-		btPause.setToolTipText("Pausar");
+		btPause.setToolTipText(Messages.getString("MainPanel.pauseTip")); //$NON-NLS-1$
 		btPause.setEnabled(false);
 		btPause.addSelectionListener(new ButtonListener());
 		btStop = new Button(sShell, SWT.NONE);
-		InputStream isStop = this.getClass().getClassLoader().getResourceAsStream("res/bot_stop.png");
+		InputStream isStop = this.getClass().getClassLoader().getResourceAsStream("res/bot_stop.png"); //$NON-NLS-1$
 		imStop = new Image(Display.getCurrent(), isStop);
 		btStop.setImage(imStop);
-		btStop.setToolTipText("Parar");
+		btStop.setToolTipText(Messages.getString("MainPanel.stopTip")); //$NON-NLS-1$
 		btStop.setEnabled(false);
 		btStop.addSelectionListener(new ButtonListener());
-		InputStream isPlay = this.getClass().getClassLoader().getResourceAsStream("res/bot_play.png");
+		InputStream isPlay = this.getClass().getClassLoader().getResourceAsStream("res/bot_play.png"); //$NON-NLS-1$
 		imPlay = new Image(Display.getCurrent(), isPlay);
 		progressBar = new ProgressBar(sShell, SWT.SMOOTH);
 		progressBar.setMaximum(100);
@@ -538,7 +539,7 @@ public class MainPanel {
 			items.removeAllElements();
 		}
 		for (int i = 0; i < trees.length; i++)
-			trees[i] = new LogicTree("root", null, 0);
+			trees[i] = new LogicTree("root", null, 0); //$NON-NLS-1$
 		// TableList.resetList();
 		GuiMethods.runMethod(GuiMethods.SETPROGRESSBAR, new Integer(0), false);
 		PIDStats.clear();
@@ -551,7 +552,7 @@ public class MainPanel {
 				f.delete();
 			f.createNewFile();
 			FileOutputStream fos = new FileOutputStream(f);
-			if (filePth.endsWith("htm"))
+			if (filePth.endsWith("htm")) //$NON-NLS-1$
 				trees[PSI_TREE].printBonsai(fos);
 			else
 				trees[PSI_TREE].print(fos);
@@ -599,7 +600,7 @@ public class MainPanel {
 
 	public static void setFilterAsRegex() {
 		filterIsRegex = true;
-		System.out.println("filterIsRegex " + filterIsRegex);
+		System.out.println("filterIsRegex " + filterIsRegex); //$NON-NLS-1$
 	}
 
 	public static void listOnlyMatches() {

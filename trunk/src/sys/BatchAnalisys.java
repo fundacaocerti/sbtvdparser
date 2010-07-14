@@ -84,7 +84,7 @@ public class BatchAnalisys extends Thread implements Runnable {
 				}
 			}
 		} else
-			MainPanel.addTreeItem("Diretório " + dir.getAbsolutePath() + "não pode ser lido.", 0);
+			MainPanel.addTreeItem(Messages.getString("BatchAnalisys.dir") + dir.getAbsolutePath() + Messages.getString("BatchAnalisys.readErr"), 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

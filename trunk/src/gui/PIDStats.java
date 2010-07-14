@@ -39,8 +39,8 @@ public class PIDStats {
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 		Label label = new Label(MainPanel.pidStats, SWT.NONE);
-		String pidText = "000" + Integer.toHexString(pid);
-		pidText = "0x" + pidText.substring(pidText.length() - 4, pidText.length());
+		String pidText = "000" + Integer.toHexString(pid); //$NON-NLS-1$
+		pidText = "0x" + pidText.substring(pidText.length() - 4, pidText.length()); //$NON-NLS-1$
 		label.setText(pidText);
 		ProgressBar pb = new ProgressBar(MainPanel.pidStats, SWT.SMOOTH);
 		pb.setMaximum(maxPercent);
@@ -51,7 +51,7 @@ public class PIDStats {
 		MainPanel.statsTree.pack(true);
 		MainPanel.statsGroup.pack(true);
 		MainPanel.scrComp.setMinSize(400, 100 + barCount * 24);
-		MainPanel.pidSelector.add(pidText + " - " + name);
+		MainPanel.pidSelector.add(pidText + " - " + name); //$NON-NLS-1$
 	}
 
 	// public static void scaleBars() {

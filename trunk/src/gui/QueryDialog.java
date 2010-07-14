@@ -37,6 +37,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import sys.Messages;
+
 public class QueryDialog extends Dialog implements SelectionListener, KeyListener {
 
 	public QueryDialog(Shell parent, boolean showDirOptions) {
@@ -84,7 +86,7 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 			sShell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 			sShell.setLocation(getParent().getLocation().x + 50, getParent().getLocation().y + 50);
 		}
-		sShell.setText("Filtro de resultados");
+		sShell.setText(Messages.getString("QueryDialog.resFilter")); //$NON-NLS-1$
 
 		GridData gridData4 = new GridData();
 		gridData4.horizontalAlignment = org.eclipse.swt.layout.GridData.END;
@@ -107,26 +109,26 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 4;
-		sShell.setText("Shell");
+		sShell.setText(Messages.getString("QueryDialog.shelltitle")); //$NON-NLS-1$
 		sShell.setLayout(gridLayout);
 		ftrLabel = new Label(sShell, SWT.NONE);
-		ftrLabel.setText("Filtro");
+		ftrLabel.setText(Messages.getString("QueryDialog.filter")); //$NON-NLS-1$
 		ftrLabel.setLayoutData(gridData4);
 		filter = new Text(sShell, SWT.BORDER);
 		filter.setLayoutData(gridData2);
 		regLabel = new Label(sShell, SWT.NONE);
-		regLabel.setText("Filtro é uma regex");
+		regLabel.setText(Messages.getString("QueryDialog.isRegex")); //$NON-NLS-1$
 		regLabel.setLayoutData(gridData3);
 		regex = new Button(sShell, SWT.CHECK);
 		regex.setSelection(false);
 		maxLabel = new Label(sShell, SWT.RIGHT);
-		maxLabel.setText("Lim. resultados");
+		maxLabel.setText(Messages.getString("QueryDialog.limit")); //$NON-NLS-1$
 		maxLabel.setLayoutData(gridData11);
 		maxResults = new Text(sShell, SWT.BORDER);
 		maxResults.setTextLimit(3);
-		maxResults.setText("1");
+		maxResults.setText("1"); //$NON-NLS-1$
 		maxResults.setLayoutData(gridData1);
-		maxResults.setToolTipText("Use 0 to grab all occurences.");
+		maxResults.setToolTipText(Messages.getString("QueryDialog.limitTip")); //$NON-NLS-1$
 		maxResults.addListener(SWT.Verify, new Listener() {
 			public void handleEvent(Event e) {
 				Text t = (Text) e.widget;
@@ -150,10 +152,10 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 		filter.addKeyListener(this);
 
 		labelList = new Label(sShell, SWT.NONE);
-		labelList.setText("Listar os arquivos");
+		labelList.setText(Messages.getString("QueryDialog.listFiles")); //$NON-NLS-1$
 		chkListAllFiles = new Button(sShell, SWT.CHECK);
 		recLabel = new Label(sShell, SWT.NONE);
-		recLabel.setText("Incluir sub-diretórios");
+		recLabel.setText(Messages.getString("QueryDialog.incSubDirs")); //$NON-NLS-1$
 		recLabel.setLayoutData(gridData21);
 		recursive = new Button(sShell, SWT.CHECK);
 
@@ -165,7 +167,7 @@ public class QueryDialog extends Dialog implements SelectionListener, KeyListene
 		}
 
 		okButton = new Button(sShell, SWT.NONE);
-		okButton.setText("OK");
+		okButton.setText(Messages.getString("QueryDialog.ok")); //$NON-NLS-1$
 		okButton.setLayoutData(gridData);
 		okButton.addSelectionListener(this);
 		sShell.pack();

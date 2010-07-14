@@ -37,6 +37,7 @@ import mpeg.psi.TableList;
 import org.eclipse.swt.SWT;
 
 import sys.Log;
+import sys.Messages;
 import sys.PIDStats;
 
 public class Packet extends Thread {
@@ -91,12 +92,12 @@ public class Packet extends Thread {
 			syncLosses++;
 			if (syncLosses % 500 == 0)
 				Log
-						.printWarning("resinc warning (500 re-syncs): " + packetCount + "-" + realPktLenght + "-"
+						.printWarning(Messages.getString("Packet.warning") + packetCount + "-" + realPktLenght + "-" //$NON-NLS-1$
 								+ skipSize);
 			if (syncLosses > synclossesToRecalc) {
 				customPktCount = 0;
 				synclossesToRecalc += syncLosses;
-				Log.printWarning("Too many sync losses, trying to re-calc packet lenght");
+				Log.printWarning(Messages.getString("Packet.syncloss")); //$NON-NLS-1$
 			}
 		}
 		if (customPktCount < skipsToSetPktLen) {
@@ -117,12 +118,12 @@ public class Packet extends Thread {
 				realPktLenght = TSP.TS_PACKET_LEN + skipSize;
 				if (realPktLenght % TSP.TS_PACKET_LEN == 0)
 					realPktLenght = TSP.TS_PACKET_LEN;
-				MainPanel.addTreeItem("Packet lenght set to " + realPktLenght + " bytes.", 0);
+				MainPanel.addTreeItem(Messages.getString("Packet.set") + realPktLenght + " bytes.", 0); //$NON-NLS-1$
 				syncLosses = 0;
 				estimate = (long) (estimate * (float) TSP.TS_PACKET_LEN / realPktLenght);
 				if (skipSize == 16) {
 					is204b = true;
-					MainPanel.addTreeItem("Layer info available.", 0);
+					MainPanel.addTreeItem(Messages.getString("Packet.layer"), 0); //$NON-NLS-1$
 				}
 			}
 		}
@@ -173,7 +174,7 @@ public class Packet extends Thread {
 			return;
 		PIDStats.printStats(bitrate);
 		if (!Float.isInfinite(TOT.lastBitrate)) {
-			MainPanel.addTreeItem("TS bitrate: " + bitrate + " Mbps", 0, MainPanel.STATS_TREE);
+			MainPanel.addTreeItem(Messages.getString("Packet.bitrate") + bitrate + " Mbps", 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			// MainPanel.addTreeItem("TS packets: " + packetCounter, 0);
 			int duration = (int) ((float) packetCount / bitrate * realPktLenght * 8 / 1e6);
 			String[] hms = new String[3];
@@ -184,7 +185,7 @@ public class Packet extends Thread {
 					hms[i] = "0" + hms[i];
 				hmsDuration = hmsDuration / 60;
 			}
-			MainPanel.addTreeItem("duration: " + hms[2] + ":" + hms[1] + ":" + hms[0] + " (" + duration + "s)", 0,
+			MainPanel.addTreeItem(Messages.getString("Packet.duration") + hms[2] + ":" + hms[1] + ":" + hms[0] + " (" + duration + "s)", 0, //$NON-NLS-1$
 					MainPanel.STATS_TREE);
 		}
 	}

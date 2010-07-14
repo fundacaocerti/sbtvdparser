@@ -30,6 +30,7 @@ import mpeg.psi.DSMCC;
 import mpeg.psi.descriptors.DSMCCDescriptorList;
 import sys.BitWise;
 import sys.Log;
+import sys.Messages;
 
 public class ModuleList {
 
@@ -69,7 +70,7 @@ public class ModuleList {
 	public void mountFS() {
 		DSMCCObject root = fileList.getRoot();
 		if (root != null) {
-			root.name = "Carrossel " + BitWise.toHex(parent.downloadId);
+			root.name = Messages.getString("ModuleList.carousel") + BitWise.toHex(parent.downloadId); //$NON-NLS-1$
 			root.mountTree(parent.progressLvl);
 		}
 		fileList.reset();
@@ -100,7 +101,7 @@ public class ModuleList {
 		if (!cacheList.contains(mc))
 			cacheList.add(mc);
 		else
-			System.out.println("já no cache");
+			System.out.println("já no cache"); //$NON-NLS-1$
 	}
 
 	public void save(File f) {
@@ -114,40 +115,40 @@ public class ModuleList {
 	}
 
 	public String toString() {
-		return "ModuleList " + BitWise.toHex(parent.downloadId);
+		return "ModuleList " + BitWise.toHex(parent.downloadId); //$NON-NLS-1$
 	}
 
 	public void createModule(BitWise bw, int treeLvl) {
 		bw.printBuffer(bw.getAbsolutePosition(), bw.getAbsolutePosition() + 6);
 		int moduleId = bw.pop16();
-		int aModuleLvl = MainPanel.addTreeItem("moduleId: " + BitWise.toHex(moduleId), treeLvl);
+		int aModuleLvl = MainPanel.addTreeItem("moduleId: " + BitWise.toHex(moduleId), treeLvl); //$NON-NLS-1$
 		int moduleSize = bw.pop16() << 16 | bw.pop16();
 		if (moduleSize > 0xa00000 || moduleSize < 0) {
-			Log.printWarning("DSMCC module is too large (>1Mb) - not creating");
+			Log.printWarning(Messages.getString("ModuleList.tooLarge")); //$NON-NLS-1$
 			return;
 		}
 		if (moduleSize == 0)
 			increaseCompleted();
 		parent.updateDlSize(moduleSize);
-		MainPanel.addTreeItem("moduleSize: " + BitWise.toHex(moduleSize), aModuleLvl);
+		MainPanel.addTreeItem(Messages.getString("ModuleList.size") + BitWise.toHex(moduleSize), aModuleLvl); //$NON-NLS-1$
 		int moduleVersion = bw.pop();
-		MainPanel.addTreeItem("moduleVersion: " + BitWise.toHex(moduleVersion), aModuleLvl);
+		MainPanel.addTreeItem(Messages.getString("ModuleList.version") + BitWise.toHex(moduleVersion), aModuleLvl); //$NON-NLS-1$
 
 		int moduleInfoLength = bw.pop();
-		int miLvl = MainPanel.addTreeItem("moduleInfo: lenght " + BitWise.toHex(moduleInfoLength), aModuleLvl);
-		MainPanel.addTreeItem("ModuleTimeOut: " + BitWise.toHex(bw.pop32()), miLvl);
-		MainPanel.addTreeItem("BlockTimeOut: " + BitWise.toHex(bw.pop32()), miLvl);
-		MainPanel.addTreeItem("MinBlockTime: " + BitWise.toHex(bw.pop32()), miLvl);
+		int miLvl = MainPanel.addTreeItem(Messages.getString("ModuleList.lenght") + BitWise.toHex(moduleInfoLength), aModuleLvl); //$NON-NLS-1$
+		MainPanel.addTreeItem("ModuleTimeOut: " + BitWise.toHex(bw.pop32()), miLvl); //$NON-NLS-1$
+		MainPanel.addTreeItem("BlockTimeOut: " + BitWise.toHex(bw.pop32()), miLvl); //$NON-NLS-1$
+		MainPanel.addTreeItem("MinBlockTime: " + BitWise.toHex(bw.pop32()), miLvl); //$NON-NLS-1$
 		int taps = bw.pop();
-		int tapLvl = MainPanel.addTreeItem("taps_count: " + taps, miLvl);
+		int tapLvl = MainPanel.addTreeItem("taps_count: " + taps, miLvl); //$NON-NLS-1$
 		for (int i = 0; i < taps; i++) {
-			int aTapLvl = MainPanel.addTreeItem("id: " + BitWise.toHex(bw.pop16()), tapLvl);
-			MainPanel.addTreeItem("use: " + BitWise.toHex(bw.pop16()), aTapLvl);
-			MainPanel.addTreeItem("association_tag: " + BitWise.toHex(bw.pop16()), aTapLvl);
-			MainPanel.addTreeItem("selector_length: " + BitWise.toHex(bw.pop()), aTapLvl);
+			int aTapLvl = MainPanel.addTreeItem("id: " + BitWise.toHex(bw.pop16()), tapLvl); //$NON-NLS-1$
+			MainPanel.addTreeItem("use: " + BitWise.toHex(bw.pop16()), aTapLvl); //$NON-NLS-1$
+			MainPanel.addTreeItem("association_tag: " + BitWise.toHex(bw.pop16()), aTapLvl); //$NON-NLS-1$
+			MainPanel.addTreeItem("selector_length: " + BitWise.toHex(bw.pop()), aTapLvl); //$NON-NLS-1$
 		}
 		int userInfoLength = bw.pop();
-		int uiLvl = MainPanel.addTreeItem("userInfo: lenght " + BitWise.toHex(userInfoLength), aModuleLvl);
+		int uiLvl = MainPanel.addTreeItem(Messages.getString("ModuleList.userLenght") + BitWise.toHex(userInfoLength), aModuleLvl); //$NON-NLS-1$
 
 		// for(i=0,i<N,i++){ uimsbf
 		// descriptor()

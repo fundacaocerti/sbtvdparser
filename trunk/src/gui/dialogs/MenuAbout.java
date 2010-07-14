@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
+import sys.Messages;
+
 public class MenuAbout extends Dialog implements SelectionListener {
 
 	private Label imageLabel = null;
@@ -64,12 +66,12 @@ public class MenuAbout extends Dialog implements SelectionListener {
 			sShell.close();
 		try {
 			if (e.widget == warrantyLink)
-				java.awt.Desktop.getDesktop().browse(new URI("http://www.gnu.org/licenses/gpl.html#section15"));
+				java.awt.Desktop.getDesktop().browse(new URI("http://www.gnu.org/licenses/gpl.html#section15")); //$NON-NLS-1$
 			if (e.widget == condLink) {
 				Desktop desk = Desktop.getDesktop();
 				if (!java.awt.Desktop.isDesktopSupported())
 					return;
-				File license = new File("COPYNG.txt");
+				File license = new File("COPYNG.txt"); //$NON-NLS-1$
 				System.out.println(license.getAbsolutePath());
 				if (license.exists() && license.canRead())
 					try {
@@ -79,7 +81,7 @@ public class MenuAbout extends Dialog implements SelectionListener {
 					}
 			}
 			if (e.widget == certiLink)
-				java.awt.Desktop.getDesktop().browse(new URI("http://www.certi.org.br"));
+				java.awt.Desktop.getDesktop().browse(new URI("http://www.certi.org.br")); //$NON-NLS-1$
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (URISyntaxException f) {
@@ -104,6 +106,8 @@ public class MenuAbout extends Dialog implements SelectionListener {
 	}
 
 	private void initialize() {
+		GridData gridData1 = new GridData();
+		gridData1.horizontalAlignment = org.eclipse.swt.layout.GridData.END;
 		GridData gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		GridData infoImgGd = new GridData();
@@ -117,7 +121,7 @@ public class MenuAbout extends Dialog implements SelectionListener {
 		gridLayout.numColumns = 3;
 		infoImgGd.widthHint = 60;
 		info1gd.horizontalSpan = 1;
-		info1gd.widthHint = 250;
+		info1gd.widthHint = 300;
 		info1gd.horizontalAlignment = org.eclipse.swt.layout.GridData.CENTER;
 		wrLinkGd.horizontalSpan = 3;
 		condLinkGd.horizontalSpan = 3;
@@ -136,37 +140,38 @@ public class MenuAbout extends Dialog implements SelectionListener {
 		imageLabel.setImage(sShell.getDisplay().getSystemImage(SWT.ICON_WORKING));
 		imageLabel.setLayoutData(infoImgGd);
 		infoLabel = new Label(sShell, SWT.NONE);
-		infoLabel.setText("SBTVD Transport Stream Parser v0.2\n" + "Copyright © 2010 Gabriel A. G. Marques\n"
-				+ "gabriel.marques@gmail.com");
+		infoLabel.setText("SBTVD Transport Stream Parser v0.21\n" + "Copyright © 2010 Gabriel A. G. Marques\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "gabriel.marques@gmail.com"); //$NON-NLS-1$
 		infoLabel.setLayoutData(info1gd);
 		gplImg = new Label(sShell, SWT.NONE);
 		// License GPLv3+: GNU GPL version 3 or later
 		// <http://gnu.org/licenses/gpl.html>
 		certiLink = new Link(sShell, SWT.NONE);
-		certiLink.setText("Initial development kindly supported by <a>CERTI Foundation</a>");
+		certiLink.setText(Messages.getString("MenuAbout.certi")); //$NON-NLS-1$
 		certiLink.setLayoutData(gridData);
 		certiLink.addSelectionListener(this);
 		certiLogoLabel = new Label(sShell, SWT.NONE);
-		certiLogoLabel.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream("/res/certi.png")));
+		certiLogoLabel.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream("/res/certi.png"))); //$NON-NLS-1$
+		certiLogoLabel.setLayoutData(gridData1);
 		warrantyLink = new Link(sShell, SWT.NONE);
-		warrantyLink.setText("This program comes with <a>ABSOLUTELY NO WARRANTY.</a>");
+		warrantyLink.setText(Messages.getString("MenuAbout.warranty")); //$NON-NLS-1$
 		warrantyLink.setLayoutData(wrLinkGd);
 		warrantyLink.addSelectionListener(this);
-		gplImg.setText("Label");
-		gplImg.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream("/res/gplv3-88x31.png")));
+		gplImg.setText("Label"); //$NON-NLS-1$
+		gplImg.setImage(new Image(Display.getCurrent(), getClass().getResourceAsStream("/res/gplv3-88x31.png"))); //$NON-NLS-1$
 		gplImg.setLayoutData(gplGd);
 		condLink = new Link(sShell, SWT.NONE);
-		condLink.setText("This is free software, and you are welcome to redistribute "
-				+ "it under <a>certain conditions.</a>");
+		condLink.setText(Messages.getString("MenuAbout.free") //$NON-NLS-1$
+				+ "\n" + Messages.getString("MenuAbout.freeLn2")); //$NON-NLS-1$
 		condLink.setLayoutData(condLinkGd);
 		condLink.addSelectionListener(this);
 		btOK = new Button(sShell, SWT.NONE);
-		btOK.setText("OK");
+		btOK.setText(Messages.getString("MenuAbout.ok")); //$NON-NLS-1$
 		btOK.setLayoutData(btOkGd);
 		btOK.addSelectionListener(this);
 		sShell.setLayout(gridLayout);
-		sShell.setSize(new Point(428, 199));
-		sShell.setText("Sobre");
+		sShell.setSize(new Point(553, 244));
+		sShell.setText(Messages.getString("MenuAbout.about")); //$NON-NLS-1$
 		sShell.pack();
 	}
 

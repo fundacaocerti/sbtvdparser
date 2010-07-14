@@ -23,6 +23,7 @@ package mpeg.pes;
 
 import gui.MainPanel;
 import sys.BitWise;
+import sys.Messages;
 
 public class PES {
 
@@ -42,13 +43,13 @@ public class PES {
 		bw = new BitWise(source);
 		bw.setOffset(srcOffset);
 		if (bw.pop() != 0 & bw.pop() != 0 & bw.pop() != 1) {
-			System.out.println("   start prefix not found");
+			System.out.println("   start prefix not found"); //$NON-NLS-1$
 			return;
 		}
 		esId = bw.pop();
 		if (esId != id) {
-			int errMsg = addSubItem("ES content not recognized: TID = " + BitWise.toHex(esId));
-			addSubItem("expected TID: " + BitWise.toHex(id) + " - " + name, errMsg);
+			int errMsg = addSubItem(Messages.getString("PES.notRec") + BitWise.toHex(esId)); //$NON-NLS-1$
+			addSubItem(Messages.getString("PES.expectedTid") + BitWise.toHex(id) + " - " + name, errMsg); //$NON-NLS-1$ //$NON-NLS-2$
 			// addSubItem("content: ["+bw.getHexSequence(section_length)+"]",
 			// errMsg);
 			return;
@@ -95,8 +96,8 @@ public class PES {
 
 	public void printHeader() {
 		// bw.printBuffer();
-		thisPacket = addSubItem("ES packet");
-		addSubItem("packet_lenght: " + bigBuffer.length, thisPacket);
+		thisPacket = addSubItem("ES packet"); //$NON-NLS-1$
+		addSubItem("packet_lenght: " + bigBuffer.length, thisPacket); //$NON-NLS-1$
 		parse();
 	}
 
@@ -109,7 +110,7 @@ public class PES {
 	// && stream_id != DSMCC_stream
 	// && stream_id != ITU-T Rec. H.222.1 type E stream) {
 	public void parseExtHeader(int parent) {
-		int hdr = addSubItem("header", parent);
+		int hdr = addSubItem("header", parent); //$NON-NLS-1$
 		// '10' 2 bslbf
 		if (bw.consumeBits(2) != 2)
 			return;
@@ -121,29 +122,29 @@ public class PES {
 		bw.consumeBits(bw.remainingBits);
 
 		int PTS_DTS_flags = bw.consumeBits(2);
-		addSubItem("PTS_DTS_flags: " + bw.printBin(PTS_DTS_flags, 2), hdr);
+		addSubItem("PTS_DTS_flags: " + bw.printBin(PTS_DTS_flags, 2), hdr); //$NON-NLS-1$
 		// System.out.println("PTS_DTS_flags: "+PTS_DTS_flags);
 		// PTS_DTS_flags 2 bslbf
 
-		addSubItem("ESCR_flag: " + bw.consumeBits(1), hdr);
-		addSubItem("ES_rate_flag: " + bw.consumeBits(1), hdr);
-		addSubItem("DSM_trick_mode_flag: " + bw.consumeBits(1), hdr);
-		addSubItem("additional_copy_info_flag: " + bw.consumeBits(1), hdr);
-		addSubItem("PES_CRC_flag: " + bw.consumeBits(1), hdr);
+		addSubItem("ESCR_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
+		addSubItem("ES_rate_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
+		addSubItem("DSM_trick_mode_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
+		addSubItem("additional_copy_info_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
+		addSubItem("PES_CRC_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
 		boolean PES_extension_flag = bw.consumeBits(1) == 1;
-		addSubItem("PES_extension_flag: " + PES_extension_flag, hdr);
+		addSubItem("PES_extension_flag: " + PES_extension_flag, hdr); //$NON-NLS-1$
 		// bw.consumeBits(bw.remainingBits);
 
 		int header_data_length = bw.pop();
-		addSubItem("PES_header_data_length: " + header_data_length, hdr);
+		addSubItem("PES_header_data_length: " + header_data_length, hdr); //$NON-NLS-1$
 		bw.mark();
 		// PES_header_data_length 8 uimsbf
 		// if (PTS_DTS_flags = = '10') {
 		if (PTS_DTS_flags == 2)
-			addSubItem("PTS: " + PTS_DTS.parse(bw, 2) + "s", hdr);
+			addSubItem("PTS: " + PTS_DTS.parse(bw, 2) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
 		if (PTS_DTS_flags == 3) {
-			addSubItem("PTS: " + PTS_DTS.parse(bw, 3) + "s", hdr);
-			addSubItem("DTS: " + PTS_DTS.parse(bw, 1) + "s", hdr);
+			addSubItem("PTS: " + PTS_DTS.parse(bw, 3) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
+			addSubItem("DTS: " + PTS_DTS.parse(bw, 1) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		// if (ESCR_flag = = '1') {

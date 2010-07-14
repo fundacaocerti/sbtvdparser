@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import parsers.Packet;
 import sys.LogicTree;
+import sys.Messages;
 
 public class CopyPopUp implements Listener {
 
@@ -73,7 +74,7 @@ public class CopyPopUp implements Listener {
 			MenuItem item = new MenuItem(menu, SWT.PUSH);
 			LogicTree lt = (LogicTree) ((TreeItem) event.item).getData();
 			text = lt.toString();
-			item.setText("copiar conteúdo?");
+			item.setText(Messages.getString("CopyPopUp.copyQuestion")); //$NON-NLS-1$
 			item.addListener(SWT.Selection, this);
 			menu.setLocation(x + s.getLocation().x, y + yBias + s.getLocation().y);
 			menu.setVisible(true);

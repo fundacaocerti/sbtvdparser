@@ -36,7 +36,7 @@ public class PIDStats {
 	private static class Set implements QuickSort.Comparable {
 		public int pid, counter, lastCount;
 		public float lastTimestamp;
-		public String name = "unknown";
+		public String name = Messages.getString("PIDStats.unknown"); //$NON-NLS-1$
 		public float[] bitrates = new float[512];
 
 		public int getValue() {
