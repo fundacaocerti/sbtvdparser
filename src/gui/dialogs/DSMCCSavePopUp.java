@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 
 import sys.LogicTree;
+import sys.Messages;
 import dsmcc.DSMCCObject;
 import dsmcc.Module;
 import dsmcc.ModuleList;
@@ -50,7 +51,7 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 
 	int yBias;
 
-	static String save = "Salvar item", open = "Abrir";
+	static String save = Messages.getString("DSMCCSavePopUp.saveitem"), open = Messages.getString("DSMCCSavePopUp.open"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	public DSMCCSavePopUp(Shell s, int yBias) {
 		this.s = s;
@@ -95,7 +96,7 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 	public void widgetSelected(SelectionEvent e) {
 		if (((MenuItem) e.getSource()).getText() == save) {
 			FileDialog fd = new FileDialog(s, SWT.SAVE);
-			fd.setText("Salvar");
+			fd.setText(Messages.getString("DSMCCSavePopUp.save")); //$NON-NLS-1$
 			fd.setFileName(data.toString());
 			String selected = fd.open();
 			if (selected == null)

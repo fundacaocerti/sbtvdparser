@@ -113,7 +113,7 @@ public class GuiMethods implements Runnable {
 		case SETPROGRESSBAR:
 			int i = ((Integer) param[0]).intValue();
 			MainPanel.progressBar.setSelection(i);
-			MainPanel.progressBar.setToolTipText(Integer.toString(i) + "%");
+			MainPanel.progressBar.setToolTipText(Integer.toString(i) + "%"); //$NON-NLS-1$
 			if (i > 0 && i != 100) {
 				MainPanel.btStop.setEnabled(true);
 				MainPanel.btPause.setEnabled(true);

@@ -26,6 +26,7 @@ import parsers.Packet;
 import sys.BitWise;
 import sys.CRC32;
 import sys.Log;
+import sys.Messages;
 import sys.PIDStats;
 
 public class Table {
@@ -45,37 +46,37 @@ public class Table {
 	int[] knownTids = { 0x00, 0x01, 0x02, 0x40, 0x41, 0x42, 0x46, 0x4A, 0x4E, 0x4F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x7E,
 			0x7F, 0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xD0, 0xD1, 0xD2 };
 
-	String[] knownNames = { "PAT", "CAT", "PMT", "NIT (actual)", "NIT (other)", "SDT (actual)", "SDT (other)", "BAT",
-			"EIT (now/next actual)", "EIT (now/next other)", "TDT", "RST", "ST", "TOT", "AIT", "DIT", "SIT", "DCT",
-			"DLT", "PCAT", "SDTT", "BIT", "NBIT (net group info.)", "NBIT (reference net group info.)", "LDT", "CDT",
-			"LIT", "ERT", "ITT" };
+	String[] knownNames = { "PAT", "CAT", "PMT", "NIT (actual)", "NIT (other)", "SDT (actual)", "SDT (other)", "BAT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+			"EIT (now/next actual)", "EIT (now/next other)", "TDT", "RST", "ST", "TOT", "AIT", "DIT", "SIT", "DCT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+			"DLT", "PCAT", "SDTT", "BIT", "NBIT (net group info.)", "NBIT (reference net group info.)", "LDT", "CDT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+			"LIT", "ERT", "ITT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	boolean onStats = false;
 
 	public String getTableName(int tid) {
-		String tn = "";
+		String tn = ""; //$NON-NLS-1$
 		// 0x3A – 0x3F Seção DSM-CC
 		if (tid > 0x30 && tid < 0x40)
-			tn = "DSM-CC";
+			tn = "DSM-CC"; //$NON-NLS-1$
 		// 0x50 – 0x57 EIT (stream atual, grade de programação)
 		if (tid > 0x4F && tid < 0x58)
-			tn = "EIT (actual - schedule basic)";
+			tn = "EIT (actual - schedule basic)"; //$NON-NLS-1$
 		// 0x58 – 0x5F EIT (stream atual, grade de programação)
 		if (tid > 0x57 && tid < 0x60)
-			tn = "EIT (actual - schedule extended)";
+			tn = "EIT (actual - schedule extended)"; //$NON-NLS-1$
 		// 0x60 – 0x6F EIT (outro stream, grade de programação)
 		if (tid > 0x5F && tid < 0x67)
-			tn = "EIT (other - schedule)";
+			tn = "EIT (other - schedule)"; //$NON-NLS-1$
 		// 0x82 – 0x83 ECM
 		if (tid == 0x82 || tid == 0x83)
-			tn = "ECM";
+			tn = "ECM"; //$NON-NLS-1$
 		// 0x84 – 0x85 EMM
 		if (tid == 0x84 || tid == 0x85)
-			tn = "EMM";
+			tn = "EMM"; //$NON-NLS-1$
 		// 0x90 – 0xBF Série selecionável para alocação de “table_id” pelas
 		// empresas
 		if (tid > 0x8F && tid < 0xC0)
-			tn = "Broadcaster defined";
+			tn = "Broadcaster defined"; //$NON-NLS-1$
 		for (int i = 0; i < knownTids.length; i++)
 			if (knownTids[i] == tid)
 				tn = knownNames[i];
@@ -83,7 +84,7 @@ public class Table {
 	}
 
 	public boolean printDescription(byte[] ba) {
-		addSubItem(name + " not implemented", 0);
+		addSubItem(name + Messages.getString("Table.notImp"), 0); //$NON-NLS-1$
 		return true;
 	}
 
@@ -135,11 +136,11 @@ public class Table {
 			bufWriteIndx = section_length + 3;
 		if (CRC32.calc(ba, 0, section_length + 3) != 0) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("Section CRC failure for pid ");
+			sb.append("Section CRC failure for pid "); //$NON-NLS-1$
 			sb.append(BitWise.toHex(pid));
-			sb.append(" at ");
+			sb.append(" at "); //$NON-NLS-1$
 			sb.append(sectionStart);
-			sb.append(":");
+			sb.append(":"); //$NON-NLS-1$
 			sb.append(Packet.byteCount);
 			Log.printWarning(sb.toString());
 			// Log.printStackTrace(e);
@@ -154,10 +155,10 @@ public class Table {
 			return true;
 		if (readTableID < id || readTableID > idLimit) { // EITs have ranges
 			// of ids
-			int errMsg = addSubItem("Table content not recognized: TID = " + BitWise.toHex(readTableID));
-			addSubItem("TID correspondece: " + name, errMsg);
-			addSubItem("expected TID: " + BitWise.toHex(id) + " - " + name, errMsg);
-			addSubItem("content: [" + bw.getHexSequence(section_length) + "]", errMsg);
+			int errMsg = addSubItem(Messages.getString("Table.unknown") + BitWise.toHex(readTableID)); //$NON-NLS-1$
+			addSubItem(Messages.getString("Table.tidName") + name, errMsg); //$NON-NLS-1$
+			addSubItem(Messages.getString("Table.expectedTid") + BitWise.toHex(id) + " - " + name, errMsg); //$NON-NLS-1$ //$NON-NLS-2$
+			addSubItem(Messages.getString("Table.content") + bw.getHexSequence(section_length) + "]", errMsg); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 		// id = table_id;
@@ -219,32 +220,32 @@ public class Table {
 		if (EIT.class.isInstance(this)) {
 			if (eitGroup == 0)
 				if (pid == EIT.FULLSEGPID)
-					eitGroup = addSubItem("Full-seg EITs", 0);
+					eitGroup = addSubItem("Full-seg EITs", 0); //$NON-NLS-1$
 				else
-					eitGroup = addSubItem("One-seg EITs", 0);
+					eitGroup = addSubItem("One-seg EITs", 0); //$NON-NLS-1$
 			treeIndx = addSubItem(name, eitGroup);
 		} else
-			treeIndx = addSubItem(name + " (pid " + BitWise.toHex(pid) + ")", 0);
-		sectionInfo = addSubItem("Section info");
+			treeIndx = addSubItem(name + " (pid " + BitWise.toHex(pid) + ")", 0); //$NON-NLS-1$ //$NON-NLS-2$
+		sectionInfo = addSubItem("Section info"); //$NON-NLS-1$
 		MainPanel.setTreeData(treeIndx, bw);
 		if (layer != 0)
-			addSubItem("layer: " + "ABC".charAt(layer - 1), sectionInfo);
-		addSubItem("Id: " + BitWise.toHex(readTableID), sectionInfo);
-		addSubItem("section CRC: " + BitWise.toHex(crc), sectionInfo);
+			addSubItem("layer: " + "ABC".charAt(layer - 1), sectionInfo); //$NON-NLS-1$ //$NON-NLS-2$
+		addSubItem("Id: " + BitWise.toHex(readTableID), sectionInfo); //$NON-NLS-1$
+		addSubItem("section CRC: " + BitWise.toHex(crc), sectionInfo); //$NON-NLS-1$
 		if (crcFails > 0)
-			addSubItem("CRC failures: " + crcFails, sectionInfo);
-		addSubItem("section_length: " + section_length, sectionInfo);
-		addSubItem("section_syntax_indicator: " + section_syntax_indicator, sectionInfo);
+			addSubItem("CRC failures: " + crcFails, sectionInfo); //$NON-NLS-1$
+		addSubItem("section_length: " + section_length, sectionInfo); //$NON-NLS-1$
+		addSubItem("section_syntax_indicator: " + section_syntax_indicator, sectionInfo); //$NON-NLS-1$
 	}
 
 	public void printSectionInfo() {
 		printBasicInfo();
-		addSubItem("Id extension: " + BitWise.toHex(idExt), sectionInfo);
-		addSubItem("version number: " + BitWise.toHex(versionNumber), sectionInfo);
-		String[] cn = { "next", "current" };
-		addSubItem("current/next: " + cn[BitWise.stripBits(versionInfo, 1, 1)], sectionInfo);
-		addSubItem("section number: " + BitWise.toHex(sectionNumber), sectionInfo);
-		addSubItem("last section number: " + BitWise.toHex(lastSectionNumber), sectionInfo);
+		addSubItem("Id extension: " + BitWise.toHex(idExt), sectionInfo); //$NON-NLS-1$
+		addSubItem("version number: " + BitWise.toHex(versionNumber), sectionInfo); //$NON-NLS-1$
+		String[] cn = { "next", "current" }; //$NON-NLS-1$ //$NON-NLS-2$
+		addSubItem("current/next: " + cn[BitWise.stripBits(versionInfo, 1, 1)], sectionInfo); //$NON-NLS-1$
+		addSubItem("section number: " + BitWise.toHex(sectionNumber), sectionInfo); //$NON-NLS-1$
+		addSubItem("last section number: " + BitWise.toHex(lastSectionNumber), sectionInfo); //$NON-NLS-1$
 	}
 
 	public boolean verifyMultiSection(byte[] ba) {

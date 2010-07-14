@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import sys.BitWise;
+import sys.Messages;
 
 //Broadcast Inter ORB (CORBA) Protocol 
 public class BIOP {
@@ -44,11 +45,11 @@ public class BIOP {
 	}
 
 	public void parseModule(BitWise bw, int moduleLvl) {
-		int biopLvl = MainPanel.addTreeItem("BIOP", moduleLvl);
+		int biopLvl = MainPanel.addTreeItem("BIOP", moduleLvl); //$NON-NLS-1$
 		bw.mark();
 		while (bw.getAvailableSize() > 0)
 			if (!parseMessage(bw, biopLvl)) {
-				System.out.println("pm fail");
+				System.out.println("pm fail"); //$NON-NLS-1$
 				break;
 			}
 		if (bw.getAvailableSize() > 0) {
@@ -56,14 +57,14 @@ public class BIOP {
 			int i = bw.getAvailableSize();
 			if (i > 120)
 				i = 120;
-			MainPanel.addTreeItem(bw.getHexSequence(i), MainPanel.addTreeItem("Module contains unidentified data!",
+			MainPanel.addTreeItem(bw.getHexSequence(i), MainPanel.addTreeItem(Messages.getString("BIOP.undefDataMsg"), //$NON-NLS-1$
 					biopLvl));
 		}
 	}
 
 	public boolean parseMessage(BitWise bw, int biopLvl) {
-		System.out.println("pm");
-		int msglvl = MainPanel.addTreeItem("message " + msgNumb++, biopLvl);
+		System.out.println("pm"); //$NON-NLS-1$
+		int msglvl = MainPanel.addTreeItem(Messages.getString("BIOP.message") + msgNumb++, biopLvl); //$NON-NLS-1$
 		// 0x42494F50 == BIOP
 		if (bw.pop() != 0x42 || bw.pop() != 0x49 || bw.pop() != 0x4F || bw.pop() != 0x50)
 			return false;
@@ -80,20 +81,20 @@ public class BIOP {
 		// objectKind_length == 4
 		bw.pop(4);
 		int objKind = bw.pop32();
-		MainPanel.addTreeItem("objKind: " + (char) (BitWise.stripBits(objKind, 32, 8))
+		MainPanel.addTreeItem("objKind: " + (char) (BitWise.stripBits(objKind, 32, 8)) //$NON-NLS-1$
 				+ (char) (BitWise.stripBits(objKind, 24, 8)) + (char) (BitWise.stripBits(objKind, 16, 8)), msglvl);
-		System.out.println("objKind " + BitWise.toHex(objKind));
+		System.out.println("objKind " + BitWise.toHex(objKind)); //$NON-NLS-1$
 		int objectInfo_length;
 
 		switch (objKind) {
 		case 0x73726700: // "srg" == ServiceGateway
-			System.out.println("ServiceGateway");
+			System.out.println("ServiceGateway"); //$NON-NLS-1$
 			fl.setSvcGatewayObjKey(objKey);
 		case 0x64697200: // "dir" == Directory
-			System.out.println("Directory");
+			System.out.println("Directory"); //$NON-NLS-1$
 			// fl.setToDir(objKey); //for empty directories
 			objectInfo_length = bw.pop16();
-			System.out.println("objInfo: " + bw.getHexSequence(objectInfo_length));
+			System.out.println("objInfo: " + bw.getHexSequence(objectInfo_length)); //$NON-NLS-1$
 			bw.pop(bw.pop() * 7); // ServiceContextList
 			// int serviceCtxLstCount = bw.pop();
 			// System.out.println("serviceCtxLstCount: "+serviceCtxLstCount);
@@ -105,10 +106,10 @@ public class BIOP {
 			bw.pop32();
 			int bindings = bw.pop16();
 			// System.out.println("messageBody_length: "+messageBody_length);
-			int bindLvl = MainPanel.addTreeItem("bindings: " + bindings, msglvl);
+			int bindLvl = MainPanel.addTreeItem("bindings: " + bindings, msglvl); //$NON-NLS-1$
 			for (int i = 0; i < bindings; i++) {
 				String name = parseName(bw);// path
-				int nameLvl = MainPanel.addTreeItem("name: " + name, bindLvl);
+				int nameLvl = MainPanel.addTreeItem("name: " + name, bindLvl); //$NON-NLS-1$
 				/* int bindingType = */bw.pop(); // 0x01 == ncontext > bound to
 				// a Directory or
 				// ServiceGateway
@@ -117,12 +118,12 @@ public class BIOP {
 				DSMCCObject f = fl.setName(parseIOR(bw, nameLvl), name);
 				fl.addChildren(objKey, f);
 				objectInfo_length = bw.pop16();
-				MainPanel.addTreeItem("objInfo: " + bw.getHexSequence(objectInfo_length), nameLvl);
+				MainPanel.addTreeItem("objInfo: " + bw.getHexSequence(objectInfo_length), nameLvl); //$NON-NLS-1$
 			}
 
 			break;
 		case 0x66696C00: // "fil" == file
-			System.out.println("File");
+			System.out.println("File"); //$NON-NLS-1$
 			objectInfo_length = bw.pop16();
 			bw.pop32();
 			bw.pop32(); // should be pop64(), but no file will be larger than a
@@ -134,14 +135,14 @@ public class BIOP {
 			// messageBody_length
 			bw.pop32();
 			int content_length = bw.pop32();
-			MainPanel.addTreeItem("file size " + BitWise.toHex(content_length), msglvl);
+			MainPanel.addTreeItem(Messages.getString("BIOP.fileSize") + BitWise.toHex(content_length), msglvl); //$NON-NLS-1$
 			fl.setContent(objKey, bw.buf, bw.getAbsolutePosition(), content_length);
 			break;
 		case 0x73747200: // "str" == Stream
-			System.out.println("Stream");
+			System.out.println("Stream"); //$NON-NLS-1$
 			break;
 		case 0x73746500: // "ste" == StreamEvent
-			System.out.println("StreamEvent");
+			System.out.println("StreamEvent"); //$NON-NLS-1$
 			break;
 		default:
 			break;
@@ -155,22 +156,22 @@ public class BIOP {
 		byte[] objKey = new byte[objectKey_length];
 		for (int i = 0; i < objKey.length; i++)
 			objKey[i] = (byte) bw.pop();
-		MainPanel.addTreeItem("objKey: " + DSMCCObject.printObjKey(objKey), msgLvl);
+		MainPanel.addTreeItem("objKey: " + DSMCCObject.printObjKey(objKey), msgLvl); //$NON-NLS-1$
 		return objKey;
 	}
 
 	byte[] parseIOR(BitWise bw, int iorLvl) {
-		iorLvl = MainPanel.addTreeItem("IOR", iorLvl);
+		iorLvl = MainPanel.addTreeItem("IOR", iorLvl); //$NON-NLS-1$
 		byte[] objKey = null;
 		int type_id_length = bw.pop32();
-		System.out.println("IOR:Type id: " + bw.getHexSequence(type_id_length));
+		System.out.println("IOR:Type id: " + bw.getHexSequence(type_id_length)); //$NON-NLS-1$
 		if (type_id_length % 4 != 0) // CDR alignment rule
 			bw.pop(4 - (type_id_length % 4));
 		int taggedProfiles_count = bw.pop32();
-		System.out.print("IOR:Tagged profiles: [");
+		System.out.print("IOR:Tagged profiles: ["); //$NON-NLS-1$
 		for (int j = 0; j < taggedProfiles_count; j++) {
 			int profileId_tag = bw.pop32();
-			System.out.print("id: ");
+			System.out.print("id: "); //$NON-NLS-1$
 			System.out.print(BitWise.toHex(profileId_tag));
 			int profile_data_length = bw.pop32();
 			bw.mark();
@@ -181,8 +182,8 @@ public class BIOP {
 				// 0x49534F50 == TAG_ObjectLocation
 				if (bw.pop32() == 0x49534F50) {
 					bw.pop();// component_data_length
-					MainPanel.addTreeItem("carouselId: " + BitWise.toHex(bw.pop32()), iorLvl);
-					MainPanel.addTreeItem("moduleId: " + BitWise.toHex(bw.pop16()), iorLvl);
+					MainPanel.addTreeItem("carouselId: " + BitWise.toHex(bw.pop32()), iorLvl); //$NON-NLS-1$
+					MainPanel.addTreeItem("moduleId: " + BitWise.toHex(bw.pop16()), iorLvl); //$NON-NLS-1$
 					bw.pop16(); // BIOP version
 					objKey = parseObjKey(bw, iorLvl);
 				}
@@ -190,7 +191,7 @@ public class BIOP {
 			}
 			bw.pop(profile_data_length - bw.getByteCount());
 		}
-		System.out.println("]");
+		System.out.println("]"); //$NON-NLS-1$
 		return objKey;
 	}
 
@@ -198,21 +199,21 @@ public class BIOP {
 		// BIOP::Name(){
 		String name = null;
 		int nameComponents_count = bw.pop();
-		System.out.println("nameComponents_count: " + nameComponents_count);
+		System.out.println("nameComponents_count: " + nameComponents_count); //$NON-NLS-1$
 		for (int i = 0; i < nameComponents_count; i++) {
 			int id_length = bw.pop();
-			System.out.print("nameComponent id: [");
+			System.out.print("nameComponent id: ["); //$NON-NLS-1$
 			StringBuffer sb = new StringBuffer();
 			for (int j = 0; j < id_length - 1; j++)
 				sb.append((char) bw.pop());
 			bw.pop();// null terminated
-			System.out.println(sb.toString() + "]");
+			System.out.println(sb.toString() + "]"); //$NON-NLS-1$
 			int kind_length = bw.pop();
-			System.out.print("nameComponent kind: [");
+			System.out.print("nameComponent kind: ["); //$NON-NLS-1$
 			for (int j = 0; j < kind_length - 1; j++)
 				System.out.print((char) bw.pop());
 			bw.pop();// null terminated
-			System.out.println("]");
+			System.out.println("]"); //$NON-NLS-1$
 			if (name == null)
 				name = sb.toString();
 		}
@@ -221,12 +222,12 @@ public class BIOP {
 
 	public static void main(String[] cmdArgs) {
 		FileList fl = new FileList();
-		File f = new File("K:\\TS\\ModuleListB");
+		File f = new File("K:\\TS\\ModuleListB"); //$NON-NLS-1$
 		File[] modules = f.listFiles();
 		for (int i = 0; i < modules.length; i++) {
 			f = modules[i];
 			if (f.isFile()) {
-				System.out.println("\n\nModule: " + f.getName());
+				System.out.println("\n\nModule: " + f.getName()); //$NON-NLS-1$
 				try {
 					FileInputStream fis = new FileInputStream(f);
 					byte[] ba = new byte[(int) f.length()];
@@ -241,8 +242,8 @@ public class BIOP {
 			}
 		}
 		DSMCCObject rd = fl.getRoot();
-		rd.name = "root";
-		File root = new File("K:\\TS\\ModuleListB\\fs");
+		rd.name = "root"; //$NON-NLS-1$
+		File root = new File("K:\\TS\\ModuleListB\\fs"); //$NON-NLS-1$
 		root.mkdir();
 		rd.saveIn(root);
 		// File f = new File("K:\\modules\\Module0002");

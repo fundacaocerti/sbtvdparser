@@ -23,19 +23,20 @@ package mpeg.psi;
 
 import gui.MainPanel;
 import sys.LogicTree;
+import sys.Messages;
 
 public class SimpleAssertions {
 
-	static String[] searchTags = { "remote_control_key_id: ", "ts_name: ", "network_PID: ", "service_id: ",
-			"service_id: ", "service_id: ", "UTC-3_time: ", "service_name: ", "service_name: ", "service_name: ",
-			"service_count: ", "component_tag: 0x00", "component_tag: 0x00", "component_tag: 0x10",
-			"type: 0x1b- H.264", "type: 0x11- ISO/IEC 14496-3 Audio", "component_tag: 0x30" };
+	static String[] searchTags = { "remote_control_key_id: ", "ts_name: ", "network_PID: ", "service_id: ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"service_id: ", "service_id: ", "UTC-3_time: ", "service_name: ", "service_name: ", "service_name: ", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			"service_count: ", "component_tag: 0x00", "component_tag: 0x00", "component_tag: 0x10", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"type: 0x1b- H.264", "type: 0x11- ISO/IEC 14496-3 Audio", "component_tag: 0x30" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	static boolean[] tagsFound = new boolean[searchTags.length];
 
 	public static void checkSBTVDConformity(LogicTree root) {
 		LogicTree current = root.getNext();
-		int digestLevel = MainPanel.addTreeItem("Resume", 0);
+		int digestLevel = MainPanel.addTreeItem(Messages.getString("SimpleAssertions.resume"), 0); //$NON-NLS-1$
 		while (current != null) {
 			String text = current.toString();
 			for (int i = 0; i < searchTags.length; i++)
@@ -46,7 +47,7 @@ public class SimpleAssertions {
 				}
 			current = root.getNext();
 		}
-		digestLevel = MainPanel.addTreeItem("Problemas", digestLevel);
+		digestLevel = MainPanel.addTreeItem(Messages.getString("SimpleAssertions.problems"), digestLevel); //$NON-NLS-1$
 		for (int i = 0; i < searchTags.length; i++)
 			if (!tagsFound[i]) {
 				MainPanel.addTreeItem(searchTags[i], digestLevel);

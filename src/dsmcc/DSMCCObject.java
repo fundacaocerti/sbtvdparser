@@ -29,6 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
+import sys.Messages;
+
 public class DSMCCObject {
 
 	boolean isDirectory;
@@ -57,7 +59,7 @@ public class DSMCCObject {
 			for (int i = 0; i < childrens.size(); i++)
 				((DSMCCObject) childrens.get(i)).mountTree(dirLvl);
 		} else {
-			int fileLvl = MainPanel.addTreeItem("[" + name + "] size: " + lenght, msgLvl, MainPanel.DSMCC_TREE);
+			int fileLvl = MainPanel.addTreeItem("[" + name + Messages.getString("DSMCCObject.size") + lenght, msgLvl, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
 			MainPanel.setTreeData(fileLvl, this);
 		}
 	}
@@ -157,7 +159,7 @@ public class DSMCCObject {
 		Desktop desk = Desktop.getDesktop();
 		if (!java.awt.Desktop.isDesktopSupported())
 			return;
-		File tempDir = new File(System.getProperty("java.io.tmpdir"));
+		File tempDir = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
 		saveIn(tempDir);
 		try {
 			desk.open(file);

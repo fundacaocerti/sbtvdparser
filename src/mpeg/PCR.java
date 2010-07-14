@@ -70,9 +70,9 @@ public class PCR {
 		} else {
 			if (timeStamp - lastTimeStamp > 2 || timeStamp - lastTimeStamp < 0) {
 				lastTimeStamp = timeStamp;
-				Log.printWarning("PCR err");
-				Log.printWarning("lts: " + lastTimeStamp);
-				Log.printWarning("ts: " + timeStamp);
+				Log.printWarning("PCR err"); //$NON-NLS-1$
+				Log.printWarning("lts: " + lastTimeStamp); //$NON-NLS-1$
+				Log.printWarning("ts: " + timeStamp); //$NON-NLS-1$
 				return;
 			}
 			lastTimeStamp = timeStamp;

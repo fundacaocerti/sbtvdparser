@@ -47,7 +47,7 @@ public class Paint implements PaintListener {
 				e.gc
 						.drawLine(selection, e.height, selection, e.height
 								- (int) ((data[i] - min - vPos) * ratio * vZoom));
-				MainPanel.graphInfo.setText(i + "s - " + PIDStats.formatScaleFactor(data[i]));
+				MainPanel.graphInfo.setText(i + "s - " + PIDStats.formatScaleFactor(data[i])); //$NON-NLS-1$
 				e.gc.setForeground(e.gc.getDevice().getSystemColor(SWT.COLOR_GREEN));
 			} else {
 				e.gc.drawLine(i, e.height, i, e.height - (int) ((data[i] - min - vPos) * ratio * vZoom));

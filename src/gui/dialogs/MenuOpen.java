@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import parsers.Parameters;
 import sys.BatchAnalisys;
+import sys.Messages;
 
 public class MenuOpen implements SelectionListener {
 
@@ -53,10 +54,10 @@ public class MenuOpen implements SelectionListener {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		String[] filterExt = { "*.trp", "*.ts", ".mpeg", "*.*" };
+		String[] filterExt = { "*.trp", "*.ts", ".mpeg", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (fileMenu.equals(e.widget)) {
 			FileDialog fd = new FileDialog(shell, SWT.OPEN);// +SWT.MULTI
-			fd.setText("Abrir");
+			fd.setText(Messages.getString("MenuOpen.open")); //$NON-NLS-1$
 			// fd.setFilterPath("C:/");
 			fd.setFilterExtensions(filterExt);
 			String selected = fd.open();
@@ -66,7 +67,7 @@ public class MenuOpen implements SelectionListener {
 		} else {
 			if (filterMenu.equals(e.widget)) {
 				FileDialog fd = new FileDialog(shell, SWT.OPEN);// +SWT.MULTI
-				fd.setText("Abrir e filtrar");
+				fd.setText(Messages.getString("MenuOpen.openFilter")); //$NON-NLS-1$
 				// fd.setFilterPath("C:/");
 				fd.setFilterExtensions(filterExt);
 				String selected = fd.open();
@@ -77,15 +78,15 @@ public class MenuOpen implements SelectionListener {
 				if (filter == null || filter.length() == 0)
 					return;
 				MainPanel.clearTree();
-				String[] parm = new String[] { selected, "-filter", filter, "", "-limitMatches",
+				String[] parm = new String[] { selected, "-filter", filter, "", "-limitMatches", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						Integer.toString(qDialog.getFilterLimit()) };
 				if (qDialog.isRegex())
-					parm[3] = "-isRegex";
+					parm[3] = "-isRegex"; //$NON-NLS-1$
 				Parameters.startParser(parm);
 			} else {
 				DirectoryDialog fd = new DirectoryDialog(shell, SWT.OPEN);// +SWT.MULTI
 				fd.setFilterPath(lastDir);
-				fd.setText("Abrir Diretório");
+				fd.setText(Messages.getString("MenuOpen.openDir")); //$NON-NLS-1$
 				lastDir = fd.open();
 				if (lastDir == null)
 					return;
@@ -94,12 +95,12 @@ public class MenuOpen implements SelectionListener {
 				if (filter == null || filter.length() == 0)
 					return;
 				MainPanel.clearTree();
-				String[] parm = new String[] { null, "-filter", filter, "", "", "-limitMatches",
+				String[] parm = new String[] { null, "-filter", filter, "", "", "-limitMatches", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 						Integer.toString(qDialog.getFilterLimit()) };
 				if (qDialog.isRegex())
-					parm[3] = "-isRegex";
+					parm[3] = "-isRegex"; //$NON-NLS-1$
 				if (!qDialog.listAllFiles())
-					parm[4] = "-listOnlyMatches";
+					parm[4] = "-listOnlyMatches"; //$NON-NLS-1$
 				BatchAnalisys ba = new BatchAnalisys(lastDir, qDialog.isRecursive(), parm);
 				ba.start();
 			}

@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Slider;
 
+import sys.Messages;
+
 public class Graph extends Composite {
 
 	private static Canvas canvas = null;
@@ -60,20 +62,20 @@ public class Graph extends Composite {
 		vPos = new Slider(this, SWT.VERTICAL);
 		vPos.setSelection(40);
 		vPos.setMaximum(40);
-		vPos.setToolTipText("Posição vertical");
+		vPos.setToolTipText(Messages.getString("Graph.vpos")); //$NON-NLS-1$
 		vPos.addSelectionListener(z);
 		vZoom = new Slider(this, SWT.VERTICAL);
 		vZoom.setSelection(40);
 		vZoom.setMaximum(90);
-		vZoom.setToolTipText("Zoom vertical (1:5 a 5:1)");
+		vZoom.setToolTipText(Messages.getString("Graph.vzoom")); //$NON-NLS-1$
 		vZoom.addSelectionListener(z);
 		sampleTime = new Slider(this, SWT.NONE);
-		sampleTime.setToolTipText("Tempo de amostragem (0.01s a 5s)");
+		sampleTime.setToolTipText(Messages.getString("Graph.sampletime")); //$NON-NLS-1$
 		// sampleTime.setSize(120, sampleTime.getSize().x);
 		sampleTime.setSelection(70);
 		sampleTime.setLayoutData(gridData1);
 		info = new Label(this, SWT.NONE);
-		info.setText("Amostra: 1.00s     Limites: 0.0-30.0 Mbps");
+		info.setText(Messages.getString("Graph.default")); //$NON-NLS-1$
 		info.setLayoutData(gridData2);
 		sampleTime.addSelectionListener(z);
 		GridLayout gridLayout = new GridLayout();
@@ -98,15 +100,15 @@ public class Graph extends Composite {
 				samp -= 13;
 			float offs = (30 - vPos.getSelection()) * max / 30;
 			StringBuilder sb = new StringBuilder();
-			sb.append("Amostra: ");
-			String s = Float.toString(samp) + "000";
+			sb.append(Messages.getString("Graph.sample")); //$NON-NLS-1$
+			String s = Float.toString(samp) + "000"; //$NON-NLS-1$
 			sb.append(s.substring(0, 5));
-			sb.append("s     Exibindo de: ");
-			sb.append((Float.toString(offs) + "000").substring(0, 4));
-			sb.append(" a ");
+			sb.append(Messages.getString("Graph.from")); //$NON-NLS-1$
+			sb.append((Float.toString(offs) + "000").substring(0, 4)); //$NON-NLS-1$
+			sb.append(Messages.getString("Graph.to")); //$NON-NLS-1$
 			System.out.println(vz);
-			sb.append((Float.toString(max / vz + offs) + "00").substring(0, 4));
-			sb.append("Mbps");
+			sb.append((Float.toString(max / vz + offs) + "00").substring(0, 4)); //$NON-NLS-1$
+			sb.append("Mbps"); //$NON-NLS-1$
 			info.setText(sb.toString());
 			graphArea.setScaling(vz, offs, samp);
 			canvas.redraw();

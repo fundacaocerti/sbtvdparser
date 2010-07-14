@@ -35,6 +35,7 @@ import mpeg.psi.TOT;
 import mpeg.psi.Table;
 import mpeg.psi.TableList;
 import sys.Log;
+import sys.Messages;
 
 public class Parameters {
 
@@ -50,7 +51,7 @@ public class Parameters {
 		try {
 			bis = new BufferedInputStream(new FileInputStream(srcFile), 4000000);
 		} catch (FileNotFoundException e) {
-			initialMessage = "File cannot be opened: [" + srcFile.getAbsolutePath() + "]";
+			initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$
 			Log.printWarning(initialMessage);
 			Log.printStackTrace(new Exception(initialMessage));
 			return null;
@@ -60,7 +61,7 @@ public class Parameters {
 
 	public static void startParser(String[] args) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("Command line: [");
+		sb.append(Messages.getString("Parameters.command")); //$NON-NLS-1$
 		for (int i = 0; i < args.length; i++) {
 			sb.append(args[i]);
 			sb.append(' ');
@@ -68,7 +69,7 @@ public class Parameters {
 		sb.append("]");
 		Log.printWarning(sb.toString());
 		if (args.length == 0) {
-			Log.printWarning("Input file not informed in commandline");
+			Log.printWarning(Messages.getString("Parameters.noInput")); //$NON-NLS-1$
 			return;
 		}
 		String srcPath = args[0];
@@ -86,7 +87,7 @@ public class Parameters {
 				if (!srcFile.exists())
 					srcFile = new File(lnkp.getAlternatePath());
 			} catch (Exception e) {
-				initialMessage = "File cannot be opened: [" + srcFile.getAbsolutePath() + "]";
+				initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$
 				Log.printStackTrace(new Exception(initialMessage));
 				Log.printWarning(initialMessage);
 				return;
@@ -94,7 +95,7 @@ public class Parameters {
 		}
 
 		if (!srcFile.exists() || !srcFile.isFile()) {
-			initialMessage = "File not found: [" + srcFile.getAbsolutePath() + "]";
+			initialMessage = Messages.getString("Parameters.fNotFound") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$
 			Log.printStackTrace(new Exception(initialMessage));
 			Log.printWarning(initialMessage);
 			return;

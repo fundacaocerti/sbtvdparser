@@ -55,7 +55,7 @@ public class Log {
 			try {
 				logfile.createNewFile();
 			} catch (IOException e1) {
-				System.err.println("Log file could not be created: [" + logfile.getAbsolutePath() + "]");
+				System.err.println(Messages.getString("Log.fCreateErr") + logfile.getAbsolutePath() + "]"); //$NON-NLS-1$
 				log = System.err;
 				return;
 			}
@@ -63,11 +63,11 @@ public class Log {
 		try {
 			log = new PrintStream(new FileOutputStream(logfile, true));
 			log.println();
-			log.println("Log started at " + DateFormat.getDateTimeInstance().format(new Date()));
+			log.println(Messages.getString("Log.start") + DateFormat.getDateTimeInstance().format(new Date())); //$NON-NLS-1$
 			if (tsfile != null)
 				log.println("Parsing [" + tsfile.getAbsolutePath() + "]");
 		} catch (IOException e) {
-			System.err.println("Log file could not be written: [" + logfile.getAbsolutePath() + "]");
+			System.err.println(Messages.getString("Log.fWriteErr") + logfile.getAbsolutePath() + "]"); //$NON-NLS-1$
 			log = System.err;
 			return;
 		}

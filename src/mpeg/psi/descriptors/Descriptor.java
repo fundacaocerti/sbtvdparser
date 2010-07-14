@@ -23,6 +23,7 @@ package mpeg.psi.descriptors;
 
 import gui.MainPanel;
 import sys.BitWise;
+import sys.Messages;
 
 public class Descriptor {
 
@@ -120,7 +121,7 @@ public class Descriptor {
 	}
 
 	public void print() {
-		String descriptorName = "Unknown";
+		String descriptorName = Messages.getString("Descriptor.unknown"); //$NON-NLS-1$
 		for (int i = 0; i < predefinedTags.length; i++)
 			if (predefinedTags[i] == parsedTag)
 				descriptorName = predefinedNames[i];

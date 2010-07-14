@@ -29,6 +29,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import sys.Messages;
+
 public class MenuSave implements SelectionListener {
 
 	private Shell s;
@@ -42,9 +44,9 @@ public class MenuSave implements SelectionListener {
 
 	public void widgetSelected(SelectionEvent e) {
 		FileDialog fd = new FileDialog(s, SWT.SAVE);
-		fd.setText("Salvar");
+		fd.setText(Messages.getString("MenuSave.save")); //$NON-NLS-1$
 		// fd.setFilterPath("C:/");
-		String[] filterExt = { "*.txt", "*.htm" };
+		String[] filterExt = { "*.txt", "*.htm" }; //$NON-NLS-1$ //$NON-NLS-2$
 		fd.setFilterExtensions(filterExt);
 		String selected = fd.open();
 		if (selected != null)

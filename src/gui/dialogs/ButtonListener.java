@@ -59,7 +59,7 @@ public class ButtonListener implements SelectionListener {
 			MainPanel.btStop.setEnabled(false);
 		MainPanel.btPause.setEnabled(false);
 		MainPanel.progressBar.setSelection(100);
-		MainPanel.progressBar.setToolTipText("100%");
+		MainPanel.progressBar.setToolTipText("100%"); //$NON-NLS-1$
 	}
 
 }
