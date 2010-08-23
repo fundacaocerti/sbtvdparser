@@ -149,8 +149,8 @@ public class Table {
 			return false;
 		}
 		crc = 0;
-		for (int i = -1; i < 2; i++)
-			crc = (crc << 8) | (((int) ba[section_length + i]) & 0xff);
+		for (int i = -1; i < 3; i++)
+			crc = (crc << 8) | ((ba[section_length + i]) & 0xff);
 		if (readyToParse())
 			return true;
 		if (readTableID < id || readTableID > idLimit) { // EITs have ranges
