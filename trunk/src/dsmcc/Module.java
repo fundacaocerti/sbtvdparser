@@ -82,9 +82,9 @@ public class Module {
 		}
 	}
 
-	public void feedPart(byte[] data, int dataOffset, int dataLenght, int blockNumber, int partLvl) {
+	public boolean feedPart(byte[] data, int dataOffset, int dataLenght, int blockNumber, int partLvl) {
 		if (remainingParts == 0 || blockNumber >= receivedParts.length || receivedParts[blockNumber])
-			return;
+			return false;
 		MainPanel
 				.addTreeItem(
 						Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
@@ -101,7 +101,7 @@ public class Module {
 					.println("Module " + id + " data feed err: inserting " + dataLenght + "b of " + data.length //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							+ "b buffer from " + dataOffset + " into " + this.data.length + "b dest. at " + blockNumber * blockSize //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							+ dataLenght);
-			return;
+			return false;
 		}
 		System.arraycopy(data, dataOffset, this.data, blockNumber * blockSize, dataLenght);
 		remainingParts--;
@@ -129,7 +129,7 @@ public class Module {
 			if (moduleList.isReadyToMount())
 				moduleList.mountFS();
 		}
-
+		return true;
 		// StringBuffer sb = new StringBuffer();
 		// sb.append(" [");
 		// for (int i = dataOffset; i < dataOffset+5; i++) {
