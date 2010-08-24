@@ -239,9 +239,10 @@ public class BitWise {
 	}
 
 	public String getHexSequence(int size) {
-		if (getAvailableSize() < size - 1) // TODO: checar as consequências
-			// disso
+		if (getAvailableSize() < size)
 			size = getAvailableSize();
+		if (size < 1)
+			return "[]";
 		StringBuffer sb = new StringBuffer(size);
 		sb.append("[");
 		int b;
