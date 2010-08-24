@@ -88,8 +88,8 @@ public class ModuleList {
 	}
 
 	public void feedData(Module m, byte[] data, int dataOffset, int dataLenght, int blockNumber, int treeLvl) {
-		parent.updateProgress(dataLenght);
-		m.feedPart(data, dataOffset, dataLenght, blockNumber, treeLvl);
+		if (m.feedPart(data, dataOffset, dataLenght, blockNumber, treeLvl))
+			parent.updateProgress(dataLenght);
 	}
 
 	public boolean isReadyToMount() {
