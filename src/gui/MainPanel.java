@@ -447,32 +447,14 @@ public class MainPanel {
 			}
 		}
 		if (targetFilter != null)
-			// if (filterIsRegex)
-			if (content.toLowerCase().indexOf(targetFilter.toLowerCase()) != -1 && filterLimit != 0) {
-				filteredId = items.size();
-				targetOK = true;
-				Vector reverse = new Vector();
-				int p = parent;
-				LogicTree topItem = null;
-				int limit = 30;
-				while (limit > 0 && p != 0) {
-					topItem = (LogicTree) items.get(p);
-					reverse.add(topItem);
-					limit--;
-					p = topItem.parent.indx;
+			if (filterIsRegex) {
+				if (content.matches(targetFilter) && filterLimit != 0) {
+					content += " (filter match)";
+					addMatchingItem(parent, rootIndx);
 				}
-				if (topItem != null && p == 0) {
-					// topItem.parent.indx = tsNameIndex;
-					topItem.parent = (LogicTree) items.get(tsNameIndex);
-				}
-				for (int i = reverse.size(); i > 0; i--) {
-					LogicTree lt = (LogicTree) reverse.get(i - 1);
-					if (!lt.isVisible)
-						GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { lt, new Integer(rootIndx) }, true);
-					// ((LogicTree)
-					// reverse.get(i-1)).treeitem.setExpanded(true);
-				}
-				filterLimit--;
+			} else if (content.toLowerCase().indexOf(targetFilter.toLowerCase()) != -1 && filterLimit != 0) {
+				content += " (filter match)";
+				addMatchingItem(parent, rootIndx);
 			}
 		// else if (!content.startsWith("Parsing"))
 		// return 0;
@@ -491,6 +473,33 @@ public class MainPanel {
 			Packet.limitNotReached = false;
 
 		return items.size() - 1;
+	}
+
+	private static void addMatchingItem(int parent, int rootIndx) {
+		filteredId = items.size();
+		targetOK = true;
+		Vector reverse = new Vector();
+		int p = parent;
+		LogicTree topItem = null;
+		int limit = 30;
+		while (limit > 0 && p != 0) {
+			topItem = (LogicTree) items.get(p);
+			reverse.add(topItem);
+			limit--;
+			p = topItem.parent.indx;
+		}
+		if (topItem != null && p == 0) {
+			// topItem.parent.indx = tsNameIndex;
+			topItem.parent = (LogicTree) items.get(tsNameIndex);
+		}
+		for (int i = reverse.size(); i > 0; i--) {
+			LogicTree lt = (LogicTree) reverse.get(i - 1);
+			if (!lt.isVisible)
+				GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { lt, new Integer(rootIndx) }, true);
+			// ((LogicTree)
+			// reverse.get(i-1)).treeitem.setExpanded(true);
+		}
+		filterLimit--;
 	}
 
 	//
