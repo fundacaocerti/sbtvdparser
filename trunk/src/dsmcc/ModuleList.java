@@ -118,7 +118,7 @@ public class ModuleList {
 		return "ModuleList " + BitWise.toHex(parent.downloadId); //$NON-NLS-1$
 	}
 
-	public void createModule(BitWise bw, int treeLvl) {
+	public void createModule(BitWise bw, int treeLvl, int blockSize) {
 		bw.printBuffer(bw.getAbsolutePosition(), bw.getAbsolutePosition() + 6);
 		int moduleId = bw.pop16();
 		int aModuleLvl = MainPanel.addTreeItem("moduleId: " + BitWise.toHex(moduleId), treeLvl); //$NON-NLS-1$
@@ -135,7 +135,8 @@ public class ModuleList {
 		MainPanel.addTreeItem(Messages.getString("ModuleList.version") + BitWise.toHex(moduleVersion), aModuleLvl); //$NON-NLS-1$
 
 		int moduleInfoLength = bw.pop();
-		int miLvl = MainPanel.addTreeItem(Messages.getString("ModuleList.lenght") + BitWise.toHex(moduleInfoLength), aModuleLvl); //$NON-NLS-1$
+		int miLvl = MainPanel.addTreeItem(
+				Messages.getString("ModuleList.lenght") + BitWise.toHex(moduleInfoLength), aModuleLvl); //$NON-NLS-1$
 		MainPanel.addTreeItem("ModuleTimeOut: " + BitWise.toHex(bw.pop32()), miLvl); //$NON-NLS-1$
 		MainPanel.addTreeItem("BlockTimeOut: " + BitWise.toHex(bw.pop32()), miLvl); //$NON-NLS-1$
 		MainPanel.addTreeItem("MinBlockTime: " + BitWise.toHex(bw.pop32()), miLvl); //$NON-NLS-1$
@@ -148,7 +149,8 @@ public class ModuleList {
 			MainPanel.addTreeItem("selector_length: " + BitWise.toHex(bw.pop()), aTapLvl); //$NON-NLS-1$
 		}
 		int userInfoLength = bw.pop();
-		int uiLvl = MainPanel.addTreeItem(Messages.getString("ModuleList.userLenght") + BitWise.toHex(userInfoLength), aModuleLvl); //$NON-NLS-1$
+		int uiLvl = MainPanel.addTreeItem(
+				Messages.getString("ModuleList.userLenght") + BitWise.toHex(userInfoLength), aModuleLvl); //$NON-NLS-1$
 
 		// for(i=0,i<N,i++){ uimsbf
 		// descriptor()
@@ -159,7 +161,7 @@ public class ModuleList {
 		}
 		// MainPanel.addTreeItem("moduleInfo: "+bw.getHexSequence(moduleInfoLength),
 		// aModuleLvl);
-		moduleList.add(new Module(moduleId, moduleVersion, moduleSize, aModuleLvl, this, origSize));
+		moduleList.add(new Module(moduleId, moduleVersion, moduleSize, aModuleLvl, this, origSize, blockSize));
 	}
 
 	public void setCompression(int origSize) {

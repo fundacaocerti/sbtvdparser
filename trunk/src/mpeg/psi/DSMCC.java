@@ -61,9 +61,12 @@ public class DSMCC extends Table {
 			GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] { Messages.getString("DSMCC.mount") + pid + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
 					new Integer(progressLvl) }, true);
 		else
-			GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] {
-					Messages.getString("DSMCC.mount") + pid + " " + (downloaded * 100 / totalLenght) + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					true);
+			GuiMethods
+					.runMethod(
+							GuiMethods.CHANGEITEM,
+							new Object[] {
+									Messages.getString("DSMCC.mount") + pid + " " + (downloaded * 100 / totalLenght) + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							true);
 	}
 
 	public boolean printDescription(byte[] ba) {
@@ -164,7 +167,7 @@ public class DSMCC extends Table {
 		int moduleLvl = addSubItem(Messages.getString("DSMCC.modules") + numberOfModules + ")", diiLvl); //$NON-NLS-1$ //$NON-NLS-2$
 		MainPanel.setTreeData(moduleLvl, moduleList);
 		for (int i = 0; i < numberOfModules; i++)
-			moduleList.createModule(bw, moduleLvl);
+			moduleList.createModule(bw, moduleLvl, blockSize);
 		moduleList.loadCache();
 		int privateDataLength = bw.pop16();
 		if (privateDataLength > 0) {

@@ -33,21 +33,22 @@ import sys.BitWise;
 import sys.Messages;
 
 public class Module {
-	int id, version, lenght, remainingParts, treeLvl, origSize;
+	int id, version, lenght, remainingParts, treeLvl, origSize, blockSize = 4066;
 	boolean[] receivedParts;
 	public int partLvl;
 	byte[] data;
 	ModuleList moduleList;
 
-	public Module(int id, int version, int lenght, int treeLvl, ModuleList moduleList, int origSize) {
+	public Module(int id, int version, int lenght, int treeLvl, ModuleList moduleList, int origSize, int blockSize) {
 		this.id = id;
 		this.version = version;
 		this.lenght = lenght;
 		this.origSize = origSize;
 		this.treeLvl = treeLvl;
 		this.moduleList = moduleList;
+		this.blockSize = blockSize;
 		data = new byte[lenght];
-		remainingParts = lenght / 4066 + 1;
+		remainingParts = lenght / blockSize + 1;
 		receivedParts = new boolean[remainingParts];
 		partLvl = MainPanel.addTreeItem(Messages.getString("Module.parts") + remainingParts, treeLvl); //$NON-NLS-1$
 	}
@@ -84,7 +85,9 @@ public class Module {
 	public void feedPart(byte[] data, int dataOffset, int dataLenght, int blockNumber, int partLvl) {
 		if (remainingParts == 0 || blockNumber >= receivedParts.length || receivedParts[blockNumber])
 			return;
-		MainPanel.addTreeItem(Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
+		MainPanel
+				.addTreeItem(
+						Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
 		// MainPanel.addTreeItem("["+
 		// printHex(contents, startOffset, startOffset+4);
 		// System.out.print("...");
@@ -93,13 +96,14 @@ public class Module {
 		// System.out.print("Module: "+Integer.toHexString(id));
 		// System.out.print("\tsize: "+Integer.toHexString(lenght));
 		// System.out.println("\tfeed: do="+dataOffset+" dl="+dataLenght+" bn="+blockNumber);
-		if ((data.length < dataOffset + dataLenght) || (this.data.length < blockNumber * 4066 + dataLenght)) {
-			System.out.println("Module " + id + " data feed err: inserting " + dataLenght + "b of " + data.length //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					+ "b buffer from " + dataOffset + " into " + this.data.length + "b dest. at " + blockNumber * 4066 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					+ dataLenght);
+		if ((data.length < dataOffset + dataLenght) || (this.data.length < blockNumber * blockSize + dataLenght)) {
+			System.out
+					.println("Module " + id + " data feed err: inserting " + dataLenght + "b of " + data.length //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ "b buffer from " + dataOffset + " into " + this.data.length + "b dest. at " + blockNumber * blockSize //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ dataLenght);
 			return;
 		}
-		System.arraycopy(data, dataOffset, this.data, blockNumber * 4066, dataLenght);
+		System.arraycopy(data, dataOffset, this.data, blockNumber * blockSize, dataLenght);
 		remainingParts--;
 		receivedParts[blockNumber] = true;
 		if (remainingParts == 0) {
