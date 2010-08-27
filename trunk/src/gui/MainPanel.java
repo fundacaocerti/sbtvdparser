@@ -42,14 +42,11 @@
  */
 package gui;
 
-import gui.dialogs.ButtonListener;
 import gui.dialogs.CopyPopUp;
 import gui.dialogs.DSMCCSavePopUp;
-import gui.dialogs.FileDropListener;
-import gui.dialogs.MenuAbout;
-import gui.dialogs.MenuOpen;
-import gui.dialogs.MenuSave;
-import gui.dialogs.PIDSelection;
+import gui.dialogs.About;
+import gui.dialogs.Open;
+import gui.dialogs.Save;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -87,12 +84,13 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import parsers.Packet;
 import parsers.Parameters;
-import sys.CRC32;
 import sys.Log;
 import sys.LogicTree;
 import sys.Messages;
 
 public class MainPanel {
+
+	private static Vector msgCache = new Vector();
 
 	public static Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,10"
 
@@ -115,8 +113,6 @@ public class MainPanel {
 	private static LogicTree[] trees = new LogicTree[5]; // @jve:decl-index=0:
 
 	private Menu menuBar = null;
-
-	private static boolean noGui = false;
 
 	public static ProgressBar progressBar = null;
 
@@ -271,36 +267,26 @@ public class MainPanel {
 		pidSelector.addSelectionListener(new PIDSelection());
 	}
 
-	public static void main(String[] cmdArgs) {
-		Messages.load();
-		try {
-			MainPanel thisClass = null;
-			// if (cmdArgs.length == 0)
-			// return;
-			if (Parameters.noGui)
-				noGui = true;
-			if (!noGui) {
-				display = Display.getDefault();
-				thisClass = new MainPanel();
-				thisClass.createSShell();
-				sShell.open();
-				thisClass.createDND();
-			}
-			// s.setPriority(3);
-			CRC32.makeTable();
-			Parameters.startParser(cmdArgs);
+	public void initialize() {
+		display = Display.getDefault();
+		createSShell();
+		sShell.open();
+		createDND();
+		for (int i = 0; i < msgCache.size(); i++)
+			addTreeItem(msgCache.get(i).toString(), 0);
+	}
 
-			while (thisClass != null && !sShell.isDisposed()) {
-				if (!display.readAndDispatch())
-					display.sleep();
-			}
-			if (display != null)
-				display.dispose();
-			isOpen = false;
-		} catch (RuntimeException e) {
-			Log.printStackTrace(e);
+	public void handleEvents() {
+		while (!sShell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
-		System.exit(0);
+	}
+
+	public void dispose() {
+		if (display != null)
+			display.dispose();
+		isOpen = false;
 	}
 
 	private void createDND() {
@@ -334,7 +320,7 @@ public class MainPanel {
 		MenuItem openFilterItem = new MenuItem(fileMenu, SWT.PUSH);
 		openItem.setText(Messages.getString("MainPanel.open")); //$NON-NLS-1$
 		openItem.setAccelerator(SWT.CTRL + 'A');
-		MenuOpen openFileListener = new MenuOpen(sShell, openItem, openFilterItem);
+		Open openFileListener = new Open(sShell, openItem, openFilterItem);
 		openItem.addSelectionListener(openFileListener);
 
 		openFilterItem.setText(Messages.getString("MainPanel.openFilter")); //$NON-NLS-1$
@@ -349,11 +335,11 @@ public class MainPanel {
 		MenuItem saveItem = new MenuItem(fileMenu, SWT.PUSH);
 		saveItem.setText(Messages.getString("MainPanel.save")); //$NON-NLS-1$
 		saveItem.setAccelerator(SWT.CTRL + 'S');
-		MenuSave saveFileListener = new MenuSave(sShell);
+		Save saveFileListener = new Save(sShell);
 
 		MenuItem about = new MenuItem(fileMenu, SWT.PUSH);
 		about.setText(Messages.getString("MainPanel.about")); //$NON-NLS-1$
-		about.addSelectionListener(new MenuAbout(sShell));
+		about.addSelectionListener(new About(sShell));
 
 		limitLabel = new CLabel(sShell, SWT.NONE);
 		limitLabel.setText(Messages.getString("MainPanel.limit")); //$NON-NLS-1$
@@ -400,13 +386,13 @@ public class MainPanel {
 	}
 
 	public static void getLimit() {
-		if (noGui)
+		if (Parameters.noGui)
 			return;
 		GuiMethods.runMethod(GuiMethods.GETLIMITBOX, null, false);
 	}
 
 	public static void setLimit(long limit) {
-		if (noGui)
+		if (Parameters.noGui)
 			return;
 		GuiMethods.runMethod(GuiMethods.SETLIMITBOX, new Long(limit), false);
 	}
@@ -417,6 +403,12 @@ public class MainPanel {
 
 	public static int addTreeItem(String content, int parent) {
 		return addTreeItem(content, parent, PSI_TREE);
+	}
+
+	// this messages can be added before the MainPanel is created, and will be
+	// shown later
+	public static void cacheMessage(String content) {
+		msgCache.add(content);
 	}
 
 	public static void changeTreeItem(String content, int index) {
@@ -466,7 +458,7 @@ public class MainPanel {
 			tit = new LogicTree(content, (LogicTree) items.get(parent), items.size());
 		items.add(tit);
 
-		if (!noGui && (targetFilter == null || targetOK || (content == tsNameId && !listOnlyMatches)))
+		if (!Parameters.noGui && (targetFilter == null || targetOK || (content == tsNameId && !listOnlyMatches)))
 			GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { tit, new Integer(rootIndx) }, true);
 
 		if (filterLimit == 0)
@@ -533,7 +525,7 @@ public class MainPanel {
 	}
 
 	public static void guiThreadExec(Runnable r, boolean sync) {
-		if (!noGui && display != null && !display.isDisposed())
+		if (!Parameters.noGui && display != null && !display.isDisposed())
 			if (sync)
 				display.syncExec(r);
 			else
@@ -541,7 +533,7 @@ public class MainPanel {
 	}
 
 	public static void clearTree() {
-		if (!noGui) {
+		if (!Parameters.noGui) {
 			Tree tmp[] = { mainTree, epgTree, statsTree, dsmccTree, ccTree };
 			for (int i = 0; i < tmp.length; i++)
 				GuiMethods.runMethod(GuiMethods.CLEARTREE, tmp[i], true);
@@ -568,7 +560,7 @@ public class MainPanel {
 			fos.flush();
 			fos.close();
 		} catch (Exception e) {
-			if (noGui)
+			if (Parameters.noGui)
 				System.err.println(e.getMessage());
 			else
 				new TreeItem(mainTree, SWT.NONE).setText(e.getMessage());

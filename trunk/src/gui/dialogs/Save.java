@@ -21,24 +21,36 @@
  */
 package gui.dialogs;
 
-import gui.Graph;
+import gui.MainPanel;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 
-import sys.PIDStats;
+import sys.Messages;
 
-public class PIDSelection implements SelectionListener {
+public class Save implements SelectionListener {
+
+	private Shell s;
+
+	public Save(Shell shell) {
+		this.s = shell;
+	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		int selIndx = ((Combo) e.getSource()).getSelectionIndex();
-		// int pid = PIDStats.getPid(selIndx);
-		float[] bitrates = PIDStats.getBitrates(selIndx);
-		Graph.plot(bitrates);
+		FileDialog fd = new FileDialog(s, SWT.SAVE);
+		fd.setText(Messages.getString("MenuSave.save")); //$NON-NLS-1$
+		// fd.setFilterPath("C:/");
+		String[] filterExt = { "*.txt", "*.htm" }; //$NON-NLS-1$ //$NON-NLS-2$
+		fd.setFilterExtensions(filterExt);
+		String selected = fd.open();
+		if (selected != null)
+			MainPanel.saveTree(selected);
 	}
 
 }

@@ -19,47 +19,25 @@
     along with the SBTVD Stream Parser.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-package gui.dialogs;
+package gui;
 
-import gui.MainPanel;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Combo;
 
-import parsers.Packet;
-import sys.BatchAnalisys;
+import sys.PIDStats;
 
-public class ButtonListener implements SelectionListener {
+public class PIDSelection implements SelectionListener {
 
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		if (e.widget == MainPanel.btPause)
-			if (BatchAnalisys.stopThread)
-				Packet.pause(!Packet.isPaused());
-			else {
-				stopCurrentTS();
-				return;
-			}
-		else {
-			BatchAnalisys.stopThread = true;
-			stopCurrentTS();
-		}
-		if (Packet.isPaused())
-			MainPanel.btPause.setImage(MainPanel.imPlay);
-		else
-			MainPanel.btPause.setImage(MainPanel.imPause);
-	}
-
-	private void stopCurrentTS() {
-		Packet.setPacketLimit(Packet.packetCount);
-		Packet.pause(false);
-		if (BatchAnalisys.stopThread)
-			MainPanel.btStop.setEnabled(false);
-		MainPanel.btPause.setEnabled(false);
-		MainPanel.progressBar.setSelection(100);
-		MainPanel.progressBar.setToolTipText("100%"); //$NON-NLS-1$
+		int selIndx = ((Combo) e.getSource()).getSelectionIndex();
+		// int pid = PIDStats.getPid(selIndx);
+		float[] bitrates = PIDStats.getBitrates(selIndx);
+		Graph.plot(bitrates);
 	}
 
 }

@@ -22,7 +22,6 @@
 package gui.dialogs;
 
 import gui.MainPanel;
-import gui.QueryDialog;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,7 +35,7 @@ import parsers.Parameters;
 import sys.BatchAnalisys;
 import sys.Messages;
 
-public class MenuOpen implements SelectionListener {
+public class Open implements SelectionListener {
 
 	private Shell shell;
 
@@ -44,7 +43,7 @@ public class MenuOpen implements SelectionListener {
 
 	static String lastDir = null;
 
-	public MenuOpen(Shell shell, Widget fileMenu, Widget filterMenu) {
+	public Open(Shell shell, Widget fileMenu, Widget filterMenu) {
 		this.shell = shell;
 		this.fileMenu = fileMenu;
 		this.filterMenu = filterMenu;
@@ -73,7 +72,7 @@ public class MenuOpen implements SelectionListener {
 				String selected = fd.open();
 				if (selected == null)
 					return;
-				QueryDialog qDialog = new QueryDialog(shell, false);
+				Query qDialog = new Query(shell, false);
 				String filter = qDialog.open();
 				if (filter == null || filter.length() == 0)
 					return;
@@ -90,7 +89,7 @@ public class MenuOpen implements SelectionListener {
 				lastDir = fd.open();
 				if (lastDir == null)
 					return;
-				QueryDialog qDialog = new QueryDialog(shell, true);
+				Query qDialog = new Query(shell, true);
 				String filter = qDialog.open();
 				if (filter == null || filter.length() == 0)
 					return;

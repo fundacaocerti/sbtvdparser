@@ -19,38 +19,46 @@
     along with the SBTVD Stream Parser.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-package gui.dialogs;
+package gui;
 
-import gui.MainPanel;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
 
-import sys.Messages;
+import parsers.Packet;
+import sys.BatchAnalisys;
 
-public class MenuSave implements SelectionListener {
-
-	private Shell s;
-
-	public MenuSave(Shell shell) {
-		this.s = shell;
-	}
+public class ButtonListener implements SelectionListener {
 
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		FileDialog fd = new FileDialog(s, SWT.SAVE);
-		fd.setText(Messages.getString("MenuSave.save")); //$NON-NLS-1$
-		// fd.setFilterPath("C:/");
-		String[] filterExt = { "*.txt", "*.htm" }; //$NON-NLS-1$ //$NON-NLS-2$
-		fd.setFilterExtensions(filterExt);
-		String selected = fd.open();
-		if (selected != null)
-			MainPanel.saveTree(selected);
+		if (e.widget == MainPanel.btPause)
+			if (BatchAnalisys.stopThread)
+				Packet.pause(!Packet.isPaused());
+			else {
+				stopCurrentTS();
+				return;
+			}
+		else {
+			BatchAnalisys.stopThread = true;
+			stopCurrentTS();
+		}
+		if (Packet.isPaused())
+			MainPanel.btPause.setImage(MainPanel.imPlay);
+		else
+			MainPanel.btPause.setImage(MainPanel.imPause);
+	}
+
+	private void stopCurrentTS() {
+		Packet.setPacketLimit(Packet.packetCount);
+		Packet.pause(false);
+		if (BatchAnalisys.stopThread)
+			MainPanel.btStop.setEnabled(false);
+		MainPanel.btPause.setEnabled(false);
+		MainPanel.progressBar.setSelection(100);
+		MainPanel.progressBar.setToolTipText("100%"); //$NON-NLS-1$
 	}
 
 }
