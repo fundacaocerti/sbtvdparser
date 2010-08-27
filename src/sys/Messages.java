@@ -1,12 +1,7 @@
 package sys;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class Messages {
@@ -16,17 +11,8 @@ public class Messages {
 	private static ResourceBundle RESOURCE_BUNDLE;
 
 	public static void load() {
-		String lang = "en", region = "US";
-		Properties p = new Properties();
-		try {
-			p.load(new FileInputStream(new File(System.getProperty("user.dir"), "sbtvdp.properties")));
-			lang = p.getProperty("UI.lang.idiom");
-			region = p.getProperty("UI.lang.region");
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		}
-		Locale loc = new Locale(lang, region);
-		RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, loc);
+		RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, new Locale(Persistence.get(Persistence.UI_LANG_IDIOM),
+				Persistence.get(Persistence.UI_LANG_REGION)));
 	}
 
 	public static String getString(String key) {

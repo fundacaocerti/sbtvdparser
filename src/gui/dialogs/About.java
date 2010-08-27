@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import sys.Messages;
 
-public class MenuAbout extends Dialog implements SelectionListener {
+public class About extends Dialog implements SelectionListener {
 
 	private Label imageLabel = null;
 	private Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,62"
@@ -89,7 +89,7 @@ public class MenuAbout extends Dialog implements SelectionListener {
 		}
 	}
 
-	public MenuAbout(Shell parent) {
+	public About(Shell parent) {
 		super(parent);
 		// sShell = parent;
 		initialize();

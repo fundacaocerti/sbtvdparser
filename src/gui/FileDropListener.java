@@ -19,7 +19,7 @@
     along with the SBTVD Stream Parser.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-package gui.dialogs;
+package gui;
 
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;

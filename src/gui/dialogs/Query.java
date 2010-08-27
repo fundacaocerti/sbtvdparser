@@ -19,7 +19,7 @@
     along with the SBTVD Stream Parser.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-package gui;
+package gui.dialogs;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -39,9 +39,9 @@ import org.eclipse.swt.widgets.Text;
 
 import sys.Messages;
 
-public class QueryDialog extends Dialog implements SelectionListener, KeyListener {
+public class Query extends Dialog implements SelectionListener, KeyListener {
 
-	public QueryDialog(Shell parent, boolean showDirOptions) {
+	public Query(Shell parent, boolean showDirOptions) {
 		super(parent);
 		this.showDirOptions = showDirOptions;
 	}
