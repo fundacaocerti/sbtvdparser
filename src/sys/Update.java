@@ -25,9 +25,7 @@ public class Update extends Thread {
 			Persistence.set(Persistence.LAST_UPDATE_VERSION, Persistence.CURRENT_SW_VERSION);
 			return;
 		}
-		System.out.println("version: [" + info[0] + "]");
-		System.out.println("url: [" + info[1] + "]");
-		System.out.println("description: [" + info[2] + "]");
+		gui.dialogs.Update.open(info[0], info[1], info[2]);
 	}
 
 	public String[] getLatestVersionInfo(String from) {
@@ -36,7 +34,7 @@ public class Update extends Thread {
 			URL url = new URL(from);
 			URLConnection cnx = url.openConnection();
 			cnx.setDoInput(true);
-			// cnx.setUseCaches(false);
+			cnx.setUseCaches(false);
 			BufferedReader br = new BufferedReader(new InputStreamReader(cnx.getInputStream()));
 			// BufferedReader br = new BufferedReader(new InputStreamReader(new
 			// FileInputStream(from), "utf-8"));

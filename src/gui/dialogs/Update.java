@@ -21,22 +21,26 @@
  */
 package gui.dialogs;
 
+import gui.MainPanel;
+
+import java.text.DateFormat;
+import java.util.Date;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import sys.Messages;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Link;
+import sys.Persistence;
 
 public class Update extends Dialog implements SelectionListener {
 
@@ -49,31 +53,40 @@ public class Update extends Dialog implements SelectionListener {
 	private Text nvText = null;
 	private Label rnLabel = null;
 	private Text rnArea = null;
-	private Link link = null;
+	private Link link = null, linkb = null;
+	Shell parent;
+	static String updVer, updURL, updInfo;  //  @jve:decl-index=0:
 
 	public void widgetDefaultSelected(SelectionEvent e) {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		if (e.widget instanceof MenuItem)
-			open();
 		if (e.widget == btOK)
 			sShell.close();
 	}
-
+	
 	public Update(Shell parent) {
 		super(parent);
-		initialize();
+		this.parent = parent;
 	}
 
-	public void open() {
-		initialize();
-		sShell.open();
-		Display display = sShell.getDisplay();
-		while (!sShell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
+	public static void open(String _updVer, String _updURL, String _updInfo) {
+		updVer = _updVer;
+		updURL = _updURL;
+		updInfo = _updInfo;
+		class Starter implements Runnable {
+			public void run() {
+				Update thisInstance = new Update(MainPanel.sShell);
+				thisInstance.initialize();
+				thisInstance.sShell.open();
+				Display display = thisInstance.sShell.getDisplay();
+				while (!thisInstance.sShell.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+			}
 		}
+		MainPanel.guiThreadExec(new Starter(), false);
 	}
 
 	private void initialize() {
@@ -85,6 +98,8 @@ public class Update extends Dialog implements SelectionListener {
 		}
 		GridData defaultGd = new GridData();
 		defaultGd.horizontalSpan = 3;
+		defaultGd.widthHint = 300;
+		defaultGd.grabExcessHorizontalSpace = true;
 		
 		GridData gridData2 = new GridData();
 		gridData2.horizontalSpan = 3;
@@ -112,31 +127,34 @@ public class Update extends Dialog implements SelectionListener {
 		cvLabel.setText("Current version:");
 		cvText = new Text(sShell, SWT.BORDER);
 		cvText.setEditable(false);
-		cvText.setText("0.3 - 25/03/2010");
+		long currSwDate = Long.parseLong(Persistence.CURRENT_SW_DATE, 16);
+		cvText.setText(Persistence.CURRENT_SW_VERSION+" - "+
+				DateFormat.getDateInstance().format(new Date(currSwDate)));
 		cvText.setLayoutData(textGd);
 		nvLabel = new Label(sShell, SWT.NONE);
 		nvLabel.setText("New version:");
 		nvText = new Text(sShell, SWT.BORDER);
 		nvText.setEditable(false);
 		nvText.setLayoutData(textGd);
-		nvText.setText("0.31b - 30/08/2010");
+		nvText.setText(updVer);
 		rnLabel = new Label(sShell, SWT.NONE);
 		rnLabel.setText("Release notes:");
 		rnLabel.setLayoutData(defaultGd);
 		rnArea = new Text(sShell, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		rnArea.setEditable(false);
+		rnArea.setText(updInfo);
 		rnArea.setLayoutData(gridData2);
-		link = new Link(sShell, SWT.NONE);
-		link.setText("<a>http://update.site</a>");
-		link.setLayoutData(defaultGd);
+		cvText = new Text(sShell, SWT.BORDER);
+		cvText.setText(updURL);
+		cvText.setLayoutData(defaultGd);
+		cvText.setEditable(false);
+		cvText.setToolTipText(updURL);
 		btOK = new Button(sShell, SWT.NONE);
 		btOK.setText(Messages.getString("MenuAbout.ok")); //$NON-NLS-1$
 		btOK.setLayoutData(gridData);
 		sShell.setLayout(gridLayout);
 		btOK.addSelectionListener(this);
-//		sShell.setSize(new Point(448, 263));
 		sShell.setText("Update notification");
 		sShell.pack();
 	}
-
 }
