@@ -182,7 +182,6 @@ public class Query extends Dialog implements SelectionListener, KeyListener {
 		isRecursive = recursive.getSelection();
 		isRegex = regex.getSelection();
 		listAllFiles = chkListAllFiles.getSelection();
-		System.out.println(maxResults.getText());
 		filterLimit = Integer.parseInt(maxResults.getText());
 		sShell.close();
 	}

@@ -73,6 +73,7 @@ public class About extends Dialog implements SelectionListener {
 					return;
 				File license = new File("COPYNG.txt"); //$NON-NLS-1$
 				System.out.println(license.getAbsolutePath());
+				// TODO: find the correct location
 				if (license.exists() && license.canRead())
 					try {
 						desk.open(license);

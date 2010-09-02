@@ -60,7 +60,6 @@ public class Open implements SelectionListener {
 			// fd.setFilterPath("C:/");
 			fd.setFilterExtensions(filterExt);
 			String selected = fd.open();
-			System.out.println(selected);
 			MainPanel.clearTree();
 			Parameters.startParser(new String[] { selected });
 		} else {
@@ -105,12 +104,4 @@ public class Open implements SelectionListener {
 			}
 		}
 	}
-
-	/*
-	 * private String popQuery() { QueryDialog qDialog = new QueryDialog(shell,
-	 * false); qDialog.setText("Filtro de resultados"); String filter =
-	 * qDialog.open(); System.out.println(qDialog.isRegex());
-	 * System.out.println(qDialog.isRecursive());
-	 * System.out.println(qDialog.getFilterLimit()); return filter; }
-	 */
 }
