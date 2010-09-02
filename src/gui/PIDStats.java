@@ -34,7 +34,6 @@ public class PIDStats {
 	public static void addBar(int pid, int percent, int maxPercent, String name) {
 		// percent = (int)(Math.log(percent)*100);
 		// maxPercent = (int)(Math.log(maxPercent)*100);
-		// System.out.println(Math.log(percent)+"/"+Math.log(maxPercent)+" "+name);
 		GridData gd = new GridData();
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;

@@ -30,6 +30,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 import sys.BitWise;
+import sys.Log;
 import sys.Messages;
 
 public class Module {
@@ -88,26 +89,27 @@ public class Module {
 		MainPanel
 				.addTreeItem(
 						Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
-		// MainPanel.addTreeItem("["+
-		// printHex(contents, startOffset, startOffset+4);
-		// System.out.print("...");
-		// printHex(contents, startOffset+lenght-4, startOffset+lenght);
-		// System.out.println("]");
-		// System.out.print("Module: "+Integer.toHexString(id));
-		// System.out.print("\tsize: "+Integer.toHexString(lenght));
-		// System.out.println("\tfeed: do="+dataOffset+" dl="+dataLenght+" bn="+blockNumber);
 		if ((data.length < dataOffset + dataLenght) || (this.data.length < blockNumber * blockSize + dataLenght)) {
-			System.out
-					.println("Module " + id + " data feed err: inserting " + dataLenght + "b of " + data.length //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							+ "b buffer from " + dataOffset + " into " + this.data.length + "b dest. at " + blockNumber * blockSize //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							+ dataLenght);
+			StringBuffer sb = new StringBuffer();
+			sb.append("Module ");
+			sb.append(id);
+			sb.append(" data feed err: inserting ");
+			sb.append(dataLenght);
+			sb.append("b of ");
+			sb.append(data.length);
+			sb.append("b buffer from ");
+			sb.append(dataOffset);
+			sb.append(" into ");
+			sb.append(this.data.length);
+			sb.append("b dest. at ");
+			sb.append(blockNumber * blockSize);
+			Log.printWarning(sb.toString());
 			return false;
 		}
 		System.arraycopy(data, dataOffset, this.data, blockNumber * blockSize, dataLenght);
 		remainingParts--;
 		receivedParts[blockNumber] = true;
 		if (remainingParts == 0) {
-			System.out.println("Module complete"); //$NON-NLS-1$
 			if (origSize != lenght) {
 				Inflater decompresser = new Inflater();
 				decompresser.setInput(this.data, 0, lenght);

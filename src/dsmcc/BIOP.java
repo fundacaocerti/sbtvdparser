@@ -49,7 +49,8 @@ public class BIOP {
 		bw.mark();
 		while (bw.getAvailableSize() > 0)
 			if (!parseMessage(bw, biopLvl)) {
-				System.out.println("pm fail"); //$NON-NLS-1$
+				// TODO: i18n
+				MainPanel.addTreeItem("Failed to parse module", biopLvl);
 				break;
 			}
 		if (bw.getAvailableSize() > 0) {
@@ -63,7 +64,6 @@ public class BIOP {
 	}
 
 	public boolean parseMessage(BitWise bw, int biopLvl) {
-		System.out.println("pm"); //$NON-NLS-1$
 		int msglvl = MainPanel.addTreeItem(Messages.getString("BIOP.message") + msgNumb++, biopLvl); //$NON-NLS-1$
 		// 0x42494F50 == BIOP
 		if (bw.pop() != 0x42 || bw.pop() != 0x49 || bw.pop() != 0x4F || bw.pop() != 0x50)
@@ -83,21 +83,17 @@ public class BIOP {
 		int objKind = bw.pop32();
 		MainPanel.addTreeItem("objKind: " + (char) (BitWise.stripBits(objKind, 32, 8)) //$NON-NLS-1$
 				+ (char) (BitWise.stripBits(objKind, 24, 8)) + (char) (BitWise.stripBits(objKind, 16, 8)), msglvl);
-		System.out.println("objKind " + BitWise.toHex(objKind)); //$NON-NLS-1$
 		int objectInfo_length;
 
 		switch (objKind) {
 		case 0x73726700: // "srg" == ServiceGateway
-			System.out.println("ServiceGateway"); //$NON-NLS-1$
 			fl.setSvcGatewayObjKey(objKey);
 		case 0x64697200: // "dir" == Directory
-			System.out.println("Directory"); //$NON-NLS-1$
 			// fl.setToDir(objKey); //for empty directories
 			objectInfo_length = bw.pop16();
-			System.out.println("objInfo: " + bw.getHexSequence(objectInfo_length)); //$NON-NLS-1$
+			MainPanel.addTreeItem("objInfo: " + bw.getHexSequence(objectInfo_length), msglvl); //$NON-NLS-1$
 			bw.pop(bw.pop() * 7); // ServiceContextList
 			// int serviceCtxLstCount = bw.pop();
-			// System.out.println("serviceCtxLstCount: "+serviceCtxLstCount);
 			// for (int i = 0; i < serviceCtxLstCount; i++) {
 			// bw.pop32();// ctxId
 			// bw.pop(bw.pop16()); //ctx datalengh
@@ -105,16 +101,13 @@ public class BIOP {
 			/* int messageBody_length = */
 			bw.pop32();
 			int bindings = bw.pop16();
-			// System.out.println("messageBody_length: "+messageBody_length);
 			int bindLvl = MainPanel.addTreeItem("bindings: " + bindings, msglvl); //$NON-NLS-1$
 			for (int i = 0; i < bindings; i++) {
 				String name = parseName(bw);// path
 				int nameLvl = MainPanel.addTreeItem("name: " + name, bindLvl); //$NON-NLS-1$
-				/* int bindingType = */bw.pop(); // 0x01 == ncontext > bound to
-				// a Directory or
-				// ServiceGateway
-				// System.out.println("bindingType: "+bindingType);
-				// bw.pop(0x49);
+				/* int bindingType = */bw.pop();
+				// 0x01 == ncontext > bound to a Directory or ServiceGateway
+				// TODO: use to create a dir.
 				DSMCCObject f = fl.setName(parseIOR(bw, nameLvl), name);
 				fl.addChildren(objKey, f);
 				objectInfo_length = bw.pop16();
@@ -123,12 +116,10 @@ public class BIOP {
 
 			break;
 		case 0x66696C00: // "fil" == file
-			System.out.println("File"); //$NON-NLS-1$
 			objectInfo_length = bw.pop16();
 			bw.pop32();
 			bw.pop32(); // should be pop64(), but no file will be larger than a
 			// few megs
-			// System.out.println("objInfo: "+bw.getHexSequence(objectInfo_length-8));
 
 			// serviceContextList_count + serviceContextList_data_byte
 			bw.pop(bw.pop());
@@ -140,9 +131,11 @@ public class BIOP {
 			break;
 		case 0x73747200: // "str" == Stream
 			System.out.println("Stream"); //$NON-NLS-1$
+			// TODO: show these events
 			break;
 		case 0x73746500: // "ste" == StreamEvent
 			System.out.println("StreamEvent"); //$NON-NLS-1$
+			// TODO: show these events
 			break;
 		default:
 			break;
@@ -164,15 +157,12 @@ public class BIOP {
 		iorLvl = MainPanel.addTreeItem("IOR", iorLvl); //$NON-NLS-1$
 		byte[] objKey = null;
 		int type_id_length = bw.pop32();
-		System.out.println("IOR:Type id: " + bw.getHexSequence(type_id_length)); //$NON-NLS-1$
+		bw.pop(type_id_length); // IOR:Type id
 		if (type_id_length % 4 != 0) // CDR alignment rule
 			bw.pop(4 - (type_id_length % 4));
 		int taggedProfiles_count = bw.pop32();
-		System.out.print("IOR:Tagged profiles: ["); //$NON-NLS-1$
 		for (int j = 0; j < taggedProfiles_count; j++) {
 			int profileId_tag = bw.pop32();
-			System.out.print("id: "); //$NON-NLS-1$
-			System.out.print(BitWise.toHex(profileId_tag));
 			int profile_data_length = bw.pop32();
 			bw.mark();
 			// 0x49534F06 == TAG_BIOP
@@ -191,7 +181,6 @@ public class BIOP {
 			}
 			bw.pop(profile_data_length - bw.getByteCount());
 		}
-		System.out.println("]"); //$NON-NLS-1$
 		return objKey;
 	}
 
@@ -199,21 +188,15 @@ public class BIOP {
 		// BIOP::Name(){
 		String name = null;
 		int nameComponents_count = bw.pop();
-		System.out.println("nameComponents_count: " + nameComponents_count); //$NON-NLS-1$
 		for (int i = 0; i < nameComponents_count; i++) {
 			int id_length = bw.pop();
-			System.out.print("nameComponent id: ["); //$NON-NLS-1$
 			StringBuffer sb = new StringBuffer();
 			for (int j = 0; j < id_length - 1; j++)
 				sb.append((char) bw.pop());
 			bw.pop();// null terminated
-			System.out.println(sb.toString() + "]"); //$NON-NLS-1$
 			int kind_length = bw.pop();
-			System.out.print("nameComponent kind: ["); //$NON-NLS-1$
-			for (int j = 0; j < kind_length - 1; j++)
-				System.out.print((char) bw.pop());
-			bw.pop();// null terminated
-			System.out.println("]"); //$NON-NLS-1$
+			bw.pop(kind_length); // nameComponent kind: fil, dir... - null
+			// terminated string
 			if (name == null)
 				name = sb.toString();
 		}
@@ -246,18 +229,5 @@ public class BIOP {
 		File root = new File("K:\\TS\\ModuleListB\\fs"); //$NON-NLS-1$
 		root.mkdir();
 		rd.saveIn(root);
-		// File f = new File("K:\\modules\\Module0002");
-		// System.out.println("Module: "+f.getName());
-		// try {
-		// FileInputStream fis = new FileInputStream(f);
-		// byte[] ba = new byte[(int)f.length()];
-		// fis.read(ba);
-		// BitWise bw = new BitWise(ba);
-		// BIOP me = new BIOP();
-		// me.parseModule(bw);
-		// fis.close();
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
 	}
 }
