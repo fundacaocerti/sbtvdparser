@@ -227,8 +227,6 @@ public class BitWise {
 	}
 
 	public BitWise getCopy(int sourceIndx, int size) {
-		// System.out.println(copies++);
-		// System.out.println(Runtime.getRuntime().freeMemory());
 		if (sourceIndx > bufSize)
 			sourceIndx = bufSize;
 		if (sourceIndx + size > bufSize)
