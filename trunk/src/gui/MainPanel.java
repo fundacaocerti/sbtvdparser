@@ -42,9 +42,9 @@
  */
 package gui;
 
+import gui.dialogs.About;
 import gui.dialogs.CopyPopUp;
 import gui.dialogs.DSMCCSavePopUp;
-import gui.dialogs.About;
 import gui.dialogs.Open;
 import gui.dialogs.Save;
 
@@ -601,7 +601,6 @@ public class MainPanel {
 
 	public static void setFilterAsRegex() {
 		filterIsRegex = true;
-		System.out.println("filterIsRegex " + filterIsRegex); //$NON-NLS-1$
 	}
 
 	public static void listOnlyMatches() {

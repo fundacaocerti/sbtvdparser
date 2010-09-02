@@ -106,7 +106,6 @@ public class Graph extends Composite {
 			sb.append(Messages.getString("Graph.from")); //$NON-NLS-1$
 			sb.append((Float.toString(offs) + "000").substring(0, 4)); //$NON-NLS-1$
 			sb.append(Messages.getString("Graph.to")); //$NON-NLS-1$
-			System.out.println(vz);
 			sb.append((Float.toString(max / vz + offs) + "00").substring(0, 4)); //$NON-NLS-1$
 			sb.append("Mbps"); //$NON-NLS-1$
 			info.setText(sb.toString());

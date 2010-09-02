@@ -59,7 +59,8 @@ public class DSMCCObject {
 			for (int i = 0; i < childrens.size(); i++)
 				((DSMCCObject) childrens.get(i)).mountTree(dirLvl);
 		} else {
-			int fileLvl = MainPanel.addTreeItem("[" + name + Messages.getString("DSMCCObject.size") + lenght, msgLvl, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
+			int fileLvl = MainPanel.addTreeItem(
+					"[" + name + Messages.getString("DSMCCObject.size") + lenght, msgLvl, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
 			MainPanel.setTreeData(fileLvl, this);
 		}
 	}
@@ -103,13 +104,6 @@ public class DSMCCObject {
 		this.startOffset = startOffset;
 		this.lenght = lenght;
 		isDirectory = false;
-		// System.out.print("FS: set contents of ");
-		// printObjKey(objKey);
-		// System.out.print(" to [");
-		// printHex(contents, startOffset, startOffset+4);
-		// System.out.print("...");
-		// printHex(contents, startOffset+lenght-4, startOffset+lenght);
-		// System.out.println("]");
 	}
 
 	public boolean equals(Object o) {

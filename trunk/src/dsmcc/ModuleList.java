@@ -100,8 +100,6 @@ public class ModuleList {
 		ModuleCache mc = new ModuleCache(data, m, dataOffset, dataLenght, blockNumber);
 		if (!cacheList.contains(mc))
 			cacheList.add(mc);
-		else
-			System.out.println("já no cache"); //$NON-NLS-1$
 	}
 
 	public void save(File f) {
@@ -119,7 +117,6 @@ public class ModuleList {
 	}
 
 	public void createModule(BitWise bw, int treeLvl, int blockSize) {
-		bw.printBuffer(bw.getAbsolutePosition(), bw.getAbsolutePosition() + 6);
 		int moduleId = bw.pop16();
 		int aModuleLvl = MainPanel.addTreeItem("moduleId: " + BitWise.toHex(moduleId), treeLvl); //$NON-NLS-1$
 		int moduleSize = bw.pop16() << 16 | bw.pop16();
