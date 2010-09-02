@@ -69,7 +69,6 @@ public class CopyPopUp implements Listener {
 			}
 		}
 		if (event.item != null && event.type == SWT.Selection && mouseButton == 3) {
-			// System.out.println("click"+((Integer)event.item.getData()).toString());
 			Menu menu = new Menu(s, SWT.POP_UP);
 			MenuItem item = new MenuItem(menu, SWT.PUSH);
 			LogicTree lt = (LogicTree) ((TreeItem) event.item).getData();
