@@ -21,12 +21,12 @@
  */
 package parsers;
 
-import sys.Log;
 import mpeg.TSP;
 import mpeg.psi.DSMCC;
 import mpeg.psi.EIT;
 import mpeg.psi.Table;
 import mpeg.psi.TableList;
+import sys.Log;
 
 public class Section {
 
@@ -53,9 +53,6 @@ public class Section {
 						+ Long.toHexString(Packet.packetCount));
 		}
 
-		// TODO: debug the continuity counter
-		// if (TSP.pid == 0)
-		// System.out.println(TSP.continuityCounter+" "+continuityOld+" "+this);
 		if ((TSP.continuityCounter - table.continuityOld != 1) && (table.continuityOld - TSP.continuityCounter != 15)
 				&& (table.continuityOld != -1))
 			TableList.continuityErrorCounters[TableList.tableIndex]++;
@@ -74,12 +71,8 @@ public class Section {
 			if (pointer_field < 0)
 				pointer_field += 256;
 			int srcPosition = TSP.dataOffset + 1;// 1 is the
-			// pointer_field
-			// System.out.println(table.name + ":
-			// "+Integer.toHexString(versionNumber));
 
 			if (pointer_field > 0) { // remainder of the last packet
-				// System.out.println("packed tables");
 				table.feedPart(Packet.buffer, srcPosition, pointer_field);
 				srcPosition += pointer_field;
 			}

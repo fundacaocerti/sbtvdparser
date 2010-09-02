@@ -123,7 +123,6 @@ public class Table {
 		// TODO section_lenght conta 1 byte a mais, weird
 		bw.setBufferSize(section_length - 1);
 		if (ba.length < section_length + 3) {// 3 bytes são de table header
-			// System.out.println("multissection, lenght: "+section_length);
 			bigBuffer = new byte[section_length + 3]; // includes CRC
 
 			// bw.setBufferSize(183);
@@ -196,19 +195,12 @@ public class Table {
 			writeSize = section_length - bufWriteIndx + 3;
 		if (source.length - srcOffset < writeSize)
 			writeSize = source.length - srcOffset;
-		// System.out.println("feed bs_"+bigBuffer.length+", ws_"+writeSize+",
-		// bwi_"+bufWriteIndx
-		// +", sle_"+source.length+", sof_"+srcOffset);
 		try {
 			System.arraycopy(source, srcOffset, bigBuffer, bufWriteIndx, writeSize);
 		} catch (RuntimeException e) {
 			Log.printStackTrace(e);
 		}
 		bufWriteIndx += writeSize;
-
-		// debug.setBuffer(source);
-		// System.out.print("feed: ");
-		// debug.printBuffer();
 
 		if (readyToParse())
 			TableList.tablesParsed[TableList.tableIndex] = printDescription(bigBuffer);

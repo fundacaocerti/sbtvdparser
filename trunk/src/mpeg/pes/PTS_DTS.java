@@ -50,12 +50,11 @@ public class PTS_DTS {
 
 		// PTS [14..0] 15 bslbf
 		pts = pts | (long) bw.pop() << 7;
-		pts = pts | (long) bw.consumeBits(7);
+		pts = pts | bw.consumeBits(7);
 		// marker_bit 1 bslbf
 		if (bw.consumeBits(1) != 1)
 			return -1;
 		float timestamp = (float) pts / 90000;
-		// System.out.println("pts/dts: "+(timestamp-lastTS));
 		if (lastTS == 0)
 			lastTS = timestamp;
 		return timestamp - lastTS;

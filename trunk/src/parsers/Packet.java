@@ -91,9 +91,8 @@ public class Packet extends Thread {
 		if (i != 1) {
 			syncLosses++;
 			if (syncLosses % 500 == 0)
-				Log
-						.printWarning(Messages.getString("Packet.warning") + packetCount + "-" + realPktLenght + "-" //$NON-NLS-1$
-								+ skipSize);
+				Log.printWarning(Messages.getString("Packet.warning") + packetCount + "-" + realPktLenght + "-" //$NON-NLS-1$
+						+ skipSize);
 			if (syncLosses > synclossesToRecalc) {
 				customPktCount = 0;
 				synclossesToRecalc += syncLosses;
@@ -167,7 +166,6 @@ public class Packet extends Thread {
 
 	public void printBitrate() {
 		float bitrate = PCR.getAverageBitrate();
-		System.out.println(bitrate);
 		if (Float.isInfinite(bitrate) || bitrate == 0)
 			bitrate = TOT.lastBitrate;
 		if (bitrate == 0)
@@ -176,7 +174,7 @@ public class Packet extends Thread {
 		if (!Float.isInfinite(TOT.lastBitrate)) {
 			MainPanel.addTreeItem(Messages.getString("Packet.bitrate") + bitrate + " Mbps", 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			// MainPanel.addTreeItem("TS packets: " + packetCounter, 0);
-			int duration = (int) ((float) packetCount / bitrate * realPktLenght * 8 / 1e6);
+			int duration = (int) (packetCount / bitrate * realPktLenght * 8 / 1e6);
 			String[] hms = new String[3];
 			int hmsDuration = duration;
 			for (int i = 0; i < hms.length; i++) {
@@ -185,8 +183,10 @@ public class Packet extends Thread {
 					hms[i] = "0" + hms[i];
 				hmsDuration = hmsDuration / 60;
 			}
-			MainPanel.addTreeItem(Messages.getString("Packet.duration") + hms[2] + ":" + hms[1] + ":" + hms[0] + " (" + duration + "s)", 0, //$NON-NLS-1$
-					MainPanel.STATS_TREE);
+			MainPanel
+					.addTreeItem(
+							Messages.getString("Packet.duration") + hms[2] + ":" + hms[1] + ":" + hms[0] + " (" + duration + "s)", 0, //$NON-NLS-1$
+							MainPanel.STATS_TREE);
 		}
 	}
 

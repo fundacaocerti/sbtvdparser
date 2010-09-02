@@ -105,7 +105,6 @@ public class Parameters {
 
 		if (srcFile.getName().endsWith(".pes")) {
 			initMainPanel();
-			System.out.println("here we go");
 			IndependentPES pes = new IndependentPES(bis);
 			// TODO: set pes type by user input
 			pes.start();

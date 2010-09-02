@@ -98,7 +98,6 @@ public class EIT extends Table {
 			return false;
 
 		printSectionInfo();
-		// System.out.println(name);
 
 		addSubItem("transport_stream_id: " + BitWise.toHex(transport_stream_id));
 		addSubItem("original_network_id: " + BitWise.toHex(original_network_id));
@@ -137,7 +136,6 @@ public class EIT extends Table {
 			int descLevel = addSubItem("Descriptors loop:", evtLevel);
 			int mark = bw.getByteCount();
 			while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
-				// System.out.println(bw.pop(0));
 				DescriptorList.print(bw, descLevel);
 			}
 			String evtName = ShortEvent.evtName;
@@ -179,15 +177,15 @@ public class EIT extends Table {
 		float duration = (float) (totalPackets / TOT.lastBitrate * 188 * 8 / 1e6);
 		addSubItem("EITs: " + (EITbasic + EIText + EITpf), statLevel);
 		if (duration != 0) {
-			addSubItem("EIT-p/f sections/s: " + ((float) EITpf / duration), statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-8day sections/s: " + ((float) EITbasic / duration), statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-extended sections/s: " + ((float) EIText / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-p/f sections/s: " + (EITpf / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-8day sections/s: " + (EITbasic / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-extended sections/s: " + (EIText / duration), statLevel, MainPanel.STATS_TREE);
 		}
 		addSubItem("Filled EITs: " + (EITbasicFilled + EITextFilled + EITpfFilled), statLevel);
 		if (duration != 0) {
-			addSubItem("EIT-p/f sections/s: " + ((float) EITpfFilled / duration), statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-8day sections/s: " + ((float) EITbasicFilled / duration), statLevel, MainPanel.STATS_TREE);
-			addSubItem("EIT-extended sections/s: " + ((float) EITextFilled / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-p/f sections/s: " + (EITpfFilled / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-8day sections/s: " + (EITbasicFilled / duration), statLevel, MainPanel.STATS_TREE);
+			addSubItem("EIT-extended sections/s: " + (EITextFilled / duration), statLevel, MainPanel.STATS_TREE);
 		}
 	}
 }

@@ -65,15 +65,4 @@ public class TSP {
 			dataOffset = 3 + AdaptationField.lenght;
 		}
 	}
-
-	public static void print() {
-		System.out.println("transportErrorIndicator: " + transportErrorIndicator); //$NON-NLS-1$
-		System.out.println("payloadUnitStartIndicator: " + payloadUnitStartIndicator); //$NON-NLS-1$
-		System.out.println("transportPriority: " + transportPriority); //$NON-NLS-1$
-		System.out.println("pid: " + BitWise.toHex(pid)); //$NON-NLS-1$
-		System.out.println("transportScramblingControl: " + transportScramblingControl); //$NON-NLS-1$
-		System.out.println("adaptationFieldControl: " + adaptationFieldControl); //$NON-NLS-1$
-		System.out.println("continuityCounter: " + continuityCounter); //$NON-NLS-1$
-		System.out.println();
-	}
 }

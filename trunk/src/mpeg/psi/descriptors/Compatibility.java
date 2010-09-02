@@ -29,7 +29,7 @@ public class Compatibility {
 		int cdLenght = bw.pop16();
 		if (cdLenght == 0)
 			return 0;
-		System.out.println("CompatibilityDescriptor is not empty");
+		// TODO: implement CD
 		bw.pop(cdLenght);
 		return cdLenght;
 	}

@@ -78,40 +78,33 @@ public class DSMCC extends Table {
 		// bw.printBuffer(0, 20);
 		// addSubItem("pid: "+BitWise.toHex(pid));
 
-		if (section_syntax_indicator == 0)
-			System.out.println("checksum used"); //$NON-NLS-1$
+		// TODO: use checksum when available -> if (section_syntax_indicator ==
+		// 0) ...
+
 		bw.mark();
 		switch (readTableID) {
 		case 0x3A:
-			System.out.println("LLCSNAP();");// TCP/IP encapsulation //$NON-NLS-1$
+			addSubItem("LLCSNAP - TCP/IP encapsulation msg.", progressLvl);
 			break;
 		case 0x3B:
-			// System.out.println("\nDSI or DII");
-			// bw.printBuffer(0, bw.getAvailableSize());
 			userNetworkMessage();
 			break;
 		case 0x3C:
-			// System.out.println("DDB");
 			downloadDataMessage();
 			break;
 		case 0x3D:
-			System.out.println("DSMCC_descriptor_list();"); //$NON-NLS-1$
+			addSubItem("DSMCC_descriptor_list msg.", progressLvl);
 			break;
 		case 0x3E:
-			System.out.println("DSMCC_private_data_byte();"); //$NON-NLS-1$
-			bw.printBuffer(bw.getAbsolutePosition(), section_length - 9);
+			addSubItem("DSMCC_private_data_byte [" + bw.getHexSequence(bw.getAvailableSize()) + "]", progressLvl);
 			break;
 		}
-		// System.out.println("available: "+bw.getAvailableSize());
 		return false;
 	}
 
 	void userNetworkMessage() {
-		// System.out.println("net");
 		int unmLvl = 0;
 		// int unmLvl = addSubItem("userNetworkMessage");
-		// System.out.print("userNetMsg: ");
-		// System.out.println(" "+section_length+"b");
 		int msgId = dsmccMsgHeader(unmLvl);
 		if (msgId == 0x1002)
 			downloadInfoIndication();
@@ -149,6 +142,7 @@ public class DSMCC extends Table {
 		addSubItem("downloadId: " + BitWise.toHex(downloadId), diiLvl); //$NON-NLS-1$
 		int blockSize = bw.pop16();
 		addSubItem("blockSize: " + BitWise.toHex(blockSize), diiLvl); //$NON-NLS-1$
+
 		// int windowSize = bw.pop();
 		// addSubItem("windowSize: "+BitWise.toHex(windowSize), unmLvl);
 		// int ackPeriod = bw.pop();
@@ -159,7 +153,8 @@ public class DSMCC extends Table {
 		// int tCDownloadScenario = bw.pop16()<<16+bw.pop16();
 		// addSubItem("tCDownloadScenario: "+BitWise.toHex(tCDownloadScenario),
 		// unmLvl);
-		System.out.println("00's: " + bw.getHexSequence(10)); //$NON-NLS-1$
+		bw.pop(10); // normally 00's - not used
+
 		// compatibilityDescriptor()
 		new Compatibility().parse(bw);
 		// bw.pop16();
