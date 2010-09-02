@@ -98,10 +98,9 @@ public class Link {
 					}
 				}
 				c = bw.pop();
-				if (alternatePath.length() == 0 && c == (int) '\\')
+				if (alternatePath.length() == 0 && c == '\\')
 					alternatePath = '\\' + getStr(bw);
 			}
-			System.out.println(filePath);
 		} catch (Exception e) {
 			Log.printStackTrace(e);
 			return;

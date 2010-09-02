@@ -69,7 +69,6 @@ public class SDT extends Table {
 			int descriptorsLenght = BitWise.stripBits(onid, 12, 12);
 			int netDescIndx = addSubItem("network descriptors: (lenght " + descriptorsLenght + ")", svcIdLevel);
 			int mark = bw.getByteCount();
-			// System.out.println(bw.getByteCount());
 			while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
 				DescriptorList.print(bw, netDescIndx);
 			}

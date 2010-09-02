@@ -111,7 +111,6 @@ public class CC extends PES {
 			// bytes no header
 			addSubItem("CRC16: " + BitWise.toHex(crc) + " " + (readCrc == crc), dataGroupLvl);
 		}
-		// System.out.println("available: " + bw.getAvailableSize());
 	}
 
 	void parseTMD(BitWise bw, boolean parseFree) {

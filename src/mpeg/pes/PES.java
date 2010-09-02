@@ -39,11 +39,9 @@ public class PES {
 	protected int thisPacket;
 
 	public void startPacket(byte[] source, int srcOffset, int writeSize) {
-		// System.out.println("PES start: "+writeSize);
 		bw = new BitWise(source);
 		bw.setOffset(srcOffset);
 		if (bw.pop() != 0 & bw.pop() != 0 & bw.pop() != 1) {
-			System.out.println("   start prefix not found"); //$NON-NLS-1$
 			return;
 		}
 		esId = bw.pop();
@@ -64,25 +62,15 @@ public class PES {
 	}
 
 	public void parse() {
-		// System.out.println("PES complete");
 		bw.printBuffer();
 	}
 
 	public void feedPart(byte[] source, int srcOffset, int writeSize) {
-		// System.out.println("PES feed: "+writeSize);
 		if (bigBuffer == null)
 			return;
 		if (bufWriteIndx == bigBuffer.length) {
-			// System.out.println(" full");
 			return;
 		}
-		// if (bufWriteIndx+writeSize > section_length+3)
-		// writeSize = section_length - bufWriteIndx+3;
-		// if (source.length - srcOffset < writeSize)
-		// writeSize = source.length - srcOffset;
-		// System.out.println("feed bs_"+bigBuffer.length+", ws_"+writeSize+",
-		// bwi_"+bufWriteIndx
-		// +", sle_"+source.length+", sof_"+srcOffset);
 		if (bufWriteIndx + writeSize > bigBuffer.length)
 			writeSize = bigBuffer.length - bufWriteIndx;
 		if (srcOffset + writeSize > source.length)
@@ -123,9 +111,6 @@ public class PES {
 
 		int PTS_DTS_flags = bw.consumeBits(2);
 		addSubItem("PTS_DTS_flags: " + bw.printBin(PTS_DTS_flags, 2), hdr); //$NON-NLS-1$
-		// System.out.println("PTS_DTS_flags: "+PTS_DTS_flags);
-		// PTS_DTS_flags 2 bslbf
-
 		addSubItem("ESCR_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
 		addSubItem("ES_rate_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
 		addSubItem("DSM_trick_mode_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$

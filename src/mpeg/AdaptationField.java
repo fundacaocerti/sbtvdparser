@@ -38,13 +38,9 @@ public class AdaptationField {
 			BitWise bw = new BitWise(content);
 			bw.setOffset(offset);
 			bw.setBufferSize(lenght + offset);
-			// System.out.println("Adaptation field found:");
-			// bw.printBuffer();
 			boolean pcrFlag = BitWise.stripBits(bw.pop(), 5, 1) == 1;
-			// System.out.println("PCR_Flag: "+pcrFlag);
 			if (pcrFlag) {
 				PCR.getInstance().update(bw);
-				// System.out.println(pid);
 			}
 		}
 	}

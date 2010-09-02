@@ -57,7 +57,6 @@ public class ESPacket {
 			int srcPosition = TSP.dataOffset + 1;// 1 is the
 			// pointer_field
 			if (pointer_field > 0) { // remainder of the last packet
-				// System.out.println("packed tables");
 				pes.feedPart(Packet.buffer, srcPosition, pointer_field);
 				srcPosition += pointer_field;
 			} else
