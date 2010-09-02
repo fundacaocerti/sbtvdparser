@@ -64,9 +64,9 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 			x = event.x;
 			y = event.y;
 		}
+		// TODO: fix bug of right click not working on selected items
 		if (event.item != null // && event.type == SWT.Selection
 				&& mouseButton == 3) {
-			// System.out.println("click"+((Integer)event.item.getData()).toString());
 			Menu menu = new Menu(s, SWT.POP_UP);
 			LogicTree lt = (LogicTree) ((TreeItem) event.item).getData();
 			data = lt.getData();
