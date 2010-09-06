@@ -49,7 +49,9 @@ public class Module {
 		this.moduleList = moduleList;
 		this.blockSize = blockSize;
 		data = new byte[lenght];
-		remainingParts = lenght / blockSize + 1;
+		remainingParts = lenght / blockSize;
+		if (lenght % blockSize > 0)
+			remainingParts++;
 		receivedParts = new boolean[remainingParts];
 		partLvl = MainPanel.addTreeItem(Messages.getString("Module.parts") + remainingParts, treeLvl); //$NON-NLS-1$
 	}
