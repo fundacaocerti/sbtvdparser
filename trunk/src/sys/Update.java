@@ -35,7 +35,7 @@ public class Update extends Thread {
 			URLConnection cnx = url.openConnection();
 			cnx.setDoInput(true);
 			cnx.setUseCaches(false);
-			BufferedReader br = new BufferedReader(new InputStreamReader(cnx.getInputStream()));
+			BufferedReader br = new BufferedReader(new InputStreamReader(cnx.getInputStream(), "utf-8"));
 			// BufferedReader br = new BufferedReader(new InputStreamReader(new
 			// FileInputStream(from), "utf-8"));
 			String line = br.readLine();
