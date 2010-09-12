@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import sys.Messages;
+import sys.Persistence;
 
 public class About extends Dialog implements SelectionListener {
 
@@ -141,7 +142,7 @@ public class About extends Dialog implements SelectionListener {
 		imageLabel.setImage(sShell.getDisplay().getSystemImage(SWT.ICON_WORKING));
 		imageLabel.setLayoutData(infoImgGd);
 		infoLabel = new Label(sShell, SWT.NONE);
-		infoLabel.setText("SBTVD Transport Stream Parser v0.21\n" + "Copyright © 2010 Gabriel A. G. Marques\n" //$NON-NLS-1$ //$NON-NLS-2$
+		infoLabel.setText("SBTVD Transport Stream Parser v" + Persistence.CURRENT_SW_VERSION + "\nCopyright © 2010 Gabriel A. G. Marques\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "gabriel.marques@gmail.com"); //$NON-NLS-1$
 		infoLabel.setLayoutData(info1gd);
 		gplImg = new Label(sShell, SWT.NONE);
