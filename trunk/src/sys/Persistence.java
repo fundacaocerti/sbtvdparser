@@ -18,7 +18,7 @@ public class Persistence {
 	public static final String CHECK_UPDATES = "checkUpdates";
 	public static final String LAST_READ_DIR = "lastOpenDir";
 	public static final String LAST_SAVE_DIR = "lastSaveDir";
-	public static final String CURRENT_SW_VERSION = "0.2";
+	public static final String CURRENT_SW_VERSION = "0.3";
 	public static final String CURRENT_SW_DATE = "12ac3f278fb";
 
 	static File f = new File(System.getProperty("user.dir"), "sbtvdp.properties");
