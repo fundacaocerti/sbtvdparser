@@ -19,27 +19,6 @@
     along with the SBTVD Stream Parser.  If not, see <http://www.gnu.org/licenses/>.
  
  */
-/*
- SBTVD TS Parser - MPEG-2 Transport Stream analyser and debugging tool.
- Copyright (C) 2010 Gabriel A. G. Marques
- gabriel.marques@gmail.com
-
- This file is part of the "SBTVD Transport Stream Parser" program.
-
- The SBTVD Transport Stream Parser is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- The SBTVD Transport Stream Parser is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with the SBTVD Stream Parser.  If not, see <http://www.gnu.org/licenses/>.
-
- */
 package gui;
 
 import gui.dialogs.About;
@@ -64,7 +43,6 @@ import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -72,6 +50,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -87,6 +66,7 @@ import parsers.Parameters;
 import sys.Log;
 import sys.LogicTree;
 import sys.Messages;
+import sys.Persistence;
 
 public class MainPanel {
 
@@ -137,13 +117,13 @@ public class MainPanel {
 
 	private TabFolder tabFolder = null;
 
-	private TabItem psiTab = null;
-	private TabItem epgTab = null;
-	private TabItem statsTab = null;
-	private TabItem ccTab = null;
-	private TabItem dsmccTab = null;
-	private TabItem logTab = null;
-	private TabItem graphTab = null;
+	private static TabItem psiTab = null;
+	private static TabItem epgTab = null;
+	private static TabItem statsTab = null;
+	private static TabItem ccTab = null;
+	private static TabItem dsmccTab = null;
+	private static TabItem logTab = null;
+	private static TabItem graphTab = null;
 
 	public static Text log = null;
 
@@ -174,18 +154,11 @@ public class MainPanel {
 		log.setEditable(false);
 
 		bitrateArea = new Group(tabFolder, SWT.BORDER);
+		bitrateArea.setLayout(new GridLayout());
 		brGraph = new Graph(bitrateArea, SWT.BORDER);
-		brGraph.setBounds(new Rectangle(3, 28, 288, 211));
-		bitrateArea.setText(Messages.getString("MainPanel.grafTitle")); //$NON-NLS-1$
-		// brGraph.setLayoutData(gridData);
 		createPidSelector();
-		pidLabel = new CLabel(bitrateArea, SWT.NONE);
-		pidLabel.setText(Messages.getString("MainPanel.pid")); //$NON-NLS-1$
-		pidLabel.setBounds(new Rectangle(3, 268, 93, 19));
-		graphInfo = new CLabel(bitrateArea, SWT.NONE);
-		graphInfo.setText("0.0Mbps - 20.0s"); //$NON-NLS-1$
-		graphInfo.setBounds(new Rectangle(3, 238, 289, 23));
-
+		pidLabel = new Label(bitrateArea, SWT.NONE);
+		graphInfo = new Label(bitrateArea, SWT.NONE);
 		createStatsGroup();
 
 		ccTree = new Tree(tabFolder, SWT.BORDER);
@@ -201,14 +174,6 @@ public class MainPanel {
 		dsmccTab = new TabItem(tabFolder, SWT.NULL);
 		logTab = new TabItem(tabFolder, SWT.NULL);
 		graphTab = new TabItem(tabFolder, SWT.NULL);
-
-		psiTab.setText(Messages.getString("MainPanel.struct")); //$NON-NLS-1$
-		epgTab.setText(Messages.getString("MainPanel.epg")); //$NON-NLS-1$
-		statsTab.setText(Messages.getString("MainPanel.stats")); //$NON-NLS-1$
-		ccTab.setText(Messages.getString("MainPanel.caption")); //$NON-NLS-1$
-		dsmccTab.setText(Messages.getString("MainPanel.dsmcc")); //$NON-NLS-1$
-		logTab.setText(Messages.getString("MainPanel.log")); //$NON-NLS-1$
-		graphTab.setText(Messages.getString("MainPanel.bitrates")); //$NON-NLS-1$
 
 		psiTab.setControl(mainTree);
 		epgTab.setControl(epgTree);
@@ -252,7 +217,6 @@ public class MainPanel {
 		statsTree.setLayoutData(gridData);
 
 		pidStats = new Group(statsGroup, SWT.V_SCROLL);
-		pidStats.setText(Messages.getString("MainPanel.pidRates")); //$NON-NLS-1$
 		pidStats.setLayoutData(gridData3);
 		pidStats.setLayout(gridLayout1);
 	}
@@ -263,7 +227,6 @@ public class MainPanel {
 	 */
 	private void createPidSelector() {
 		pidSelector = new Combo(bitrateArea, SWT.READ_ONLY);
-		pidSelector.setBounds(new Rectangle(93, 268, 195, 21));
 		pidSelector.addSelectionListener(new PIDSelection());
 	}
 
@@ -296,6 +259,8 @@ public class MainPanel {
 		target.addDropListener(new FileDropListener());
 	}
 
+	private static MenuItem file, settings, openItem, openFilterItem, openDirItem, saveItem, about, langPtItem, langEnItem;
+	
 	private void createSShell() {
 		GridData progressGridData = new GridData();
 		progressGridData.grabExcessHorizontalSpace = true;
@@ -311,34 +276,40 @@ public class MainPanel {
 
 		menuBar = new Menu(sShell, SWT.BAR);
 		sShell.setMenuBar(menuBar);
-		MenuItem file = new MenuItem(menuBar, SWT.CASCADE);
-		file.setText(Messages.getString("MainPanel.fileMenu")); //$NON-NLS-1$
+		file = new MenuItem(menuBar, SWT.CASCADE);
 		final Menu fileMenu = new Menu(sShell, SWT.DROP_DOWN);
 		file.setMenu(fileMenu);
+		
+		settings = new MenuItem(menuBar, SWT.CASCADE);
+		final Menu setMenu = new Menu(sShell, SWT.DROP_DOWN);
+		settings.setMenu(setMenu);
+		langPtItem = new MenuItem(setMenu, SWT.PUSH);
+		langEnItem = new MenuItem(setMenu, SWT.PUSH);
+		
+		SettingsListener setLstnr = new SettingsListener();
+		langPtItem.addSelectionListener(setLstnr);
+		langEnItem.addSelectionListener(setLstnr);
+		langEnItem.setData("en");
+		langPtItem.setData("pt");
 
-		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
-		MenuItem openFilterItem = new MenuItem(fileMenu, SWT.PUSH);
-		openItem.setText(Messages.getString("MainPanel.open")); //$NON-NLS-1$
+		openItem = new MenuItem(fileMenu, SWT.PUSH);
+		openFilterItem = new MenuItem(fileMenu, SWT.PUSH);
 		openItem.setAccelerator(SWT.CTRL + 'A');
 		Open openFileListener = new Open(sShell, openItem, openFilterItem);
 		openItem.addSelectionListener(openFileListener);
 
-		openFilterItem.setText(Messages.getString("MainPanel.openFilter")); //$NON-NLS-1$
 		openFilterItem.setAccelerator(SWT.CTRL + 'F');
 		openFilterItem.addSelectionListener(openFileListener);
 
-		MenuItem openDirItem = new MenuItem(fileMenu, SWT.PUSH);
-		openDirItem.setText(Messages.getString("MainPanel.openDir")); //$NON-NLS-1$
+		openDirItem = new MenuItem(fileMenu, SWT.PUSH);
 		openDirItem.setAccelerator(SWT.CTRL + 'D');
 		openDirItem.addSelectionListener(openFileListener);
 
-		MenuItem saveItem = new MenuItem(fileMenu, SWT.PUSH);
-		saveItem.setText(Messages.getString("MainPanel.save")); //$NON-NLS-1$
+		saveItem = new MenuItem(fileMenu, SWT.PUSH);
 		saveItem.setAccelerator(SWT.CTRL + 'S');
 		Save saveFileListener = new Save(sShell);
 
-		MenuItem about = new MenuItem(fileMenu, SWT.PUSH);
-		about.setText(Messages.getString("MainPanel.about")); //$NON-NLS-1$
+		about = new MenuItem(fileMenu, SWT.PUSH);
 		about.addSelectionListener(new About(sShell));
 
 		limitLabel = new CLabel(sShell, SWT.NONE);
@@ -379,6 +350,36 @@ public class MainPanel {
 		dsmccTree.addListener(SWT.MouseDown, savePopUp);
 		progressBar.addListener(SWT.MouseDown, mouseListener);
 		clearTree();
+		setTexts();
+	}
+
+	public static void setTexts() {
+		pidStats.setText(Messages.getString("MainPanel.pidRates")); //$NON-NLS-1$
+		bitrateArea.setText(Messages.getString("MainPanel.grafTitle")); //$NON-NLS-1$
+		pidLabel.setText(Messages.getString("MainPanel.pid")); //$NON-NLS-1$
+		graphInfo.setText("0.0Mbps - 20.0s"); //$NON-NLS-1$
+		psiTab.setText(Messages.getString("MainPanel.struct")); //$NON-NLS-1$
+		epgTab.setText(Messages.getString("MainPanel.epg")); //$NON-NLS-1$
+		statsTab.setText(Messages.getString("MainPanel.stats")); //$NON-NLS-1$
+		ccTab.setText(Messages.getString("MainPanel.caption")); //$NON-NLS-1$
+		dsmccTab.setText(Messages.getString("MainPanel.dsmcc")); //$NON-NLS-1$
+		logTab.setText(Messages.getString("MainPanel.log")); //$NON-NLS-1$
+		graphTab.setText(Messages.getString("MainPanel.bitrates")); //$NON-NLS-1$
+		file.setText(Messages.getString("MainPanel.fileMenu")); //$NON-NLS-1$
+		settings.setText(Messages.getString("MainPanel.settingsMenu")); //$NON-NLS-1$
+		openItem.setText(Messages.getString("MainPanel.open")); //$NON-NLS-1$
+		openFilterItem.setText(Messages.getString("MainPanel.openFilter")); //$NON-NLS-1$
+		openDirItem.setText(Messages.getString("MainPanel.openDir")); //$NON-NLS-1$
+		saveItem.setText(Messages.getString("MainPanel.save")); //$NON-NLS-1$
+		about.setText(Messages.getString("MainPanel.about")); //$NON-NLS-1$
+		if (Persistence.get(Persistence.UI_LANG_IDIOM).equals("pt")) {
+			langPtItem.setText("● "+Messages.getString("MainPanel.langPt"));
+			langEnItem.setText("   "+Messages.getString("MainPanel.langEn"));
+		}
+		else {
+			langEnItem.setText("● "+Messages.getString("MainPanel.langEn"));
+			langPtItem.setText("   "+Messages.getString("MainPanel.langPt"));
+		}
 	}
 
 	public static void setProgress(int progress) {
@@ -448,8 +449,6 @@ public class MainPanel {
 				content += " (filter match)";
 				addMatchingItem(parent, rootIndx);
 			}
-		// else if (!content.startsWith("Parsing"))
-		// return 0;
 
 		LogicTree tit;
 		if (parent == 0)
@@ -481,23 +480,15 @@ public class MainPanel {
 			p = topItem.parent.indx;
 		}
 		if (topItem != null && p == 0) {
-			// topItem.parent.indx = tsNameIndex;
 			topItem.parent = (LogicTree) items.get(tsNameIndex);
 		}
 		for (int i = reverse.size(); i > 0; i--) {
 			LogicTree lt = (LogicTree) reverse.get(i - 1);
 			if (!lt.isVisible)
 				GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { lt, new Integer(rootIndx) }, true);
-			// ((LogicTree)
-			// reverse.get(i-1)).treeitem.setExpanded(true);
 		}
 		filterLimit--;
 	}
-
-	//
-	// public static LogicTree getTreeRoot() {
-	// return treeRoot;
-	// }
 
 	public final static int PSI_TREE = 0, EPG_TREE = 1, STATS_TREE = 2, DSMCC_TREE = 3, CC_TREE = 4;
 
@@ -595,9 +586,9 @@ public class MainPanel {
 
 	public static Combo pidSelector = null;
 
-	private CLabel pidLabel = null;
+	private static Label pidLabel = null;
 
-	public static CLabel graphInfo = null;
+	public static Label graphInfo = null;
 
 	public static void setFilterAsRegex() {
 		filterIsRegex = true;
