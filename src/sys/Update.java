@@ -44,6 +44,7 @@ public class Update extends Thread {
 			while (line != null) {
 				if (descStart) {
 					line = line.replace("<br>", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+					line = line.replace("&bull", "●"); //$NON-NLS-1$ //$NON-NLS-2$
 					description.append(line.replaceAll("<.+?>", "")); //$NON-NLS-1$ //$NON-NLS-2$
 					if (line.indexOf("/p") > 0) { //$NON-NLS-1$
 						descStart = false;
