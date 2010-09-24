@@ -23,6 +23,8 @@ package gui.dialogs;
 
 import gui.MainPanel;
 
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -34,14 +36,13 @@ import org.eclipse.swt.widgets.Widget;
 import parsers.Parameters;
 import sys.BatchAnalisys;
 import sys.Messages;
+import sys.Persistence;
 
 public class Open implements SelectionListener {
 
 	private Shell shell;
 
 	Widget fileMenu, filterMenu;
-
-	static String lastDir = null;
 
 	public Open(Shell shell, Widget fileMenu, Widget filterMenu) {
 		this.shell = shell;
@@ -57,20 +58,24 @@ public class Open implements SelectionListener {
 		if (fileMenu.equals(e.widget)) {
 			FileDialog fd = new FileDialog(shell, SWT.OPEN);// +SWT.MULTI
 			fd.setText(Messages.getString("MenuOpen.open")); //$NON-NLS-1$
-			// fd.setFilterPath("C:/");
+			fd.setFilterPath(Persistence.get(Persistence.LAST_READ_DIR));
 			fd.setFilterExtensions(filterExt);
 			String selected = fd.open();
+			if (selected == null)
+				return;
+			Persistence.set(Persistence.LAST_READ_DIR, new File(selected).getParent());
 			MainPanel.clearTree();
 			Parameters.startParser(new String[] { selected });
 		} else {
 			if (filterMenu.equals(e.widget)) {
 				FileDialog fd = new FileDialog(shell, SWT.OPEN);// +SWT.MULTI
 				fd.setText(Messages.getString("MenuOpen.openFilter")); //$NON-NLS-1$
-				// fd.setFilterPath("C:/");
 				fd.setFilterExtensions(filterExt);
+				fd.setFilterPath(Persistence.get(Persistence.LAST_READ_DIR));
 				String selected = fd.open();
 				if (selected == null)
 					return;
+				Persistence.set(Persistence.LAST_READ_DIR, new File(selected).getParent());
 				Query qDialog = new Query(shell, false);
 				String filter = qDialog.open();
 				if (filter == null || filter.length() == 0)
@@ -83,11 +88,12 @@ public class Open implements SelectionListener {
 				Parameters.startParser(parm);
 			} else {
 				DirectoryDialog fd = new DirectoryDialog(shell, SWT.OPEN);// +SWT.MULTI
-				fd.setFilterPath(lastDir);
+				fd.setFilterPath(Persistence.get(Persistence.LAST_READ_DIR));
 				fd.setText(Messages.getString("MenuOpen.openDir")); //$NON-NLS-1$
-				lastDir = fd.open();
-				if (lastDir == null)
+				String dir = fd.open();
+				if (dir == null)
 					return;
+				Persistence.set(Persistence.LAST_READ_DIR, dir);
 				Query qDialog = new Query(shell, true);
 				String filter = qDialog.open();
 				if (filter == null || filter.length() == 0)
@@ -99,7 +105,8 @@ public class Open implements SelectionListener {
 					parm[3] = "-isRegex"; //$NON-NLS-1$
 				if (!qDialog.listAllFiles())
 					parm[4] = "-listOnlyMatches"; //$NON-NLS-1$
-				BatchAnalisys ba = new BatchAnalisys(lastDir, qDialog.isRecursive(), parm);
+				BatchAnalisys ba = new BatchAnalisys(Persistence.get(Persistence.LAST_READ_DIR), qDialog.isRecursive(),
+						parm);
 				ba.start();
 			}
 		}
