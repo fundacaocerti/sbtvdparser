@@ -29,7 +29,7 @@ public class DescriptorList {
 	static Class[] descList = { TSinformation.class, TerrestrialSystemDelivery.class, PartialReception.class,
 			StreamIdentifier.class, DataComponent.class, Component.class, ApplicationSignaling.class,
 			NetworkName.class, ParentalRating.class, ShortEvent.class, Service.class, DataContent.class,
-			AudioComponent.class, CarouselID.class, AssociationTag.class };
+			AudioComponent.class, CarouselID.class, AssociationTag.class, ExtendedEvent.class };
 
 	static boolean exception;
 
