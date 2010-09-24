@@ -24,6 +24,9 @@ package dsmcc;
 import gui.MainPanel;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import mpeg.psi.DSMCC;
@@ -34,8 +37,8 @@ import sys.Messages;
 
 public class ModuleList {
 
-	Vector moduleList = new Vector();
-	Vector cacheList = new Vector();
+	HashMap moduleList = new HashMap();
+	Vector ddbCache = new Vector();
 	Module lastOne;
 	int completeModules = 0;
 	int origSize;
@@ -49,22 +52,14 @@ public class ModuleList {
 		fileList = new FileList();
 	}
 
-	public Module getById(int id) {
-		// version is not used by now
-		if (lastOne != null && lastOne.getId() == id)
-			return lastOne;
-		for (int i = 0; i < moduleList.size(); i++) {
-			lastOne = (Module) moduleList.get(i);
-			if (lastOne.getId() == id)
-				return lastOne;
-		}
-		return null;
+	public Module getById(Integer id) {
+		return (Module) moduleList.get(id);
 	}
 
 	public void loadCache() {
-		for (int i = 0; i < cacheList.size(); i++)
-			((ModuleCache) cacheList.get(i)).load(this);
-		cacheList.removeAllElements();
+		for (int i = 0; i < ddbCache.size(); i++)
+			((DdbCache) ddbCache.get(i)).load(this);
+		ddbCache.removeAllElements();
 	}
 
 	public void mountFS() {
@@ -78,8 +73,8 @@ public class ModuleList {
 
 	public void reset() {
 		completeModules = 0;
-		moduleList.removeAllElements();
-		cacheList.removeAllElements();
+		moduleList.clear();
+		ddbCache.removeAllElements();
 		mountFS();
 	}
 
@@ -97,17 +92,19 @@ public class ModuleList {
 	}
 
 	public void cacheData(int m, byte[] data, int dataOffset, int dataLenght, int blockNumber) {
-		ModuleCache mc = new ModuleCache(data, m, dataOffset, dataLenght, blockNumber);
-		if (!cacheList.contains(mc))
-			cacheList.add(mc);
+		DdbCache mc = new DdbCache(data, m, dataOffset, dataLenght, blockNumber);
+		if (!ddbCache.contains(mc))
+			ddbCache.add(mc);
 	}
 
 	public void save(File f) {
 		if (f.exists())
 			f.delete();
 		f.mkdir();
-		for (int i = 0; i < moduleList.size(); i++) {
-			Module m = (Module) moduleList.get(i);
+		Iterator it = moduleList.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pairs = (Map.Entry) it.next();
+			Module m = (Module) pairs.getValue();
 			m.save(new File(f, m.toString()));
 		}
 	}
@@ -158,7 +155,8 @@ public class ModuleList {
 		}
 		// MainPanel.addTreeItem("moduleInfo: "+bw.getHexSequence(moduleInfoLength),
 		// aModuleLvl);
-		moduleList.add(new Module(moduleId, moduleVersion, moduleSize, aModuleLvl, this, origSize, blockSize));
+		moduleList.put(new Integer(moduleId), new Module(moduleId, moduleVersion, moduleSize, aModuleLvl, this,
+				origSize, blockSize));
 	}
 
 	public void setCompression(int origSize) {

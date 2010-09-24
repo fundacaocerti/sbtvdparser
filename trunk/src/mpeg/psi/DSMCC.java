@@ -177,7 +177,7 @@ public class DSMCC extends Table {
 		if (dsmccMsgHeader(0) != 0x1003)
 			return; // its not a DDB message
 		int moduleId = bw.pop16();
-		Module m = moduleList.getById(moduleId);
+		Module m = moduleList.getById(new Integer(moduleId));
 		// addSubItem("moduleId: "+BitWise.toHex(moduleId), ddmLvl);
 		// addSubItem("moduleVersion: "+BitWise.toHex(moduleVersion), ddmLvl);
 		bw.pop();
