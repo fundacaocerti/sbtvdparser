@@ -77,7 +77,7 @@ public class BIOP {
 		/* int message_type = */bw.pop();
 		int message_size = bw.pop32();
 		int mark = bw.getAbsolutePosition();
-		byte[] objKey = parseObjKey(bw, msglvl);
+		Long objKey = parseObjKey(bw, msglvl);
 		// objectKind_length == 4
 		bw.pop(4);
 		int objKind = bw.pop32();
@@ -144,18 +144,18 @@ public class BIOP {
 		return true;
 	}
 
-	private byte[] parseObjKey(BitWise bw, int msgLvl) {
+	private Long parseObjKey(BitWise bw, int msgLvl) {
 		int objectKey_length = bw.pop();
-		byte[] objKey = new byte[objectKey_length];
-		for (int i = 0; i < objKey.length; i++)
-			objKey[i] = (byte) bw.pop();
-		MainPanel.addTreeItem("objKey: " + DSMCCObject.printObjKey(objKey), msgLvl); //$NON-NLS-1$
-		return objKey;
+		long objKey = 0;
+		for (int i = 0; i < objectKey_length; i++)
+			objKey = objKey << 8 | (byte) bw.pop();
+		MainPanel.addTreeItem("objKey: 0x" + Long.toHexString(objKey), msgLvl); //$NON-NLS-1$
+		return new Long(objKey);
 	}
 
-	byte[] parseIOR(BitWise bw, int iorLvl) {
+	Long parseIOR(BitWise bw, int iorLvl) {
 		iorLvl = MainPanel.addTreeItem("IOR", iorLvl); //$NON-NLS-1$
-		byte[] objKey = null;
+		Long objKey = null;
 		int type_id_length = bw.pop32();
 		bw.pop(type_id_length); // IOR:Type id
 		if (type_id_length % 4 != 0) // CDR alignment rule

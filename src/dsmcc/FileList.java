@@ -21,42 +21,31 @@
  */
 package dsmcc;
 
-import java.util.Vector;
+import java.util.HashMap;
 
 public class FileList {
 
-	Vector contentList = new Vector();
+	HashMap contentList = new HashMap();
 
-	private byte[] svcGatewayObjKey = null;
+	private Long svcGatewayObjKey = null;
 
 	public DSMCCObject getRoot() {
 		return getByObjKey(svcGatewayObjKey);
 	}
 
 	public void reset() {
-		contentList.removeAllElements();
+		contentList.clear();
 	}
 
 	public void add(DSMCCObject file) {
-		contentList.add(file);
+		contentList.put(file.objKey, file);
 	}
 
-	public DSMCCObject getByObjKey(byte[] objKey) {
-		for (int i = 0; i < contentList.size(); i++)
-			if (((DSMCCObject) contentList.get(i)).isTheSame(objKey))
-				return (DSMCCObject) contentList.get(i);
-		return null;
+	public DSMCCObject getByObjKey(Long objKey) {
+		return (DSMCCObject) contentList.get(objKey);
 	}
 
-	// public void mkDir(byte[] objKey) {
-	// DSMCCFile f = getByObjKey(objKey);
-	// if (f == null) {
-	// f = new DSMCCDir(objKey);
-	// add(f);
-	// }
-	// }
-
-	public DSMCCObject setName(byte[] objKey, String name) {
+	public DSMCCObject setName(Long objKey, String name) {
 		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
 			f = new DSMCCObject(objKey);
@@ -66,7 +55,7 @@ public class FileList {
 		return f;
 	}
 
-	public void setContent(byte[] objKey, byte[] contents, int startOffset, int lenght) {
+	public void setContent(Long objKey, byte[] contents, int startOffset, int lenght) {
 		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
 			f = new DSMCCObject(objKey);
@@ -75,7 +64,7 @@ public class FileList {
 		f.setContent(contents, startOffset, lenght);
 	}
 
-	public void addChildren(byte[] objKey, DSMCCObject file) {
+	public void addChildren(Long objKey, DSMCCObject file) {
 		DSMCCObject f = getByObjKey(objKey);
 		if (f == null) {
 			f = new DSMCCObject(objKey);
@@ -84,7 +73,7 @@ public class FileList {
 		f.addChildren(file);
 	}
 
-	public void setSvcGatewayObjKey(byte[] svcGatewayObjKey) {
+	public void setSvcGatewayObjKey(Long svcGatewayObjKey) {
 		this.svcGatewayObjKey = svcGatewayObjKey;
 	}
 }

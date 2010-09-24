@@ -35,7 +35,7 @@ public class DSMCCObject {
 
 	boolean isDirectory;
 
-	byte[] objKey = null;
+	Long objKey = null;
 
 	public String name = null;
 
@@ -91,7 +91,7 @@ public class DSMCCObject {
 		return sb.toString();
 	}
 
-	public DSMCCObject(byte[] objKey) {
+	public DSMCCObject(Long objKey) {
 		this.objKey = objKey;
 	}
 
@@ -112,15 +112,8 @@ public class DSMCCObject {
 		return isTheSame(((DSMCCObject) o).objKey);
 	}
 
-	public boolean isTheSame(byte[] objKey) {
-		if (objKey == null || this.objKey == null)
-			return false;
-		if (objKey.length != this.objKey.length)
-			return false;
-		for (int i = 0; i < objKey.length; i++)
-			if (objKey[i] != this.objKey[i])
-				return false;
-		return true;
+	public boolean isTheSame(Long objKey) {
+		return objKey.longValue() == this.objKey.longValue();
 	}
 
 	public void save(File file) {
