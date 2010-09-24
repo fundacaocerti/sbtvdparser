@@ -49,11 +49,15 @@ public class ShortEvent extends Descriptor {
 
 	public String readText(BitWise bw) {
 		int textLenght = bw.pop();
-		StringBuffer ts = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
+		sb.append('[');
 		while (textLenght > 0) {
-			ts.append((char) bw.pop());
+			char c = (char) bw.pop();
+			if (c >= ' ')
+				sb.append(c);
 			textLenght--;
 		}
-		return ts.toString();
+		sb.append(']');
+		return sb.toString();
 	}
 }

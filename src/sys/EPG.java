@@ -50,7 +50,7 @@ public class EPG {
 
 		public String toString() {
 			return description[0] + " - " + TOT.formatMJD(startTime) + " " + description[1] + " : " + description[2]
-					+ "(" + description[4] + ") [" + description[3] + "]";
+					+ "(" + description[4] + ") " + description[3];
 		}
 	}
 
