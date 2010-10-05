@@ -138,6 +138,7 @@ public class GuiMethods implements Runnable {
 			}
 			break;
 		}
+		//TODO may be crashing the app.
 		param = null;
 		returnVal = null;
 	}

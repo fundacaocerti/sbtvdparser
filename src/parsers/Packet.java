@@ -25,6 +25,7 @@ import gui.MainPanel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import mpeg.AdaptationField;
 import mpeg.PCR;
@@ -44,9 +45,13 @@ public class Packet extends Thread {
 
 	InputStream bis = null;
 
+	public OutputStream bos = null;
+
 	public static long limit = 0, estimate = 0, TEIerrors = 0, byteCount = 0, packetCount = 0, syncLosses = 0;
 
 	public static boolean is204b = false, iipAdded = false;
+
+	public int[] filterPIDs = null;
 
 	int btsPackets = 0, skipSize = 0, customPktCount = 0;
 
@@ -145,11 +150,15 @@ public class Packet extends Thread {
 			TableList.resetList();
 			PESList.resetList();
 			PIDStats.reset();
+			System.gc();
 			if (limit > 0)
 				MainPanel.setLimit(limit);
 			MainPanel.getLimit();
 			try {
-				mainLoop();
+				if (filterPIDs != null)
+					pidFilterLoop();
+				else
+					mainLoop();
 				bis.close();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -162,6 +171,33 @@ public class Packet extends Thread {
 			Log.printStackTrace(e);
 			e.printStackTrace();
 		}
+	}
+
+	private void pidFilterLoop() throws InterruptedException, IOException {
+		limitNotReached = true;
+		boolean hasBytesToRead;
+		do {
+			parsePacket();
+			PIDStats.increasePid(TSP.pid);
+			if (TSP.transportErrorIndicator == 1)// check if should copy TSP.pid
+				break;
+			for (int i = 0; i < filterPIDs.length; i++)
+				if (filterPIDs[i] == TSP.pid) {
+					bos.write(0x47);
+					bos.write(buffer);
+					break;
+				}
+
+			if (estimate > 100 && !Parameters.noGui && packetCount % (estimate / 100) == 0)
+				MainPanel.setProgress((int) (packetCount / (estimate / 100)));
+			hasBytesToRead = byteCount < (estimate * realPktLenght);
+			if (limitNotReached)
+				limitNotReached = (limit == 0 || packetCount < limit);
+		} while (hasBytesToRead && (MainPanel.isOpen || Parameters.noGui) && limitNotReached);
+		bos.flush();
+		bos.close();
+		MainPanel.setCursor(SWT.CURSOR_ARROW);
+		MainPanel.addTreeItem("Demux complete!", 0);
 	}
 
 	public void printBitrate() {
