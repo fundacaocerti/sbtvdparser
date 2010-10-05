@@ -24,6 +24,7 @@ package gui;
 import gui.dialogs.About;
 import gui.dialogs.CopyPopUp;
 import gui.dialogs.DSMCCSavePopUp;
+import gui.dialogs.Demux;
 import gui.dialogs.Open;
 import gui.dialogs.Save;
 
@@ -237,6 +238,7 @@ public class MainPanel {
 		createDND();
 		for (int i = 0; i < msgCache.size(); i++)
 			addTreeItem(msgCache.get(i).toString(), 0);
+		msgCache.removeAllElements();
 	}
 
 	public void handleEvents() {
@@ -259,8 +261,9 @@ public class MainPanel {
 		target.addDropListener(new FileDropListener());
 	}
 
-	private static MenuItem file, settings, openItem, openFilterItem, openDirItem, saveItem, about, langPtItem, langEnItem;
-	
+	private static MenuItem file, settings, openItem, openFilterItem, openDirItem, saveItem, about, langPtItem,
+			langEnItem, tools, demux, crop;
+
 	private void createSShell() {
 		GridData progressGridData = new GridData();
 		progressGridData.grabExcessHorizontalSpace = true;
@@ -279,13 +282,22 @@ public class MainPanel {
 		file = new MenuItem(menuBar, SWT.CASCADE);
 		final Menu fileMenu = new Menu(sShell, SWT.DROP_DOWN);
 		file.setMenu(fileMenu);
-		
+
 		settings = new MenuItem(menuBar, SWT.CASCADE);
 		final Menu setMenu = new Menu(sShell, SWT.DROP_DOWN);
 		settings.setMenu(setMenu);
 		langPtItem = new MenuItem(setMenu, SWT.PUSH);
 		langEnItem = new MenuItem(setMenu, SWT.PUSH);
-		
+
+		tools = new MenuItem(menuBar, SWT.CASCADE);
+		final Menu toolsMenu = new Menu(sShell, SWT.DROP_DOWN);
+		tools.setMenu(toolsMenu);
+		demux = new MenuItem(toolsMenu, SWT.PUSH);
+		crop = new MenuItem(toolsMenu, SWT.PUSH);
+		Demux demuxListener = new Demux(sShell);
+		demux.addSelectionListener(demuxListener);
+		// crop.addSelectionListener(toolsLstnr);
+
 		SettingsListener setLstnr = new SettingsListener();
 		langPtItem.addSelectionListener(setLstnr);
 		langEnItem.addSelectionListener(setLstnr);
@@ -373,13 +385,15 @@ public class MainPanel {
 		saveItem.setText(Messages.getString("MainPanel.save")); //$NON-NLS-1$
 		about.setText(Messages.getString("MainPanel.about")); //$NON-NLS-1$
 		if (Persistence.get(Persistence.UI_LANG_IDIOM).equals("pt")) {
-			langPtItem.setText("● "+Messages.getString("MainPanel.langPt"));
-			langEnItem.setText("   "+Messages.getString("MainPanel.langEn"));
+			langPtItem.setText("● " + Messages.getString("MainPanel.langPt"));
+			langEnItem.setText("   " + Messages.getString("MainPanel.langEn"));
+		} else {
+			langEnItem.setText("● " + Messages.getString("MainPanel.langEn"));
+			langPtItem.setText("   " + Messages.getString("MainPanel.langPt"));
 		}
-		else {
-			langEnItem.setText("● "+Messages.getString("MainPanel.langEn"));
-			langPtItem.setText("   "+Messages.getString("MainPanel.langPt"));
-		}
+		tools.setText("Tools");
+		demux.setText("Demux");
+		crop.setText("Crop");
 	}
 
 	public static void setProgress(int progress) {

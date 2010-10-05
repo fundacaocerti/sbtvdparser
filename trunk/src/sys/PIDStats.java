@@ -21,8 +21,8 @@
  */
 package sys;
 
-import mpeg.PCR;
 import gui.GuiMethods;
+import mpeg.PCR;
 import parsers.Packet;
 
 public class PIDStats {
@@ -33,11 +33,12 @@ public class PIDStats {
 
 	static int foundPids = 0;
 
-	private static class Set implements QuickSort.Comparable {
+	public static class Set implements QuickSort.Comparable {
 		public int pid, counter, lastCount;
 		public float lastTimestamp;
 		public String name = Messages.getString("PIDStats.unknown"); //$NON-NLS-1$
 		public float[] bitrates = new float[512];
+		public Object data;
 
 		public int getValue() {
 			return counter;
@@ -86,7 +87,7 @@ public class PIDStats {
 		}
 	}
 
-	static float measureRate = (float) 1; // em segundos
+	static float measureRate = 1; // em segundos
 
 	static void addPid(int pid) {
 		if (foundPids == MAXPIDS)
@@ -135,6 +136,14 @@ public class PIDStats {
 
 	public static int getPid(int indx) {
 		return sets[foundPids - indx - 1].pid;
+	}
+
+	public static Set[] getPids() {
+		return sets;
+	}
+
+	public static int getPidCount() {
+		return foundPids;
 	}
 
 	public static String formatScaleFactor(float mega) {
