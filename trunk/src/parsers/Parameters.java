@@ -24,9 +24,12 @@ package parsers;
 import gui.MainPanel;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import mpeg.pes.CC;
@@ -47,6 +50,8 @@ public class Parameters {
 
 	static public boolean noGui = false, noTree = false, noStats = false, batchResults = false;
 
+	static String[] startArgs;
+
 	public static InputStream getStream() {
 		try {
 			bis = new BufferedInputStream(new FileInputStream(srcFile), 4000000);
@@ -59,7 +64,26 @@ public class Parameters {
 		return bis;
 	}
 
+	public static void startParser() {
+		if (startArgs != null)
+			startParser(startArgs);
+	}
+
+	public static void startParser(String outFile, String[] pids) {
+		if (startArgs != null) {
+			String[] newParms = new String[startArgs.length + 2 + pids.length];
+			System.arraycopy(startArgs, 0, newParms, 0, startArgs.length);
+			String[] oldParms = startArgs;
+			newParms[startArgs.length] = "-demux";
+			newParms[startArgs.length + 1] = outFile;
+			System.arraycopy(pids, 0, newParms, startArgs.length + 2, pids.length);
+			startParser(newParms);
+			startArgs = oldParms;
+		}
+	}
+
 	public static void startParser(String[] args) {
+		startArgs = args;
 		StringBuffer sb = new StringBuffer();
 		sb.append(Messages.getString("Parameters.command")); //$NON-NLS-1$
 		for (int i = 0; i < args.length; i++) {
@@ -111,12 +135,14 @@ public class Parameters {
 			return;
 		}
 
+		BufferedOutputStream bos = null;
 		Packet.estimate = srcFile.length() / 188;
 		Packet.limit = 0;
 		int filter = 0;
 		int matchLimit = 0;
 		MainPanel.setFilter(null);
 		CC.reset();
+		int[] demuxPids = null;
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-noGui"))
 				noGui = true;
@@ -142,6 +168,31 @@ public class Parameters {
 				MainPanel.setFilterAsRegex();
 			if (args[i].equalsIgnoreCase("-listOnlyMatches"))
 				MainPanel.listOnlyMatches();
+			if (args[i].equalsIgnoreCase("-demux")) {
+				int j;
+				for (j = i + 2; j < args.length && args[j].startsWith("0x"); j++)
+					;
+				if (j == i + 2) {
+					initialMessage = "PIDs to demux not informed or invalid";
+					return;
+				}
+				demuxPids = new int[j - i - 2];
+				for (int k = 0; k < demuxPids.length; k++)
+					demuxPids[k] = Integer.parseInt(args[k + i + 2].substring(2), 16);
+				// TODO:
+				File f = new File(args[i + 1]);
+				if (f.exists())
+					f.delete();
+				try {
+					f.createNewFile();
+					FileOutputStream fos = new FileOutputStream(f);
+					bos = new BufferedOutputStream(fos);
+				} catch (IOException e) {
+					// TODO handle it
+					e.printStackTrace();
+				}
+				i = j;
+			}
 		}
 		if (matchLimit > 0)
 			MainPanel.setFilterLimit(matchLimit);
@@ -153,6 +204,10 @@ public class Parameters {
 		initMainPanel();
 		TOT.reset();
 		pp = new Packet(bis);
+		if (demuxPids != null) {
+			pp.filterPIDs = demuxPids;
+			pp.bos = bos;
+		}
 		pp.start();
 	}
 
