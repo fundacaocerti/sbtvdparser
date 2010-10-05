@@ -21,11 +21,11 @@
  */
 package gui;
 
-
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 import parsers.Packet;
+import parsers.Parameters;
 import sys.BatchAnalisys;
 
 public class ButtonListener implements SelectionListener {
@@ -34,21 +34,25 @@ public class ButtonListener implements SelectionListener {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		if (e.widget == MainPanel.btPause)
-			if (BatchAnalisys.stopThread)
-				Packet.pause(!Packet.isPaused());
-			else {
+		if (e.widget == MainPanel.btPause) {
+			if (BatchAnalisys.stopThread) {
+				if (MainPanel.progressBar.getSelection() == 100)
+					Parameters.startParser();
+				else
+					Packet.pause(!Packet.isPaused());
+			} else {
 				stopCurrentTS();
 				return;
 			}
-		else {
+			if (Packet.isPaused())
+				MainPanel.btPause.setImage(MainPanel.imPlay);
+			else
+				MainPanel.btPause.setImage(MainPanel.imPause);
+		} else {
 			BatchAnalisys.stopThread = true;
 			stopCurrentTS();
-		}
-		if (Packet.isPaused())
 			MainPanel.btPause.setImage(MainPanel.imPlay);
-		else
-			MainPanel.btPause.setImage(MainPanel.imPause);
+		}
 	}
 
 	private void stopCurrentTS() {
@@ -56,7 +60,6 @@ public class ButtonListener implements SelectionListener {
 		Packet.pause(false);
 		if (BatchAnalisys.stopThread)
 			MainPanel.btStop.setEnabled(false);
-		MainPanel.btPause.setEnabled(false);
 		MainPanel.progressBar.setSelection(100);
 		MainPanel.progressBar.setToolTipText("100%"); //$NON-NLS-1$
 	}
