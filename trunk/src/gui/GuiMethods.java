@@ -120,7 +120,7 @@ public class GuiMethods implements Runnable {
 			} else {
 				if (BatchAnalisys.stopThread)
 					MainPanel.btStop.setEnabled(false);
-				MainPanel.btPause.setEnabled(false);
+				MainPanel.btPause.setImage(MainPanel.imPlay);
 			}
 			break;
 		case SETCURSOR:
@@ -138,5 +138,7 @@ public class GuiMethods implements Runnable {
 			}
 			break;
 		}
+		param = null;
+		returnVal = null;
 	}
 }
