@@ -30,6 +30,7 @@ public class TableList {
 
 	public static int[] continuityErrorCounters = new int[200];
 
+	// TODO: use a hashmap
 	public static boolean[] tablesParsed = new boolean[200];
 
 	public static int tableIndex = 0;
