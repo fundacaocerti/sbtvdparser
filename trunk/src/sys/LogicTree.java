@@ -31,6 +31,8 @@ import java.util.Vector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TreeItem;
 
+import parsers.Packet;
+
 public class LogicTree {
 
 	public String text;
@@ -45,12 +47,15 @@ public class LogicTree {
 
 	public int indx;
 
+	public long creationTimestamp;
+
 	public boolean isVisible = false;
 
 	public LogicTree(String text, LogicTree parent, int indx) {
 		this.text = text;
 		this.parent = parent;
 		this.indx = indx;
+		creationTimestamp = Packet.packetCount;
 		if (parent != null) {
 			parent.sons.add(this);
 		}
