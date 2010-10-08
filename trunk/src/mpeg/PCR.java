@@ -22,6 +22,7 @@
 //Program Clock Reference
 package mpeg;
 
+import mpeg.psi.TOT;
 import parsers.Packet;
 import sys.BitWise;
 import sys.Log;
@@ -35,6 +36,8 @@ public class PCR {
 
 	static long firstPacketCount = 0, lastPacketCount = 0;
 
+	public static long totPacketCount = -1;
+
 	static int id = 0;
 
 	public static PCR getInstance() {
@@ -43,6 +46,18 @@ public class PCR {
 
 	public static float getAverageBitrate() {
 		return (float) averageBitrate / 1000000;
+	}
+
+	public static String getFormatedTimestamp(long packetNumber) {
+		if (lastTimeStamp == -1)
+			return "Received at packet " + Long.toString(packetNumber);
+		double sec = packetNumber * Packet.realPktLenght * 8 / averageBitrate;
+		String seconds = Double.toString(sec) + "000";
+		seconds = seconds.substring(0, seconds.indexOf('.') + 4);
+		String utcTime = TOT.getTimeStamp(sec);
+		if (utcTime != null)
+			return "Received at " + seconds + "s (" + utcTime + " UTC-3)";
+		return "Received at " + seconds + "s";
 	}
 
 	public static float getCurrentTimestamp() {
