@@ -21,7 +21,9 @@
  */
 package gui.dialogs;
 
+import gui.GuiMethods;
 import gui.MainPanel;
+import mpeg.PCR;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -34,6 +36,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import parsers.Packet;
@@ -44,7 +47,7 @@ public class CopyPopUp implements Listener {
 
 	static int mouseButton, x, y;
 
-	String text;
+	static LogicTree lt = null;
 
 	Shell s;
 
@@ -63,29 +66,34 @@ public class CopyPopUp implements Listener {
 			if (event.widget.getClass() == ProgressBar.class) {
 				ProgressBar pb = (ProgressBar) event.widget;
 				if (pb.getSelection() != 100) {
-					MainPanel.setCursor(SWT.CURSOR_WAIT);
+					MainPanel.sShell.setCursor(GuiMethods.busyCursor);
 					Packet.jumpTo((float) x / (pb.getSize().x - 3));
 				}
 			}
-		}
-		if (event.item != null && event.type == SWT.Selection && mouseButton == 3) {
-			Menu menu = new Menu(s, SWT.POP_UP);
-			MenuItem item = new MenuItem(menu, SWT.PUSH);
-			LogicTree lt = (LogicTree) ((TreeItem) event.item).getData();
-			text = lt.toString();
-			item.setText(Messages.getString("CopyPopUp.copyQuestion")); //$NON-NLS-1$
-			item.addListener(SWT.Selection, this);
-			menu.setLocation(x + s.getLocation().x, y + yBias + s.getLocation().y);
-			menu.setVisible(true);
-			while (!menu.isDisposed() && menu.isVisible()) {
-				if (!Display.getDefault().readAndDispatch())
-					Display.getDefault().sleep();
+			if (event.widget.getClass() == Tree.class && mouseButton == 3) {
+				// if (event.item != null)
+				// lt = (LogicTree) ((TreeItem) event.item).getData();
+				Menu menu = new Menu(s, SWT.POP_UP);
+				MenuItem item = new MenuItem(menu, SWT.PUSH);
+				item.setText(Messages.getString("CopyPopUp.copyQuestion")); //$NON-NLS-1$
+				item.addListener(SWT.Selection, this);
+				menu.setLocation(x + s.getLocation().x, y + yBias + s.getLocation().y);
+				menu.setVisible(true);
+				while (!menu.isDisposed() && menu.isVisible()) {
+					if (!Display.getDefault().readAndDispatch())
+						Display.getDefault().sleep();
+				}
+				menu.dispose();
 			}
-			menu.dispose();
 		}
-		if (event.item == null && event.type == SWT.Selection) {
+		if (event.widget.getClass() == MenuItem.class) {
 			Clipboard clipboard = new Clipboard(Display.getDefault());
-			clipboard.setContents(new Object[] { text }, new Transfer[] { TextTransfer.getInstance() });
+			clipboard.setContents(new Object[] { lt.toString() }, new Transfer[] { TextTransfer.getInstance() });
+		}
+		// TODO: add subtitles and statistics
+		if (event.type == SWT.Selection && event.widget.getClass() == Tree.class) {
+			lt = (LogicTree) ((TreeItem) event.item).getData();
+			MainPanel.statusBar.setText(PCR.getFormatedTimestamp(lt.creationTimestamp));
 		}
 	}
 
