@@ -36,7 +36,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -99,7 +98,7 @@ public class MainPanel {
 
 	public static Text inputLimit = null;
 
-	private CLabel limitLabel = null;
+	private static Label limitLabel = null;
 
 	static GuiMethods gm = new GuiMethods(); // @jve:decl-index=0:
 
@@ -125,6 +124,8 @@ public class MainPanel {
 	private static TabItem dsmccTab = null;
 	private static TabItem logTab = null;
 	private static TabItem graphTab = null;
+
+	public static Label statusBar = null;
 
 	public static Text log = null;
 
@@ -249,8 +250,11 @@ public class MainPanel {
 	}
 
 	public void dispose() {
-		if (display != null)
-			display.dispose();
+		try { // in case the display is already disposed
+			if (display != null)
+				display.dispose();
+		} catch (org.eclipse.swt.SWTException e) {
+		}
 		isOpen = false;
 	}
 
@@ -273,7 +277,6 @@ public class MainPanel {
 		gridLayout.numColumns = 5;
 
 		sShell = new Shell();
-		sShell.setText(Messages.getString("MainPanel.shellTitle")); //$NON-NLS-1$
 		sShell.setLayout(gridLayout);
 		sShell.setSize(new Point(800, 600));
 
@@ -324,23 +327,19 @@ public class MainPanel {
 		about = new MenuItem(fileMenu, SWT.PUSH);
 		about.addSelectionListener(new About(sShell));
 
-		limitLabel = new CLabel(sShell, SWT.NONE);
-		limitLabel.setText(Messages.getString("MainPanel.limit")); //$NON-NLS-1$
+		limitLabel = new Label(sShell, SWT.NONE);
 		inputLimit = new Text(sShell, SWT.BORDER);
-		inputLimit.setToolTipText(Messages.getString("MainPanel.limitTip")); //$NON-NLS-1$
 		inputLimit.setTextLimit(10);
 		btPause = new Button(sShell, SWT.NONE);
 		InputStream isPause = this.getClass().getClassLoader().getResourceAsStream("res/bot_pause.png"); //$NON-NLS-1$
 		imPause = new Image(Display.getCurrent(), isPause);
 		btPause.setImage(imPause);
-		btPause.setToolTipText(Messages.getString("MainPanel.pauseTip")); //$NON-NLS-1$
 		btPause.setEnabled(false);
 		btPause.addSelectionListener(new ButtonListener());
 		btStop = new Button(sShell, SWT.NONE);
 		InputStream isStop = this.getClass().getClassLoader().getResourceAsStream("res/bot_stop.png"); //$NON-NLS-1$
 		imStop = new Image(Display.getCurrent(), isStop);
 		btStop.setImage(imStop);
-		btStop.setToolTipText(Messages.getString("MainPanel.stopTip")); //$NON-NLS-1$
 		btStop.setEnabled(false);
 		btStop.addSelectionListener(new ButtonListener());
 		InputStream isPlay = this.getClass().getClassLoader().getResourceAsStream("res/bot_play.png"); //$NON-NLS-1$
@@ -361,11 +360,25 @@ public class MainPanel {
 		dsmccTree.addListener(SWT.Selection, savePopUp);
 		dsmccTree.addListener(SWT.MouseDown, savePopUp);
 		progressBar.addListener(SWT.MouseDown, mouseListener);
+
+		statusBar = new Label(sShell, SWT.LEFT);
+		GridData statusGd = new GridData();
+		statusGd.horizontalSpan = 5;
+		statusGd.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+
+		statusBar.setLayoutData(statusGd);
+		statusBar.setText("tamenamena a ee, tamenamena uee ee...");
 		clearTree();
 		setTexts();
 	}
 
 	public static void setTexts() {
+		limitLabel.setText(Messages.getString("MainPanel.limit")); //$NON-NLS-1$
+		sShell.setText(Messages.getString("MainPanel.shellTitle")); //$NON-NLS-1$
+		inputLimit.setToolTipText(Messages.getString("MainPanel.limitTip")); //$NON-NLS-1$
+		btPause.setToolTipText(Messages.getString("MainPanel.pauseTip")); //$NON-NLS-1$
+		btStop.setToolTipText(Messages.getString("MainPanel.stopTip")); //$NON-NLS-1$
+
 		pidStats.setText(Messages.getString("MainPanel.pidRates")); //$NON-NLS-1$
 		bitrateArea.setText(Messages.getString("MainPanel.grafTitle")); //$NON-NLS-1$
 		pidLabel.setText(Messages.getString("MainPanel.pid")); //$NON-NLS-1$
@@ -530,7 +543,7 @@ public class MainPanel {
 	}
 
 	public static void guiThreadExec(Runnable r, boolean sync) {
-		if (!Parameters.noGui && display != null && !display.isDisposed())
+		if (!Parameters.noGui && display != null && !display.isDisposed() && r != null)
 			if (sync)
 				display.syncExec(r);
 			else
@@ -559,9 +572,13 @@ public class MainPanel {
 			f.createNewFile();
 			FileOutputStream fos = new FileOutputStream(f);
 			if (filePth.endsWith("htm")) //$NON-NLS-1$
-				trees[PSI_TREE].printBonsai(fos);
+				for (int i = 0; i < trees.length; i++) {
+					trees[i].printBonsai(fos);
+				}
 			else
-				trees[PSI_TREE].print(fos);
+				for (int i = 0; i < trees.length; i++) {
+					trees[i].print(fos);
+				}
 			fos.flush();
 			fos.close();
 		} catch (Exception e) {
