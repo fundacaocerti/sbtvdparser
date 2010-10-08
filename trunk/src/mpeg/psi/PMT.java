@@ -22,6 +22,7 @@
 //Program Association Table;
 package mpeg.psi;
 
+import gui.GuiMethods;
 import mpeg.AdaptationField;
 import mpeg.pes.CC;
 import mpeg.pes.PESList;
@@ -45,6 +46,9 @@ public class PMT extends Table {
 		printSectionInfo();
 		addSubItem("PID: " + BitWise.toHex(pid));
 		int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(idExt));
+		name = "PMT (service_id: " + BitWise.toHex(idExt) + ")";
+		GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] { name, new Integer(treeIndx) }, true);
+		PIDStats.setIdentification(pid, name);
 		addSubItem("type: " + TSinformation.svcTypes[BitWise.stripBits(idExt, 5, 2)], svcIdLevel);
 		addSubItem("number: " + (BitWise.stripBits(idExt, 3, 3) + 1), svcIdLevel);
 		// reserved 3 - não tá na norma
