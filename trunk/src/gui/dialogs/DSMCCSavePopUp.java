@@ -21,7 +21,11 @@
  */
 package gui.dialogs;
 
+import gui.MainPanel;
+
 import java.io.File;
+
+import mpeg.PCR;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,6 +37,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import sys.LogicTree;
@@ -87,6 +92,10 @@ public class DSMCCSavePopUp implements Listener, SelectionListener {
 					Display.getDefault().sleep();
 			}
 			menu.dispose();
+		}
+		if (event.type == SWT.Selection && event.widget.getClass() == Tree.class) {
+			LogicTree lt = (LogicTree) ((TreeItem) event.item).getData();
+			MainPanel.statusBar.setText(PCR.getFormatedTimestamp(lt.creationTimestamp));
 		}
 	}
 
