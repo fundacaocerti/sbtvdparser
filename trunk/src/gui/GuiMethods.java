@@ -44,11 +44,11 @@ public class GuiMethods implements Runnable {
 
 	private static GuiMethods thisClass = new GuiMethods();
 
-	static Cursor normalCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_ARROW);
+	public static final Cursor normalCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_ARROW);
 
-	static Cursor busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
+	public static final Cursor busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
 
-	static Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+	public static final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
 
 	public static synchronized void runMethod(int type, Object[] param, boolean sync) {
 		thisClass.type = type;
@@ -69,76 +69,75 @@ public class GuiMethods implements Runnable {
 	}
 
 	public void run() {
-		// estraga o GETLIMIT
-		// if (param == null || param[0] == null)
-		// return;
-		if (executed)
-			return;
-		executed = true;
-		switch (type) {
-		case CLEARTREE:
-			((Tree) param[0]).removeAll();
-			break;
-		case ADDPIDBAR:
-			PIDStats.addBar(((Integer) param[0]).intValue(), ((Integer) param[1]).intValue(), ((Integer) param[2])
-					.intValue(), param[3].toString());
-			// PIDStats.addBar(((Integer) param[0]).intValue(), ((Integer)
-			// param[1]).intValue(), param[2].toString());
-			break;
-		case ADDTREEITEM:
-			((LogicTree) param[0]).addToUI(((Integer) param[1]).intValue());
-			break;
-		case CHANGEITEM:
-			MainPanel.changeTreeItem(param[0].toString(), ((Integer) param[1]).intValue());
-			break;
-		case GETLIMITBOX:
-			if (!MainPanel.inputLimit.isDisposed()) {
-				long limit = 0;
-				try {
-					limit = Long.parseLong(MainPanel.inputLimit.getText());
-				} catch (NumberFormatException e) {
-				}
-				Packet.setPacketLimit(limit);
-			}
-			break;
-		case ADDTOLOG:
-			MainPanel.log.append(param[0].toString());
-			break;
-		case SETTITLE:
-			MainPanel.sShell.setText(param[0].toString());
-			break;
-		case SETLIMITBOX:
-			MainPanel.inputLimit.setText(((Long) param[0]).toString());
-			break;
-		case SETPROGRESSBAR:
-			int i = ((Integer) param[0]).intValue();
-			MainPanel.progressBar.setSelection(i);
-			MainPanel.progressBar.setToolTipText(Integer.toString(i) + "%"); //$NON-NLS-1$
-			if (i > 0 && i != 100) {
-				MainPanel.btStop.setEnabled(true);
-				MainPanel.btPause.setEnabled(true);
-			} else {
-				if (BatchAnalisys.stopThread)
-					MainPanel.btStop.setEnabled(false);
-				MainPanel.btPause.setImage(MainPanel.imPlay);
-			}
-			break;
-		case SETCURSOR:
-			int type = ((Integer) param[0]).intValue();
+		try {
+			if (executed)
+				return;
+			executed = true;
 			switch (type) {
-			case SWT.CURSOR_ARROW:
-				MainPanel.sShell.setCursor(normalCursor);
+			case CLEARTREE:
+				((Tree) param[0]).removeAll();
 				break;
-			case SWT.CURSOR_WAIT:
-				MainPanel.sShell.setCursor(busyCursor);
+			case ADDPIDBAR:
+				PIDStats.addBar(((Integer) param[0]).intValue(), ((Integer) param[1]).intValue(), ((Integer) param[2])
+						.intValue(), param[3].toString());
 				break;
-			case SWT.CURSOR_HAND:
-				MainPanel.sShell.setCursor(handCursor);
+			case ADDTREEITEM:
+				((LogicTree) param[0]).addToUI(((Integer) param[1]).intValue());
+				break;
+			case CHANGEITEM:
+				MainPanel.changeTreeItem(param[0].toString(), ((Integer) param[1]).intValue());
+				break;
+			case GETLIMITBOX:
+				if (!MainPanel.inputLimit.isDisposed()) {
+					long limit = 0;
+					try {
+						limit = Long.parseLong(MainPanel.inputLimit.getText());
+					} catch (NumberFormatException e) {
+					}
+					Packet.setPacketLimit(limit);
+				}
+				break;
+			case ADDTOLOG:
+				MainPanel.log.append(param[0].toString());
+				break;
+			case SETTITLE:
+				MainPanel.sShell.setText(param[0].toString());
+				break;
+			case SETLIMITBOX:
+				MainPanel.inputLimit.setText(((Long) param[0]).toString());
+				break;
+			case SETPROGRESSBAR:
+				int i = ((Integer) param[0]).intValue();
+				MainPanel.progressBar.setSelection(i);
+				MainPanel.progressBar.setToolTipText(Integer.toString(i) + "%"); //$NON-NLS-1$
+				if (i > 0 && i != 100) {
+					MainPanel.btStop.setEnabled(true);
+					MainPanel.btPause.setEnabled(true);
+				} else {
+					if (BatchAnalisys.stopThread)
+						MainPanel.btStop.setEnabled(false);
+					MainPanel.btPause.setImage(MainPanel.imPlay);
+				}
+				break;
+			case SETCURSOR:
+				int type = ((Integer) param[0]).intValue();
+				switch (type) {
+				case SWT.CURSOR_ARROW:
+					MainPanel.sShell.setCursor(normalCursor);
+					break;
+				case SWT.CURSOR_WAIT:
+					MainPanel.sShell.setCursor(busyCursor);
+					break;
+				case SWT.CURSOR_HAND:
+					MainPanel.sShell.setCursor(handCursor);
+					break;
+				}
 				break;
 			}
-			break;
+		} catch (NullPointerException e) {
+			// may happen when the object is destroyed before the async. exe.
+			// It means nothing, so we can just ignore it.
 		}
-		//TODO may be crashing the app.
 		param = null;
 		returnVal = null;
 	}
