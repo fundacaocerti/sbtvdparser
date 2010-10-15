@@ -48,13 +48,17 @@ public class PCR {
 		return (float) averageBitrate / 1000000;
 	}
 
+	public static double getTimestamp(long packetNumber) {
+		return packetNumber * Packet.realPktLenght * 8 / averageBitrate;
+	}
+
 	public static String getFormatedTimestamp(long packetNumber) {
 		if (lastTimeStamp == -1)
 			return "Received at packet " + Long.toString(packetNumber);
-		double sec = packetNumber * Packet.realPktLenght * 8 / averageBitrate;
+		double sec = getTimestamp(packetNumber);
 		String seconds = Double.toString(sec) + "000";
 		seconds = seconds.substring(0, seconds.indexOf('.') + 4);
-		String utcTime = TOT.getTimeStamp(sec);
+		String utcTime = TOT.getTimeStamp(Math.round(sec));
 		if (utcTime != null)
 			return "Received at " + seconds + "s (" + utcTime + " UTC-3)";
 		return "Received at " + seconds + "s";

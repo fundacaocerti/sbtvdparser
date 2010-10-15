@@ -22,6 +22,7 @@
 //Time Offset Table;
 package mpeg.psi;
 
+import mpeg.PCR;
 import mpeg.psi.descriptors.DescriptorList;
 import parsers.Packet;
 import sys.BitWise;
@@ -31,7 +32,7 @@ public class TOT extends Table {
 	static int currentTimeStamp, lastTimeStamp, totsParsed = 0;
 	// reset de todas as tabelas
 
-	static long lastpacketCounter = 0;
+	static long lastpacketCounter = 0, totPacketCounter = 0;
 
 	public static float lastBitrate = 0;
 
@@ -48,6 +49,7 @@ public class TOT extends Table {
 	public boolean printDescription(byte[] ba) {
 		if (!verifySection(ba))
 			return false;
+		totPacketCounter = Packet.packetCount;
 		// time_offset_section(){
 		// UTC-3_time 40 bslbf
 		ts = parseMJD(bw);
@@ -99,9 +101,10 @@ public class TOT extends Table {
 
 	static int[] ts = null;
 
-	public static String getTimeStamp(double secondOffset) {
+	public static String getTimeStamp(long secondOffset) {
 		if (ts == null)
 			return null;
+		secondOffset -= PCR.getTimestamp(totPacketCounter);
 		int[] ts2 = new int[6];
 		System.arraycopy(ts, 0, ts2, 0, 6);
 		ts2[5] += secondOffset % 60;
