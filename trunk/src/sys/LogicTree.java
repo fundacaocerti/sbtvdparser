@@ -187,8 +187,8 @@ public class LogicTree {
 			((LogicTree) sons.get(i)).recursiveBPrint(out);
 	}
 
-	public void printBonsai(OutputStream out) throws IOException {
-		out.write("<!--\n\tvar theTree = \"".getBytes());
+	public void printBonsai(OutputStream out, String id) throws IOException {
+		out.write(("<!--\n\tvar " + id + " = \"").getBytes());
 		createBonsaiIndexes();
 		printInt(++dirIndxCounter, out);
 		printNode(out);
