@@ -156,9 +156,11 @@ public class TOT extends Table {
 		int secondPerUnit = 3600;
 		for (int i = 0; i < 3; i++) {
 			tmp = bw.pop();
-			currentTimeStamp += Integer.valueOf(Integer.toHexString(tmp)).intValue() * secondPerUnit;
+			if (tmp < 10)
+				tmp = Integer.valueOf(Integer.toHexString(tmp)).intValue();
+			currentTimeStamp += tmp * secondPerUnit;
 			secondPerUnit = secondPerUnit / 60;
-			ts[3 + i] = Integer.parseInt(Integer.toHexString(tmp));
+			ts[3 + i] = tmp;
 		}
 		return ts;
 	}
