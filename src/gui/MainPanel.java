@@ -367,7 +367,6 @@ public class MainPanel {
 		statusGd.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 
 		statusBar.setLayoutData(statusGd);
-		statusBar.setText("tamenamena a ee, tamenamena uee ee...");
 		clearTree();
 		setTexts();
 	}
@@ -565,6 +564,9 @@ public class MainPanel {
 	}
 
 	public static void saveTree(String filePth) {
+		String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"),
+				Messages.getString("MainPanel.stats"), Messages.getString("MainPanel.dsmcc"),
+				Messages.getString("MainPanel.caption") };
 		try {
 			File f = new File(filePth);
 			if (f.exists())
@@ -573,11 +575,15 @@ public class MainPanel {
 			FileOutputStream fos = new FileOutputStream(f);
 			if (filePth.endsWith("htm")) //$NON-NLS-1$
 				for (int i = 0; i < trees.length; i++) {
-					trees[i].printBonsai(fos);
+					trees[i].printBonsai(fos, treeNames[i]);
 				}
 			else
 				for (int i = 0; i < trees.length; i++) {
+					fos.write("****".getBytes());
+					fos.write(treeNames[i].getBytes());
+					fos.write("****\n".getBytes());
 					trees[i].print(fos);
+					fos.write("\n\n\n".getBytes());
 				}
 			fos.flush();
 			fos.close();
