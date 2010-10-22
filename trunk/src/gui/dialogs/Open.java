@@ -54,7 +54,7 @@ public class Open implements SelectionListener {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		String[] filterExt = { "*.trp", "*.ts", ".mpeg", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		String[] filterExt = { "*.*", "*.ts", ".mpeg", "*.trp" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		if (fileMenu.equals(e.widget)) {
 			FileDialog fd = new FileDialog(shell, SWT.OPEN);// +SWT.MULTI
 			fd.setText(Messages.getString("MenuOpen.open")); //$NON-NLS-1$
