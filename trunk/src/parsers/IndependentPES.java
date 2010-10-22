@@ -70,7 +70,7 @@ public class IndependentPES extends Thread {
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
-			MainPanel.setProgress(100);
+			MainPanel.setProgress(1);
 		} catch (RuntimeException e) {
 			Log.printStackTrace(e);
 			e.printStackTrace();

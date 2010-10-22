@@ -65,7 +65,7 @@ public class BatchAnalisys extends Thread implements Runnable {
 
 	private void parseDir(File dir) {
 		if (dir.exists() && dir.canRead()) {
-			MainPanel.setProgress(1);
+			MainPanel.setProgress(0.01f);
 			File[] files = dir.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				if (stopThread)
@@ -84,7 +84,9 @@ public class BatchAnalisys extends Thread implements Runnable {
 				}
 			}
 		} else
-			MainPanel.addTreeItem(Messages.getString("BatchAnalisys.dir") + dir.getAbsolutePath() + Messages.getString("BatchAnalisys.readErr"), 0); //$NON-NLS-1$ //$NON-NLS-2$
+			MainPanel
+					.addTreeItem(
+							Messages.getString("BatchAnalisys.dir") + dir.getAbsolutePath() + Messages.getString("BatchAnalisys.readErr"), 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

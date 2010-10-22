@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import mpeg.TSP;
 import mpeg.pes.CC;
 import mpeg.psi.EIT;
 import mpeg.psi.TOT;
@@ -69,12 +70,12 @@ public class Parameters {
 			startParser(startArgs);
 	}
 
-	public static void startParser(String outFile, String[] pids) {
+	public static void startParser(String outFile, String[] pids, String op) {
 		if (startArgs != null) {
 			String[] newParms = new String[startArgs.length + 2 + pids.length];
 			System.arraycopy(startArgs, 0, newParms, 0, startArgs.length);
 			String[] oldParms = startArgs;
-			newParms[startArgs.length] = "-demux";
+			newParms[startArgs.length] = op;
 			newParms[startArgs.length + 1] = outFile;
 			System.arraycopy(pids, 0, newParms, startArgs.length + 2, pids.length);
 			startParser(newParms);
@@ -136,7 +137,9 @@ public class Parameters {
 		}
 
 		BufferedOutputStream bos = null;
-		Packet.estimate = srcFile.length() / 188;
+		Packet.fileLenght = srcFile.length();
+		Packet.estimate = Packet.fileLenght / TSP.TS_PACKET_LEN;
+		// redefined when packet size is assured
 		Packet.limit = 0;
 		int filter = 0;
 		int matchLimit = 0;
