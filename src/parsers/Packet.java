@@ -47,7 +47,8 @@ public class Packet extends Thread {
 
 	public OutputStream bos = null;
 
-	public static long limit = 0, estimate = 0, TEIerrors = 0, byteCount = 0, packetCount = 0, syncLosses = 0;
+	public static long limit = 0, estimate = 0, fileLenght = 0, TEIerrors = 0, byteCount = 0, packetCount = 0,
+			syncLosses = 0;
 
 	public static boolean is204b = false, iipAdded = false;
 
@@ -124,7 +125,7 @@ public class Packet extends Thread {
 					realPktLenght = TSP.TS_PACKET_LEN;
 				MainPanel.addTreeItem(Messages.getString("Packet.set") + realPktLenght + " bytes.", 0); //$NON-NLS-1$
 				syncLosses = 0;
-				estimate = (long) (estimate * (float) TSP.TS_PACKET_LEN / realPktLenght);
+				estimate = fileLenght / realPktLenght;
 				if (skipSize == 16) {
 					is204b = true;
 					MainPanel.addTreeItem(Messages.getString("Packet.layer"), 0); //$NON-NLS-1$
@@ -166,7 +167,7 @@ public class Packet extends Thread {
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
-			MainPanel.setProgress(100);
+			MainPanel.setProgress(1);
 		} catch (RuntimeException e) {
 			Log.printStackTrace(e);
 			e.printStackTrace();
@@ -188,8 +189,8 @@ public class Packet extends Thread {
 					break;
 				}
 
-			if (estimate > 100 && !Parameters.noGui && packetCount % (estimate / 100) == 0)
-				MainPanel.setProgress((int) (packetCount / (estimate / 100)));
+			if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0)
+				MainPanel.setProgress((float) packetCount / estimate);
 			hasBytesToRead = byteCount < (estimate * realPktLenght);
 			if (limitNotReached)
 				limitNotReached = (limit == 0 || packetCount < limit);
@@ -242,13 +243,13 @@ public class Packet extends Thread {
 			sp.parseTable();
 			pp.parsePES();
 
-			if (estimate > 100 && !Parameters.noGui && packetCount % (estimate / 100) == 0)
-				MainPanel.setProgress((int) (packetCount / (estimate / 100)));
+			if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0)
+				MainPanel.setProgress((float) packetCount / estimate);
 			hasBytesToRead = byteCount < (estimate * realPktLenght);
 			if (limitNotReached)
 				limitNotReached = (limit == 0 || packetCount < limit);
 			if (jumpOK) {
-				MainPanel.setProgress((int) (packetCount / (estimate / 100)));
+				MainPanel.setProgress((float) packetCount / estimate);
 				MainPanel.setCursor(SWT.CURSOR_ARROW);
 				jumpOK = false;
 			}
@@ -306,8 +307,10 @@ public class Packet extends Thread {
 	public static void setPacketLimit(long limit) {
 		if (limit > 0) {
 			Packet.limit = limit;
-			if (limit < estimate)
-				estimate = limit;
+
+			// TODO: these lines only make sense with real streams, not files
+			// if (limit < estimate)
+			// estimate = limit;
 		}
 	}
 }

@@ -21,6 +21,8 @@
  */
 package gui;
 
+import gui.dialogs.Crop;
+
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
@@ -34,9 +36,13 @@ public class ButtonListener implements SelectionListener {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		if (e.widget == MainPanel.btPause) {
+		if ("pause".equals(e.widget.getData())) {
+			if (Crop.isWaitingCrop()) {
+				Crop.crop();
+				return;
+			}
 			if (BatchAnalisys.stopThread) {
-				if (MainPanel.progressBar.getSelection() == 100)
+				if (MainPanel.progressBar.getStop() == 1)
 					Parameters.startParser();
 				else
 					Packet.pause(!Packet.isPaused());
@@ -45,13 +51,13 @@ public class ButtonListener implements SelectionListener {
 				return;
 			}
 			if (Packet.isPaused())
-				MainPanel.btPause.setImage(MainPanel.imPlay);
+				MainPanel.setPauseButtonState(MainPanel.PLAING);
 			else
-				MainPanel.btPause.setImage(MainPanel.imPause);
+				MainPanel.setPauseButtonState(MainPanel.PAUSED);
 		} else {
 			BatchAnalisys.stopThread = true;
 			stopCurrentTS();
-			MainPanel.btPause.setImage(MainPanel.imPlay);
+			MainPanel.setPauseButtonState(MainPanel.PLAING);
 		}
 	}
 
@@ -59,9 +65,10 @@ public class ButtonListener implements SelectionListener {
 		Packet.setPacketLimit(Packet.packetCount);
 		Packet.pause(false);
 		if (BatchAnalisys.stopThread)
-			MainPanel.btStop.setEnabled(false);
-		MainPanel.progressBar.setSelection(100);
-		MainPanel.progressBar.setToolTipText("100%"); //$NON-NLS-1$
+			MainPanel.setPauseButtonState(MainPanel.STOPPED);
+		MainPanel.progressBar.setStopPoint(1);
+		MainPanel.progressBar.setText("100%"); //$NON-NLS-1$
+		MainPanel.progressBar.layout();
 	}
 
 }

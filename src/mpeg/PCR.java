@@ -32,24 +32,28 @@ public class PCR {
 	private static PCR thisInstance = new PCR();
 
 	public static double firstTimestamp = -1;
-	static double lastTimeStamp = -1, averageBitrate = 30;
+	static double lastTimeStamp = -1;
+	static double[] smoothAvgBitrate;
 
 	static long firstPacketCount = 0, lastPacketCount = 0;
 
-	public static long totPacketCount = -1;
-
-	static int id = 0;
+	private PCR() {
+		smoothAvgBitrate = new double[3];
+		smoothAvgBitrate[0] = 0;// Mbps
+		smoothAvgBitrate[1] = 0;
+		smoothAvgBitrate[2] = 30;
+	}
 
 	public static PCR getInstance() {
 		return thisInstance;
 	}
 
 	public static float getAverageBitrate() {
-		return (float) averageBitrate / 1000000;
+		return (float) smoothAvgBitrate[2] / 1000000;
 	}
 
 	public static double getTimestamp(long packetNumber) {
-		return packetNumber * Packet.realPktLenght * 8 / averageBitrate;
+		return packetNumber * Packet.realPktLenght * 8 / smoothAvgBitrate[2];
 	}
 
 	public static String getFormatedTimestamp(long packetNumber) {
@@ -68,7 +72,7 @@ public class PCR {
 		double bits = (Packet.packetCount - lastPacketCount) * Packet.realPktLenght * 8;
 		if (firstTimestamp == lastTimeStamp)
 			return 0;
-		return (float) (bits / averageBitrate + (lastTimeStamp - firstTimestamp));
+		return (float) (bits / smoothAvgBitrate[2] + (lastTimeStamp - firstTimestamp));
 	}
 
 	public void update(BitWise bw) {
@@ -92,10 +96,27 @@ public class PCR {
 				Log.printWarning("ts: " + timeStamp); //$NON-NLS-1$
 				return;
 			}
+			// double currentBitrate = (Packet.packetCount - lastPacketCount) /
+			// (timeStamp - lastTimeStamp)
+			// * Packet.realPktLenght * 8;
 			lastTimeStamp = timeStamp;
 			lastPacketCount = Packet.packetCount;
-			averageBitrate = (lastPacketCount - firstPacketCount) / (timeStamp - firstTimestamp) * Packet.realPktLenght
-					* 8;
+			double avgBitrate = (lastPacketCount - firstPacketCount) / (timeStamp - firstTimestamp)
+					* Packet.realPktLenght * 8;
+			if (smoothAvgBitrate[0] == 0) {
+				smoothAvgBitrate[0] = avgBitrate;
+				smoothAvgBitrate[1] = avgBitrate;
+			}
+			smoothAvgBitrate[0] = smoothAvgBitrate[1];
+			smoothAvgBitrate[1] = smoothAvgBitrate[2];
+			smoothAvgBitrate[2] = smoothAvgBitrate[0] * 0.475 + smoothAvgBitrate[1] * 0.475 + avgBitrate * 0.05;
+			/*
+			 * TODO: make some PCR jitter tests with gnuplot plot 'data.txt'
+			 * using 0:2 "%lf %lf %lf\n" with lines, 'data.txt' using 0:3
+			 * "%lf %lf %lf\n" with lines System.out.print(currentBitrate);
+			 * System.out.print(';'); System.out.print(avgBitrate);
+			 * System.out.print(';'); System.out.println(smoothAvgBitrate[2]);
+			 */
 		}
 	}
 }

@@ -23,6 +23,7 @@ package gui;
 
 import gui.dialogs.About;
 import gui.dialogs.CopyPopUp;
+import gui.dialogs.Crop;
 import gui.dialogs.DSMCCSavePopUp;
 import gui.dialogs.Demux;
 import gui.dialogs.Open;
@@ -53,7 +54,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -94,7 +94,7 @@ public class MainPanel {
 
 	private Menu menuBar = null;
 
-	public static ProgressBar progressBar = null;
+	public static MultiProgressBar progressBar = null;
 
 	public static Text inputLimit = null;
 
@@ -104,16 +104,13 @@ public class MainPanel {
 
 	public static boolean targetOK = false;
 
-	public static Button btStop = null;
-	public static Button btPause = null;
+	private static Button btStop = null, btPause = null;
 
 	private static String targetFilter; // @jve:decl-index=0:
 
 	private static FileTransfer fileTransfer = FileTransfer.getInstance();
 
-	public static Image imPause, imPlay; // VE idiota, não suporta declarações
-	// com vírgula.
-	public static Image imStop;
+	static Image imPause, imPlay, imCrop, imStop;
 
 	private TabFolder tabFolder = null;
 
@@ -299,7 +296,8 @@ public class MainPanel {
 		crop = new MenuItem(toolsMenu, SWT.PUSH);
 		Demux demuxListener = new Demux(sShell);
 		demux.addSelectionListener(demuxListener);
-		// crop.addSelectionListener(toolsLstnr);
+		Crop cropListener = new Crop(sShell);
+		crop.addSelectionListener(cropListener);
 
 		SettingsListener setLstnr = new SettingsListener();
 		langPtItem.addSelectionListener(setLstnr);
@@ -333,10 +331,10 @@ public class MainPanel {
 		btPause = new Button(sShell, SWT.NONE);
 		InputStream isPause = this.getClass().getClassLoader().getResourceAsStream("res/bot_pause.png"); //$NON-NLS-1$
 		imPause = new Image(Display.getCurrent(), isPause);
-		btPause.setImage(imPause);
-		btPause.setEnabled(false);
 		btPause.addSelectionListener(new ButtonListener());
+		btPause.setData("pause");
 		btStop = new Button(sShell, SWT.NONE);
+		btStop.setData("stop");
 		InputStream isStop = this.getClass().getClassLoader().getResourceAsStream("res/bot_stop.png"); //$NON-NLS-1$
 		imStop = new Image(Display.getCurrent(), isStop);
 		btStop.setImage(imStop);
@@ -344,10 +342,10 @@ public class MainPanel {
 		btStop.addSelectionListener(new ButtonListener());
 		InputStream isPlay = this.getClass().getClassLoader().getResourceAsStream("res/bot_play.png"); //$NON-NLS-1$
 		imPlay = new Image(Display.getCurrent(), isPlay);
-		progressBar = new ProgressBar(sShell, SWT.SMOOTH);
-		progressBar.setMaximum(100);
-		progressBar.setLayoutData(progressGridData);
-		progressBar.setMinimum(0);
+		InputStream isCrop = this.getClass().getClassLoader().getResourceAsStream("res/bot_crop.png"); //$NON-NLS-1$
+		imCrop = new Image(Display.getCurrent(), isCrop);
+		progressBar = new MultiProgressBar(sShell, SWT.BORDER, 500);
+		// progressBar.setLayoutData(progressGridData);
 
 		createTabFolder();
 		saveItem.addSelectionListener(saveFileListener);
@@ -371,11 +369,28 @@ public class MainPanel {
 		setTexts();
 	}
 
+	public static final int PLAING = 0, PAUSED = 1, CROP_WAIT = 2, STOPPED = 3;
+
+	public static void setPauseButtonState(int state) {
+		String[] tooltips = { Messages.getString("MainPanel.pauseTip"), //$NON-NLS-1$
+				Messages.getString("MainPanel.playTip"), //$NON-NLS-1$
+				Messages.getString("MainPanel.cropTip"), //$NON-NLS-1$
+				Messages.getString("MainPanel.openPlayTip") //$NON-NLS-1$
+		};
+		Image[] images = { imPause, imPlay, imCrop, imPlay };
+		btPause.setToolTipText(tooltips[state]);
+		btPause.setImage(images[state]);
+		if (state == PLAING || state == PAUSED)
+			btStop.setEnabled(true);
+		else
+			btStop.setEnabled(false);
+	}
+
 	public static void setTexts() {
 		limitLabel.setText(Messages.getString("MainPanel.limit")); //$NON-NLS-1$
 		sShell.setText(Messages.getString("MainPanel.shellTitle")); //$NON-NLS-1$
 		inputLimit.setToolTipText(Messages.getString("MainPanel.limitTip")); //$NON-NLS-1$
-		btPause.setToolTipText(Messages.getString("MainPanel.pauseTip")); //$NON-NLS-1$
+		setPauseButtonState(STOPPED);
 		btStop.setToolTipText(Messages.getString("MainPanel.stopTip")); //$NON-NLS-1$
 
 		pidStats.setText(Messages.getString("MainPanel.pidRates")); //$NON-NLS-1$
@@ -408,8 +423,8 @@ public class MainPanel {
 		crop.setText("Crop");
 	}
 
-	public static void setProgress(int progress) {
-		GuiMethods.runMethod(GuiMethods.SETPROGRESSBAR, new Integer(progress), true);
+	public static void setProgress(float progress) {
+		GuiMethods.runMethod(GuiMethods.SETPROGRESSBAR, new Float(progress), true);
 	}
 
 	public static void getLimit() {

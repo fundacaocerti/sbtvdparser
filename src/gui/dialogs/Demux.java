@@ -80,7 +80,7 @@ public class Demux extends Dialog implements SelectionListener {
 			fd.setText(Messages.getString("MenuSave.save")); //$NON-NLS-1$
 			String selected = fd.open();
 			if (selected != null)
-				Parameters.startParser(selected, sa);
+				Parameters.startParser(selected, sa, "-demux");
 		} else if (e.widget == btInvert)
 			for (int i = 0; i < PIDStats.getPidCount(); i++) {
 				Button b = (Button) pid[i].data;

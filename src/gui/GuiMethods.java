@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 
 import parsers.Packet;
-import sys.BatchAnalisys;
 import sys.LogicTree;
 
 public class GuiMethods implements Runnable {
@@ -107,16 +106,14 @@ public class GuiMethods implements Runnable {
 				MainPanel.inputLimit.setText(((Long) param[0]).toString());
 				break;
 			case SETPROGRESSBAR:
-				int i = ((Integer) param[0]).intValue();
-				MainPanel.progressBar.setSelection(i);
-				MainPanel.progressBar.setToolTipText(Integer.toString(i) + "%"); //$NON-NLS-1$
-				if (i > 0 && i != 100) {
-					MainPanel.btStop.setEnabled(true);
-					MainPanel.btPause.setEnabled(true);
+				float i = ((Float) param[0]).floatValue();
+				MainPanel.progressBar.setStopPoint(i);
+				// TODO: MainPanel.progressBar.setText(x%);
+				MainPanel.progressBar.layout();
+				if (i > 0 && i != 1) {
+					MainPanel.setPauseButtonState(MainPanel.PLAING);
 				} else {
-					if (BatchAnalisys.stopThread)
-						MainPanel.btStop.setEnabled(false);
-					MainPanel.btPause.setImage(MainPanel.imPlay);
+					MainPanel.setPauseButtonState(MainPanel.STOPPED);
 				}
 				break;
 			case SETCURSOR:
