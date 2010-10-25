@@ -47,6 +47,8 @@ public class Packet extends Thread {
 
 	public OutputStream bos = null;
 
+	public float[] cropPoints = null;
+
 	public static long limit = 0, estimate = 0, fileLenght = 0, TEIerrors = 0, byteCount = 0, packetCount = 0,
 			syncLosses = 0;
 
@@ -158,6 +160,8 @@ public class Packet extends Thread {
 			try {
 				if (filterPIDs != null)
 					pidFilterLoop();
+				if (cropPoints != null)
+					cropLoop();
 				else
 					mainLoop();
 				bis.close();
@@ -174,9 +178,37 @@ public class Packet extends Thread {
 		}
 	}
 
+	private void cropLoop() throws InterruptedException, IOException {
+		limitNotReached = true;
+		bis.skip((long) (fileLenght * cropPoints[0]));
+		long bytesToWrite = (long) (fileLenght * (cropPoints[1] - cropPoints[0]));
+		do {
+			parsePacket();
+			PIDStats.increasePid(TSP.pid);
+			if (TSP.transportErrorIndicator == 1)// check if should copy TSP.pid
+				break;
+			bos.write(0x47);
+			bos.write(buffer);
+		} while (hasBytesToRead() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached
+				&& byteCount < bytesToWrite);
+		bos.flush();
+		bos.close();
+		MainPanel.setCursor(SWT.CURSOR_ARROW);
+		MainPanel.addTreeItem("Crop complete!", 0);
+	}
+
+	private boolean hasBytesToRead() {
+		boolean hasBytesToRead;
+		if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0)
+			MainPanel.setProgress((float) packetCount / estimate);
+		hasBytesToRead = byteCount < (estimate * realPktLenght);
+		if (limitNotReached)
+			limitNotReached = (limit == 0 || packetCount < limit);
+		return hasBytesToRead;
+	}
+
 	private void pidFilterLoop() throws InterruptedException, IOException {
 		limitNotReached = true;
-		boolean hasBytesToRead;
 		do {
 			parsePacket();
 			PIDStats.increasePid(TSP.pid);
@@ -189,12 +221,7 @@ public class Packet extends Thread {
 					break;
 				}
 
-			if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0)
-				MainPanel.setProgress((float) packetCount / estimate);
-			hasBytesToRead = byteCount < (estimate * realPktLenght);
-			if (limitNotReached)
-				limitNotReached = (limit == 0 || packetCount < limit);
-		} while (hasBytesToRead && (MainPanel.isOpen || Parameters.noGui) && limitNotReached);
+		} while (hasBytesToRead() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached);
 		bos.flush();
 		bos.close();
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
@@ -231,7 +258,6 @@ public class Packet extends Thread {
 
 	private void mainLoop() throws InterruptedException, IOException {
 		limitNotReached = true;
-		boolean hasBytesToRead;
 		Section sp = new Section();
 		ESPacket pp = new ESPacket();
 		do {
@@ -243,11 +269,6 @@ public class Packet extends Thread {
 			sp.parseTable();
 			pp.parsePES();
 
-			if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0)
-				MainPanel.setProgress((float) packetCount / estimate);
-			hasBytesToRead = byteCount < (estimate * realPktLenght);
-			if (limitNotReached)
-				limitNotReached = (limit == 0 || packetCount < limit);
 			if (jumpOK) {
 				MainPanel.setProgress((float) packetCount / estimate);
 				MainPanel.setCursor(SWT.CURSOR_ARROW);
@@ -256,7 +277,7 @@ public class Packet extends Thread {
 			if (jump)
 				jump();
 		} while (jump
-				|| (hasBytesToRead && !TableList.tablesCaught() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached));
+				|| (hasBytesToRead() && !TableList.tablesCaught() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached));
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
 		// System.out.println(hasBytesToRead + ","
 		// + !TableList.tablesCaught() + ","
