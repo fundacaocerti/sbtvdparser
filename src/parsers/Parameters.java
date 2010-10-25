@@ -146,6 +146,7 @@ public class Parameters {
 		MainPanel.setFilter(null);
 		CC.reset();
 		int[] demuxPids = null;
+		float[] cropPoints = null;
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-noGui"))
 				noGui = true;
@@ -196,6 +197,29 @@ public class Parameters {
 				}
 				i = j;
 			}
+			if (args[i].equalsIgnoreCase("-crop")) {
+				cropPoints = new float[2];
+				try {
+					cropPoints[0] = Float.parseFloat(args[i + 2]);
+					cropPoints[1] = Float.parseFloat(args[i + 3]);
+				} catch (NumberFormatException e1) {
+					initialMessage = "Crop points must be in the range 0.0 to 1.0";
+					return;
+				}
+
+				File f = new File(args[i + 1]);
+				if (f.exists())
+					f.delete();
+				try {
+					f.createNewFile();
+					FileOutputStream fos = new FileOutputStream(f);
+					bos = new BufferedOutputStream(fos);
+				} catch (IOException e) { // TODO handle it
+					e.printStackTrace();
+				}
+				i += 3;
+
+			}
 		}
 		if (matchLimit > 0)
 			MainPanel.setFilterLimit(matchLimit);
@@ -209,6 +233,10 @@ public class Parameters {
 		pp = new Packet(bis);
 		if (demuxPids != null) {
 			pp.filterPIDs = demuxPids;
+			pp.bos = bos;
+		}
+		if (cropPoints != null) {
+			pp.cropPoints = cropPoints;
 			pp.bos = bos;
 		}
 		pp.start();
