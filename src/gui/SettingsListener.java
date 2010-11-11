@@ -14,10 +14,10 @@ public class SettingsListener implements SelectionListener {
 
 	public void widgetSelected(SelectionEvent e) {
 		Persistence.set(Persistence.UI_LANG_IDIOM, ((MenuItem)e.getSource()).getData().toString());
-		if (Persistence.get(Persistence.UI_LANG_IDIOM).equals("pt"))
-			Persistence.set(Persistence.UI_LANG_REGION, "BR");
+		if (Persistence.get(Persistence.UI_LANG_IDIOM).equals("pt")) //$NON-NLS-1$
+			Persistence.set(Persistence.UI_LANG_REGION, "BR"); //$NON-NLS-1$
 		else
-			Persistence.set(Persistence.UI_LANG_REGION, "US");
+			Persistence.set(Persistence.UI_LANG_REGION, "US"); //$NON-NLS-1$
 		Messages.load();
 		MainPanel.setTexts();
 	}

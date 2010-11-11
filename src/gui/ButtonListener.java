@@ -36,7 +36,7 @@ public class ButtonListener implements SelectionListener {
 	}
 
 	public void widgetSelected(SelectionEvent e) {
-		if ("pause".equals(e.widget.getData())) {
+		if ("pause".equals(e.widget.getData())) { //$NON-NLS-1$
 			if (Crop.isWaitingCrop()) {
 				Crop.crop();
 				return;
