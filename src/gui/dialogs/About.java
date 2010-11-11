@@ -164,7 +164,7 @@ public class About extends Dialog implements SelectionListener {
 		gplImg.setLayoutData(gplGd);
 		condLink = new Link(sShell, SWT.NONE);
 		condLink.setText(Messages.getString("MenuAbout.free") //$NON-NLS-1$
-				+ "\n" + Messages.getString("MenuAbout.freeLn2")); //$NON-NLS-1$
+				+ "\n" + Messages.getString("MenuAbout.freeLn2")); //$NON-NLS-1$ //$NON-NLS-2$
 		condLink.setLayoutData(condLinkGd);
 		condLink.addSelectionListener(this);
 		btOK = new Button(sShell, SWT.NONE);
