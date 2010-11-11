@@ -26,6 +26,7 @@ import mpeg.es.CCPresentation;
 import mpeg.psi.descriptors.Component;
 import sys.BitWise;
 import sys.CRC16;
+import sys.Messages;
 
 public class CC extends PES {
 
@@ -41,7 +42,7 @@ public class CC extends PES {
 		id = 0xbd;
 		this.pid = pid;
 		ccTrackNumb++;
-		name = "Closed Caption " + ccTrackNumb;
+		name = Messages.getString("CC.caption") + ccTrackNumb; //$NON-NLS-1$
 		treeIndx = MainPanel.addTreeItem(name, 0, MainPanel.CC_TREE);
 	}
 
@@ -55,7 +56,7 @@ public class CC extends PES {
 		if (bigBuffer.length > 46)
 			super.printHeader();
 		else if (mgmtPackets == 0)
-			mgmtPackets = addSubItem("Management packets");
+			mgmtPackets = addSubItem("Management packets"); //$NON-NLS-1$
 		else {
 			int i = bw.getAbsolutePosition();
 			bw.setOffset(bigBuffer.length - 2);
@@ -65,8 +66,8 @@ public class CC extends PES {
 				if (mgmtCrcs[i] == crc)
 					return;
 			mgmtCrcs[mgmtCount++] = crc;
-			thisPacket = addSubItem("ES packet " + BitWise.toHex(crc), mgmtPackets);
-			addSubItem("packet_lenght: " + bigBuffer.length, thisPacket);
+			thisPacket = addSubItem("ES packet " + BitWise.toHex(crc), mgmtPackets); //$NON-NLS-1$
+			addSubItem(Messages.getString("CC.pktSize") + bigBuffer.length, thisPacket); //$NON-NLS-1$
 			parse();
 		}
 	}
@@ -82,23 +83,23 @@ public class CC extends PES {
 		for (int i = 0; i < prefix.length; i++)
 			if (prefix[i] != bw.pop())
 				return;
-		addSubItem("start prefix OK", thisPacket);
+		addSubItem(Messages.getString("CC.startOk"), thisPacket); //$NON-NLS-1$
 		while (bw.getAvailableSize() > 7) {// 5b de header + 2 de crc = mínimo
 			// dataGroup
 			int crcStart = bw.getAbsolutePosition();
-			String id = "A-";
+			String id = "A-"; //$NON-NLS-1$
 			int data_group_id = bw.consumeBits(6);
 			if (data_group_id > 0x1F)
-				id = "B-";
+				id = "B-"; //$NON-NLS-1$
 			if (data_group_id % 0x20 == 0)
-				id += "management";
+				id += "management"; //$NON-NLS-1$
 			else
-				id += "statement lang. " + (data_group_id % 0x20);
-			dataGroupLvl = addSubItem("data_group_id: " + id, thisPacket);
-			addSubItem("data_group_version: " + bw.consumeBits(2), dataGroupLvl);
+				id += "statement lang. " + (data_group_id % 0x20); //$NON-NLS-1$
+			dataGroupLvl = addSubItem("data_group_id: " + id, thisPacket); //$NON-NLS-1$
+			addSubItem("data_group_version: " + bw.consumeBits(2), dataGroupLvl); //$NON-NLS-1$
 			bw.pop16(); // data_group_link_number; last_data_group_link_number
 			int data_group_size = bw.pop16();
-			addSubItem("data_group_size: " + data_group_size, dataGroupLvl);
+			addSubItem("data_group_size: " + data_group_size, dataGroupLvl); //$NON-NLS-1$
 
 			// bw.printBuffer(bw.getAbsolutePosition(), bw.getBufferSize());
 			if (data_group_id % 0x20 == 0)
@@ -109,16 +110,16 @@ public class CC extends PES {
 			int readCrc = bw.pop16();
 			int crc = CRC16.calc(bigBuffer, crcStart, data_group_size + 5); // 5
 			// bytes no header
-			addSubItem("CRC16: " + BitWise.toHex(crc) + " " + (readCrc == crc), dataGroupLvl);
+			addSubItem("CRC16: " + BitWise.toHex(crc) + " " + (readCrc == crc), dataGroupLvl); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	void parseTMD(BitWise bw, boolean parseFree) {
-		String[] tmdTxt = { "Free", "Real-time", "Offset time", "reserved" };
+		String[] tmdTxt = { "Free", "Real-time", "Offset time", "reserved" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		// TMD 2
 		bw.remainingBits = 0;
 		int tmd = bw.consumeBits(2);
-		addSubItem("TMD: " + tmdTxt[tmd], dataGroupLvl);
+		addSubItem("TMD: " + tmdTxt[tmd], dataGroupLvl); //$NON-NLS-1$
 		// Reserved 6
 		bw.consumeBits(6);
 		// if(TMD==’10’){
@@ -135,29 +136,29 @@ public class CC extends PES {
 			sb.append(BitWise.toHex(bw.consumeBits(4)).substring(3));
 			// Reserved 4
 			bw.consumeBits(4);
-			addSubItem("OTM: " + sb.toString(), dataGroupLvl);
+			addSubItem("OTM: " + sb.toString(), dataGroupLvl); //$NON-NLS-1$
 		}
 	}
 
 	void parseDataUnit(BitWise bw) {
 		// bw.printBuffer(bw.getAbsolutePosition(), bw.getAbsolutePosition()+4);
 		int data_unit_loop_length = (bw.pop16() << 8) + bw.pop();
-		int duLvl = addSubItem("data_unit", dataGroupLvl);
-		addSubItem("data_unit_loop_length: " + data_unit_loop_length, duLvl);
+		int duLvl = addSubItem("data_unit", dataGroupLvl); //$NON-NLS-1$
+		addSubItem("data_unit_loop_length: " + data_unit_loop_length, duLvl); //$NON-NLS-1$
 		if (data_unit_loop_length < 5)
 			return;
-		addSubItem("unit separator: " + (0x1f == bw.pop()), duLvl);
+		addSubItem("unit separator: " + (0x1f == bw.pop()), duLvl); //$NON-NLS-1$
 		int[] typeId = { 0x20, 0x28, 0x2c, 0x30, 0x31, 0x34, 0x35 };
-		String[] typeNames = { "text", "geometric", "sound", "1b DRCS", "2b DRCS", "color map", "bitmap" };
-		String typeName = "Unknown";
+		String[] typeNames = { "text", "geometric", "sound", "1b DRCS", "2b DRCS", "color map", "bitmap" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+		String typeName = Messages.getString("CC.unknown"); //$NON-NLS-1$
 		int type = bw.pop();
 		for (int i = 0; i < typeNames.length; i++)
 			if (type == typeId[i])
 				typeName = typeNames[i];
-		addSubItem("type: " + typeName, duLvl);
+		addSubItem(Messages.getString("CC.duType") + typeName, duLvl); //$NON-NLS-1$
 		int data_unit_size = (bw.pop16() << 8) + bw.pop();
-		addSubItem("data_unit_size: " + data_unit_size, duLvl);
-		int contentLvl = addSubItem("content", duLvl);
+		addSubItem(Messages.getString("CC.duSize") + data_unit_size, duLvl); //$NON-NLS-1$
+		int contentLvl = addSubItem(Messages.getString("CC.duContent"), duLvl); //$NON-NLS-1$
 		if (type == typeId[0])
 			new CCPresentation(contentLvl, thisPacket).parse(bw, data_unit_size);
 	}
@@ -176,19 +177,19 @@ public class CC extends PES {
 		parseTMD(bw, false);
 		// num_languages 8
 		int num_languages = bw.pop();
-		addSubItem("num_languages: " + num_languages, dataGroupLvl);
+		addSubItem(Messages.getString("CC.duLangs") + num_languages, dataGroupLvl); //$NON-NLS-1$
 		// for(i=0;i<N;i++){
 		for (int i = 0; i < num_languages; i++) {
 			// language_tag 3 bslbf
-			addSubItem("language_tag: " + bw.consumeBits(3), dataGroupLvl);
+			addSubItem("tag: " + bw.consumeBits(3), dataGroupLvl); //$NON-NLS-1$
 			// reserved 1 bslbf
 			bw.consumeBits(1);
 			// DMF 4 bslbf
 			int dmf = bw.consumeBits(4);
-			String[] dispType = { "Auto", "Non", "Select", "Specific" };
-			addSubItem("dmf: " + dispType[BitWise.stripBits(dmf, 4, 2)] + " display", dataGroupLvl);
+			String[] dispType = { "Auto", "Non", "Select", "Specific" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			addSubItem("dmf: " + dispType[BitWise.stripBits(dmf, 4, 2)] + " display", dataGroupLvl); //$NON-NLS-1$ //$NON-NLS-2$
 			if (dmf == 12 || dmf == 13 || dmf == 14)
-				addSubItem("dc: " + bw.pop());
+				addSubItem("dc: " + bw.pop()); //$NON-NLS-1$
 			// if (DMF==’1100’ || DMF==’1101’ || DMF==’1110’){
 			// DC 8 bslbf
 			// }
@@ -196,12 +197,13 @@ public class CC extends PES {
 
 			// ISO_639_language_code 24 uimsbf
 			int df = bw.consumeBits(4);
-			String[] hv = { "Horizontal", "Vertical" };
-			String[] dens = { "standard dens.", "high density", "western lang.", "1920x1080", "960x540", "720x480",
-					"1280x720", "reserved" };
-			addSubItem("Format: " + hv[df & 1] + " writing in " + dens[df >> 1], dataGroupLvl);
-			addSubItem("TCS: " + bw.consumeBits(2), dataGroupLvl);
-			addSubItem("rollup_mode: " + "yn".charAt(bw.consumeBits(2) & 1), dataGroupLvl);
+			String[] hv = { "Horizontal", "Vertical" }; //$NON-NLS-1$ //$NON-NLS-2$
+			String[] dens = { "standard dens.", "high density", "western lang.", "1920x1080", "960x540", "720x480", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					"1280x720", "reserved" }; //$NON-NLS-1$ //$NON-NLS-2$
+			addSubItem(
+					Messages.getString("CC.format") + hv[df & 1] + Messages.getString("CC.wMode") + dens[df >> 1], dataGroupLvl); //$NON-NLS-1$ //$NON-NLS-2$
+			addSubItem("TCS: " + bw.consumeBits(2), dataGroupLvl); //$NON-NLS-1$
+			addSubItem("rollup: " + Messages.getString("CC.yesNo").charAt(bw.consumeBits(2) & 1), dataGroupLvl); //$NON-NLS-1$ //$NON-NLS-2$
 			// Format 4 bslbf
 			// TCS 2 bslbf
 			// rollup_mode 2 bslbf
