@@ -26,6 +26,7 @@ import mpeg.psi.TOT;
 import parsers.Packet;
 import sys.BitWise;
 import sys.Log;
+import sys.Messages;
 
 public class PCR {
 	// TS may have many, but only one per program
@@ -58,14 +59,14 @@ public class PCR {
 
 	public static String getFormatedTimestamp(long packetNumber) {
 		if (lastTimeStamp == -1)
-			return "Received at packet " + Long.toString(packetNumber);
+			return Messages.getString("PCR.pktTimestamp") + Long.toString(packetNumber); //$NON-NLS-1$
 		double sec = getTimestamp(packetNumber);
-		String seconds = Double.toString(sec) + "000";
+		String seconds = Double.toString(sec) + "000"; //$NON-NLS-1$
 		seconds = seconds.substring(0, seconds.indexOf('.') + 4);
 		String utcTime = TOT.getTimeStamp(Math.round(sec));
 		if (utcTime != null)
-			return "Received at " + seconds + "s (" + utcTime + " UTC-3)";
-		return "Received at " + seconds + "s";
+			return Messages.getString("PCR.realTimestamp") + " " + seconds + "s (" + utcTime + " UTC-3)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return Messages.getString("PCR.offsetTimestamp") + " " + seconds + "s"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static float getCurrentTimestamp() {
