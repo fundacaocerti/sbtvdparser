@@ -99,7 +99,7 @@ public class Packet extends Thread {
 		if (i != 1) {
 			syncLosses++;
 			if (syncLosses % 500 == 0)
-				Log.printWarning(Messages.getString("Packet.warning") + packetCount + "-" + realPktLenght + "-" //$NON-NLS-1$
+				Log.printWarning(Messages.getString("Packet.warning") + packetCount + "-" + realPktLenght + "-" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						+ skipSize);
 			if (syncLosses > synclossesToRecalc) {
 				customPktCount = 0;
@@ -125,7 +125,7 @@ public class Packet extends Thread {
 				realPktLenght = TSP.TS_PACKET_LEN + skipSize;
 				if (realPktLenght % TSP.TS_PACKET_LEN == 0)
 					realPktLenght = TSP.TS_PACKET_LEN;
-				MainPanel.addTreeItem(Messages.getString("Packet.set") + realPktLenght + " bytes.", 0); //$NON-NLS-1$
+				MainPanel.addTreeItem(Messages.getString("Packet.set") + realPktLenght + " bytes.", 0); //$NON-NLS-1$ //$NON-NLS-2$
 				syncLosses = 0;
 				estimate = fileLenght / realPktLenght;
 				if (skipSize == 16) {
@@ -167,7 +167,7 @@ public class Packet extends Thread {
 				bis.close();
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset));
+				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset)); //$NON-NLS-1$
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
@@ -181,27 +181,27 @@ public class Packet extends Thread {
 	private void cropLoop() throws InterruptedException, IOException {
 		limitNotReached = true;
 		bis.skip((long) (fileLenght * cropPoints[0]));
-		long bytesToWrite = (long) (fileLenght * (cropPoints[1] - cropPoints[0]));
+		fileLenght = (long) (fileLenght * (cropPoints[1] - cropPoints[0]));
+		estimate = fileLenght / TSP.TS_PACKET_LEN;
 		do {
 			parsePacket();
 			PIDStats.increasePid(TSP.pid);
 			if (TSP.transportErrorIndicator == 1)// check if should copy TSP.pid
-				break;
+				continue;
 			bos.write(0x47);
 			bos.write(buffer);
-		} while (hasBytesToRead() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached
-				&& byteCount < bytesToWrite);
+		} while (hasBytesToRead() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached);
 		bos.flush();
 		bos.close();
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
-		MainPanel.addTreeItem("Crop complete!", 0);
+		MainPanel.addTreeItem(Messages.getString("Packet.cropOk"), 0); //$NON-NLS-1$
 	}
 
 	private boolean hasBytesToRead() {
 		boolean hasBytesToRead;
 		if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0)
 			MainPanel.setProgress((float) packetCount / estimate);
-		hasBytesToRead = byteCount < (estimate * realPktLenght);
+		hasBytesToRead = byteCount < (estimate * realPktLenght) && byteCount < fileLenght;
 		if (limitNotReached)
 			limitNotReached = (limit == 0 || packetCount < limit);
 		return hasBytesToRead;
@@ -213,7 +213,7 @@ public class Packet extends Thread {
 			parsePacket();
 			PIDStats.increasePid(TSP.pid);
 			if (TSP.transportErrorIndicator == 1)// check if should copy TSP.pid
-				break;
+				continue;
 			for (int i = 0; i < filterPIDs.length; i++)
 				if (filterPIDs[i] == TSP.pid) {
 					bos.write(0x47);
@@ -225,7 +225,7 @@ public class Packet extends Thread {
 		bos.flush();
 		bos.close();
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
-		MainPanel.addTreeItem("Demux complete!", 0);
+		MainPanel.addTreeItem(Messages.getString("Packet.demuxOk"), 0); //$NON-NLS-1$
 	}
 
 	public void printBitrate() {
@@ -236,7 +236,7 @@ public class Packet extends Thread {
 			return;
 		PIDStats.printStats(bitrate);
 		if (!Float.isInfinite(TOT.lastBitrate)) {
-			MainPanel.addTreeItem(Messages.getString("Packet.bitrate") + bitrate + " Mbps", 0, MainPanel.STATS_TREE); //$NON-NLS-1$
+			MainPanel.addTreeItem(Messages.getString("Packet.bitrate") + bitrate + " Mbps", 0, MainPanel.STATS_TREE); //$NON-NLS-1$ //$NON-NLS-2$
 			// MainPanel.addTreeItem("TS packets: " + packetCounter, 0);
 			int duration = (int) (packetCount / bitrate * realPktLenght * 8 / 1e6);
 			String[] hms = new String[3];
@@ -244,12 +244,12 @@ public class Packet extends Thread {
 			for (int i = 0; i < hms.length; i++) {
 				hms[i] = Integer.toString(hmsDuration % 60);
 				if (hms[i].length() == 1)
-					hms[i] = "0" + hms[i];
+					hms[i] = "0" + hms[i]; //$NON-NLS-1$
 				hmsDuration = hmsDuration / 60;
 			}
 			MainPanel
 					.addTreeItem(
-							Messages.getString("Packet.duration") + hms[2] + ":" + hms[1] + ":" + hms[0] + " (" + duration + "s)", 0, //$NON-NLS-1$
+							Messages.getString("Packet.duration") + hms[2] + ":" + hms[1] + ":" + hms[0] + " (" + duration + "s)", 0, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							MainPanel.STATS_TREE);
 		}
 	}

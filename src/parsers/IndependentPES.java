@@ -66,7 +66,7 @@ public class IndependentPES extends Thread {
 				bis.close();
 			} catch (Exception e) {
 				e.printStackTrace();
-				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset));
+				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset)); //$NON-NLS-1$
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
