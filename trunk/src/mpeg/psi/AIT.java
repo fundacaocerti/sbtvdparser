@@ -48,7 +48,7 @@ public class AIT extends Table {
 		int commonDescLvl = addSubItem("common descriptors: (lenght " + commonDescriptorsLength + ")");
 		bw.mark();
 		while ((bw.getByteCount() < commonDescriptorsLength) && (bw.getAvailableSize() > 0)) {
-			DescriptorList.print(bw, commonDescLvl);
+			DescriptorList.getInstance().print(bw, commonDescLvl);
 		}
 		int applicationLoopLength = BitWise.stripBits(bw.pop16(), 12, 12);
 		int appLvl = addSubItem("application loop: (lenght " + applicationLoopLength + ")");
@@ -85,7 +85,7 @@ public class AIT extends Table {
 			int mark = bw.getByteCount();
 			int appDescLvl = addSubItem("application descriptors: (lenght " + appDescLoopLenght + ")", appLvl);
 			while ((bw.getByteCount() - mark < appDescLoopLenght) && (bw.getAvailableSize() > 0)) {
-				AITDescriptorList.print(bw, appDescLvl);
+				AITDescriptorList.getInstance().print(bw, appDescLvl);
 			}
 		}
 		return true;

@@ -40,7 +40,7 @@ public class TSDT extends Table {
 		// for(j=0;j<N;j++){
 		// Descriptor()
 		while (bw.getAvailableSize() > 0) {
-			DescriptorList.print(bw, descLevel);
+			DescriptorList.getInstance().print(bw, descLevel);
 		}
 		return true;
 	}
