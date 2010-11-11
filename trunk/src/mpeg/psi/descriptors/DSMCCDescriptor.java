@@ -21,44 +21,31 @@
  */
 package mpeg.psi.descriptors;
 
-import dsmcc.ModuleList;
-import gui.MainPanel;
 import sys.BitWise;
+import sys.Messages;
+import dsmcc.ModuleList;
 
-public class DSMCCDescriptor {
-
-	int[] predefinedTags = { 0x09, 0x71 };
-
-	String[] predefinedNames = { "compressed_module", "caching_priority" };
-
-	String name = null;
-
-	public int tag = 0xFF, parsedTag, tableIndx;
-
-	int descriptor_length = 0;
-
-	BitWise bw;
+public class DSMCCDescriptor extends Descriptor {
 
 	ModuleList ml;
 
+	public DSMCCDescriptor() {
+		predefinedTags = new int[] { 0x09, 0x71 };
+		predefinedNames = new String[] { "compressed_module", "caching_priority" };
+	}
+
 	public void setUp(int treeIndex, BitWise tableBw, ModuleList ml) {
-		tableIndx = treeIndex;
 		this.ml = ml;
-		int startIndx = tableBw.getAbsolutePosition();
-		// descriptor_tag 8 uimsbf
-		parsedTag = tableBw.pop();
-		// descriptor_length 8 uimsbf
-		descriptor_length = tableBw.pop();
-		tableBw.pop(descriptor_length);
-		bw = tableBw.getCopy(startIndx, descriptor_length + 2);
-		bw.pop(2);
+		super.setUp(treeIndex, tableBw);
 	}
 
 	public void print() {
-		String descriptorName = "Unknown";
+		String descriptorName = Messages.getString("Descriptor.unknown"); //$NON-NLS-1$
 		for (int i = 0; i < predefinedTags.length; i++)
 			if (predefinedTags[i] == parsedTag)
 				descriptorName = predefinedNames[i];
+		descriptorName = checkRange(descriptorName);
+
 		int descIndx = addSubItem(descriptorName + " descriptor", tableIndx);
 		addSubItem("descriptor semantic unknown", descIndx);
 		addSubItem("tag = " + BitWise.toHex(parsedTag), descIndx);
@@ -68,18 +55,12 @@ public class DSMCCDescriptor {
 			addSubItem("lenght seems invalid: " + descriptor_length, descIndx);
 	}
 
-	public static int preparse(BitWise bw) {
-		return bw.pop(0);
+	protected String checkRange(String descriptorName) {
+		// if (parsedTag > 0x79 && parsedTag < 0xC0)
+		// descriptorName = "Broadcaster defined";
+		// if (parsedTag > 0xE0 && parsedTag < 0xF7)
+		// descriptorName = "Reserved";
+		return descriptorName;
 	}
 
-	public int addSubItem(String msg, int parent) {
-		int level = MainPanel.addTreeItem(msg, parent);
-		if (parent == tableIndx)
-			MainPanel.setTreeData(level, bw);
-		return level;
-	}
-
-	public String toString() {
-		return null;
-	}
 }

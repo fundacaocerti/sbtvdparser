@@ -21,65 +21,16 @@
  */
 package mpeg.psi.descriptors;
 
-import sys.BitWise;
-import sys.Log;
+public class AITDescriptorList extends DescriptorList {
 
-public class AITDescriptorList {
+	private static AITDescriptorList thisClass;
 
-	static Class[] descList = { ApplicationName.class, GingaJAppLocation.class, GingaJApp.class,
-			TransportProtocol.class, Application.class, GingaNCLAppLocation.class, GingaNCLApp.class };
-
-	static boolean exception;
-
-	static int getTag(Class cl) {
-		int tag = 0;
-		try {
-			tag = cl.getField("tag").getInt(cl);
-		} catch (Exception e) {
-			System.err.println("getTag(" + cl.getName() + ")");
-			System.err.println(e.getLocalizedMessage());
-			exception = true;
+	public static AITDescriptorList getInstance() {
+		if (thisClass == null) {
+			thisClass = new AITDescriptorList();
+			thisClass.descList = new Class<?>[] { ApplicationName.class, GingaJAppLocation.class, GingaJApp.class,
+					TransportProtocol.class, Application.class, GingaNCLAppLocation.class, GingaNCLApp.class };
 		}
-		return tag;
-	}
-
-	static void invokeMethod(Class cl, Object o, String method) {
-		try {
-			(cl.cast(o)).getClass().getMethod(method, null).invoke(o, null);
-		} catch (Exception e) {
-			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName() + ", " + o.getClass().getName() + ")"));
-			Log.printStackTrace(e);
-			exception = true;
-		}
-	}
-
-	static AITDescriptor getAITDescriptor(Class cl, int treeIndex, BitWise bw) {
-		AITDescriptor d = null;
-		try {
-			d = (AITDescriptor) (cl.getConstructors()[0]).newInstance(null);
-		} catch (Exception e) {
-			System.err.println("getDSMCCDescriptor(" + cl.getName() + ", " + treeIndex + ")");
-			System.err.println(e.getLocalizedMessage());
-			exception = true;
-		}
-		return d;
-	}
-
-	public static void print(BitWise bw, int treeIndex) {
-		int tag = AITDescriptor.preparse(bw);
-		exception = false;
-		for (int i = 0; i < descList.length; i++) {
-			Class descClass = descList[i];
-			if (getTag(descClass) == tag) {
-				AITDescriptor d = getAITDescriptor(descClass, treeIndex, bw);
-				d.setUp(treeIndex, bw);
-				invokeMethod(descClass, d, "printDescription");
-				if (!exception)
-					return;
-			}
-		}
-		AITDescriptor d = new AITDescriptor();
-		d.setUp(treeIndex, bw);
-		d.print();
+		return thisClass;
 	}
 }

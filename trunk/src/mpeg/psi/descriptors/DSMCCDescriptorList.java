@@ -21,60 +21,31 @@
  */
 package mpeg.psi.descriptors;
 
-import dsmcc.ModuleList;
 import sys.BitWise;
-import sys.Log;
+import dsmcc.ModuleList;
 
-public class DSMCCDescriptorList {
+public class DSMCCDescriptorList extends DescriptorList {
 
-	static Class[] descList = { CompressedModule.class };
+	private static DSMCCDescriptorList thisClass;
 
-	static boolean exception;
-
-	static int getTag(Class cl) {
-		int tag = 0;
-		try {
-			tag = cl.getField("tag").getInt(cl);
-		} catch (Exception e) {
-			System.err.println("getTag(" + cl.getName() + ")");
-			System.err.println(e.getLocalizedMessage());
-			exception = true;
+	public static DSMCCDescriptorList getInstance() {
+		if (thisClass == null) {
+			thisClass = new DSMCCDescriptorList();
+			thisClass.descList = new Class<?>[] { CompressedModule.class };
 		}
-		return tag;
+		return thisClass;
 	}
 
-	static void invokeMethod(Class cl, Object o, String method) {
-		try {
-			(cl.cast(o)).getClass().getMethod(method, null).invoke(o, null);
-		} catch (Exception e) {
-			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName() + ", " + o.getClass().getName() + ")"));
-			Log.printStackTrace(e);
-			exception = true;
-		}
-	}
-
-	static DSMCCDescriptor getDSMCCDescriptor(Class cl, int treeIndex, BitWise bw) {
-		DSMCCDescriptor d = null;
-		try {
-			d = (DSMCCDescriptor) (cl.getConstructors()[0]).newInstance(null);
-		} catch (Exception e) {
-			System.err.println("getDSMCCDescriptor(" + cl.getName() + ", " + treeIndex + ")");
-			System.err.println(e.getLocalizedMessage());
-			exception = true;
-		}
-		return d;
-	}
-
-	public static void print(BitWise bw, int treeIndex, ModuleList ml) {
+	public void print(BitWise bw, int treeIndex, ModuleList ml) {
 		int tag = DSMCCDescriptor.preparse(bw);
-		exception = false;
-		for (int i = 0; i < descList.length; i++) {
-			Class descClass = descList[i];
-			if (getTag(descClass) == tag) {
-				DSMCCDescriptor d = getDSMCCDescriptor(descClass, treeIndex, bw);
+		thisClass.exception = false;
+		for (int i = 0; i < thisClass.descList.length; i++) {
+			Class<?> descClass = thisClass.descList[i];
+			if (thisClass.getTag(descClass) == tag) {
+				DSMCCDescriptor d = (DSMCCDescriptor) thisClass.getDescriptor(descClass, treeIndex, bw);
 				d.setUp(treeIndex, bw, ml);
-				invokeMethod(descClass, d, "printDescription");
-				if (!exception)
+				thisClass.invokeMethod(descClass, d, "printDescription");
+				if (!thisClass.exception)
 					return;
 			}
 		}
