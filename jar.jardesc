@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="K:/gag/eclipse/workspaceTestes/TV-D/deploy/tsp.jar"/>
+    <jar path="/usr/bin/tsp.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/TV-D/jar.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -12,16 +12,6 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=TV-D/res"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;gui"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.es"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.psi.descriptors"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;parsers"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;gui.dialogs"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.sbtvd"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.pes"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;mpeg"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.psi"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;sys"/>
-        <javaElement handleIdentifier="=TV-D/src&lt;dsmcc"/>
+        <javaElement handleIdentifier="=TV-D/src"/>
     </selectedElements>
 </jardesc>
