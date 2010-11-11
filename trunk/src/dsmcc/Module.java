@@ -93,17 +93,17 @@ public class Module {
 						Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
 		if ((data.length < dataOffset + dataLenght) || (this.data.length < blockNumber * blockSize + dataLenght)) {
 			StringBuffer sb = new StringBuffer();
-			sb.append("Module ");
+			sb.append("Module "); //$NON-NLS-1$
 			sb.append(id);
-			sb.append(" data feed err: inserting ");
+			sb.append(" data feed err: inserting "); //$NON-NLS-1$
 			sb.append(dataLenght);
-			sb.append("b of ");
+			sb.append("b of "); //$NON-NLS-1$
 			sb.append(data.length);
-			sb.append("b buffer from ");
+			sb.append("b buffer from "); //$NON-NLS-1$
 			sb.append(dataOffset);
-			sb.append(" into ");
+			sb.append(" into "); //$NON-NLS-1$
 			sb.append(this.data.length);
-			sb.append("b dest. at ");
+			sb.append("b dest. at "); //$NON-NLS-1$
 			sb.append(blockNumber * blockSize);
 			Log.printWarning(sb.toString());
 			return false;

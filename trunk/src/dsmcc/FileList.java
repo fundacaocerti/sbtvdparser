@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class FileList {
 
-	HashMap contentList = new HashMap();
+	HashMap<Long, DSMCCObject> contentList = new HashMap<Long, DSMCCObject>();
 
 	private Long svcGatewayObjKey = null;
 
@@ -42,7 +42,7 @@ public class FileList {
 	}
 
 	public DSMCCObject getByObjKey(Long objKey) {
-		return (DSMCCObject) contentList.get(objKey);
+		return contentList.get(objKey);
 	}
 
 	public DSMCCObject setName(Long objKey, String name) {
