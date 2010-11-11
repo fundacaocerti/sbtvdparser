@@ -31,7 +31,6 @@ public class AITDescriptor extends Descriptor {
 	}
 
 	protected String checkRange(String descriptorName) {
-		System.out.println("checkrange");
 		if (parsedTag > 0x79 && parsedTag < 0xC0)
 			descriptorName = "Broadcaster defined";
 		if (parsedTag > 0x07 && parsedTag < 0x80 || parsedTag > 0xbf && parsedTag < 0xc2 || parsedTag > 0xc2)
