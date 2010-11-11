@@ -112,7 +112,7 @@ public class MultiProgressBar extends Composite implements Listener {
 		if (e.type == SWT.MouseMove) {
 			int abs = e.x + ((Label) e.widget).getLocation().x;
 			cursor = (float) abs / (getSize().x - 3);
-			tooltip = Float.toString(totalTime * cursor) + "000";
+			tooltip = Float.toString(totalTime * cursor) + "000"; //$NON-NLS-1$
 			tooltip = tooltip.substring(0, tooltip.indexOf('.') + 4);
 			tooltip += 's';
 			if (abs < labels[1].getLocation().x)
