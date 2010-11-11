@@ -26,7 +26,7 @@ import java.util.Vector;
 
 public class TableList {
 
-	static Vector tableList = new Vector();
+	static Vector<Table> tableList = new Vector<Table>();
 
 	public static int[] continuityErrorCounters = new int[200];
 
@@ -54,11 +54,11 @@ public class TableList {
 		if (pid == 0xFFFF)
 			return null;
 		for (int i = 0; i < tableList.size(); i++)
-			if (((Table) tableList.get(i)).pid == pid) {
+			if ((tableList.get(i)).pid == pid) {
 				tableIndex = i;
 				// if (!tablesParsed[i]) //TODO: colocar na UI como opção (pegar
 				// todas vs. pegar 1a)
-				return (Table) tableList.get(i);
+				return tableList.get(i);
 			}
 		return null;
 	}
@@ -66,14 +66,14 @@ public class TableList {
 	public static Table getByIndex(int index) {
 		if (index >= tableList.size())
 			return null;
-		return (Table) tableList.get(index);
+		return tableList.get(index);
 	}
 
 	public static int getLenght() {
 		return tableList.size();
 	}
 
-	public static void addTable(Object table) {
+	public static void addTable(Table table) {
 		tableList.add(table);
 	}
 

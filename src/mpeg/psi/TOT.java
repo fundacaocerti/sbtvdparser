@@ -22,6 +22,12 @@
 //Time Offset Table;
 package mpeg.psi;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import mpeg.PCR;
 import mpeg.psi.descriptors.DescriptorList;
 import parsers.Packet;
@@ -44,12 +50,16 @@ public class TOT extends Table {
 
 	public static void reset() {
 		totsParsed = 0;
+		lastpacketCounter = 0;
+		totPacketCounter = 0;
+		lastBitrate = 0;
 	}
 
 	public boolean printDescription(byte[] ba) {
 		if (!verifySection(ba))
 			return false;
-		totPacketCounter = Packet.packetCount;
+		if (totPacketCounter == 0)
+			totPacketCounter = Packet.packetCount;
 		// time_offset_section(){
 		// UTC-3_time 40 bslbf
 		ts = parseMJD(bw);
@@ -72,7 +82,7 @@ public class TOT extends Table {
 		// for(j=0;j<N;j++){
 		// Descriptor()
 		while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
-			DescriptorList.print(bw, descLevel);
+			DescriptorList.getInstance().print(bw, descLevel);
 		}
 		return false;
 	}
@@ -99,42 +109,27 @@ public class TOT extends Table {
 		lastpacketCounter = Packet.packetCount;
 	}
 
-	static int[] ts = null;
+	static Date ts = null;
 
 	public static String getTimeStamp(long secondOffset) {
 		if (ts == null)
 			return null;
 		secondOffset -= PCR.getTimestamp(totPacketCounter);
-		int[] ts2 = new int[6];
-		System.arraycopy(ts, 0, ts2, 0, 6);
-		ts2[5] += secondOffset % 60;
-		ts2[4] += secondOffset / 60;
-		ts2[3] += secondOffset / (60 ^ 2);
-		ts2[2] += secondOffset / (60 ^ 3);
-		return formatMJD(ts2);
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(ts);
+		calendar.add(Calendar.SECOND, (int) secondOffset);
+		return formatMJD(calendar.getTime());
 	}
 
-	public static String formatMJD(int[] ts) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < 3; i++) {
-			if (ts[2 - i] < 10)
-				sb.append('0');
-			sb.append(Integer.toString(ts[2 - i]));
-			if (i < 2)
-				sb.append('/');
+	public static String formatMJD(Date d) {
+		if (d != null) {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			return sdf.format(d);
 		}
-		sb.append(' ');
-		for (int i = 0; i < 3; i++) {
-			if (ts[i + 3] < 10)
-				sb.append('0');
-			sb.append(Integer.toString(ts[i + 3]));
-			if (i < 2)
-				sb.append(':');
-		}
-		return sb.toString();
+		return "invalid MJD";
 	}
 
-	public static int[] parseMJD(BitWise bw) {
+	public static Date parseMJD(BitWise bw) {
 		int[] ts = new int[6];
 		int mjd = bw.pop16();
 
@@ -150,21 +145,50 @@ public class TOT extends Table {
 		tmp = month / 11;
 		month = month + 2 - 12 * tmp;
 		year = 100 * (n - 49) + year + tmp;
-
-		ts[2] = day;
-		ts[1] = month;
-		ts[0] = year;
+		if (year > 1990) {
+			ts[2] = day;
+			ts[1] = month;
+			ts[0] = year;
+		} else
+			return null;
 
 		currentTimeStamp = 0;
 		int secondPerUnit = 3600;
 		for (int i = 0; i < 3; i++) {
 			tmp = bw.pop();
-			if (tmp < 10)
-				tmp = Integer.valueOf(Integer.toHexString(tmp)).intValue();
+			if ((tmp > 9 && tmp < 0x10) || (tmp > 0x19 && tmp < 0x20) || (tmp > 0x23))
+				return null;
+			tmp = Integer.valueOf(Integer.toHexString(tmp)).intValue();
 			currentTimeStamp += tmp * secondPerUnit;
 			secondPerUnit = secondPerUnit / 60;
-			ts[3 + i] = tmp;
+			ts[i] = tmp;
 		}
-		return ts;
+
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < 3; i++) {
+			if (ts[2 - i] < 10)
+				sb.append('0');
+			sb.append(Integer.toString(ts[2 - i]));
+			if (i < 2)
+				sb.append('-');
+		}
+		sb.append(' ');
+		for (int i = 0; i < 3; i++) {
+			if (ts[i + 3] < 10)
+				sb.append('0');
+			sb.append(Integer.toString(ts[i + 3]));
+			if (i < 2)
+				sb.append(':');
+		}
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("DD-MM-yyyy HH:mm:ss");
+			Date d = sdf.parse(sb.toString());
+			System.out.println(sb.toString() + " > " + formatMJD(d));
+			return d;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

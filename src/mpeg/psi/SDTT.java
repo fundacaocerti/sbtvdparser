@@ -90,7 +90,7 @@ public class SDTT extends Table {
 			// for(j=0;j<N2;j++){
 			int descLevel = addSubItem("descriptors:");
 			while (bw.getByteCount() < contentlenght && bw.getAvailableSize() > 0)
-				DescriptorList.print(bw, descLevel);
+				DescriptorList.getInstance().print(bw, descLevel);
 			// descriptors()
 			// }
 		}

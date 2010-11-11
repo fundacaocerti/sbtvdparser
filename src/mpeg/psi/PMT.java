@@ -66,7 +66,7 @@ public class PMT extends Table {
 		// for(i=0,i<N,i++){ uimsbf
 		// descriptor()
 		while ((bw.getByteCount() < programInfoLength) && (bw.getAvailableSize() > 0)) {
-			DescriptorList.print(bw, programInfoLevel);
+			DescriptorList.getInstance().print(bw, programInfoLevel);
 		}
 
 		int esLoopLevel = addSubItem("elementary streams:", svcIdLevel);
@@ -93,7 +93,7 @@ public class PMT extends Table {
 			// for(i=0,i<N2,i++){
 			// Descriptor()
 			while ((bw.getByteCount() < esInfoLenght) && (bw.getAvailableSize() > 0)) {
-				DescriptorList.print(bw, esInfoLevel);
+				DescriptorList.getInstance().print(bw, esInfoLevel);
 			}
 			if (StreamIdentifier.cTag == 0x30)
 				PESList.addElementaryStream(new CC(esPid));

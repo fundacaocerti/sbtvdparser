@@ -70,7 +70,7 @@ public class SDT extends Table {
 			int netDescIndx = addSubItem("network descriptors: (lenght " + descriptorsLenght + ")", svcIdLevel);
 			int mark = bw.getByteCount();
 			while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
-				DescriptorList.print(bw, netDescIndx);
+				DescriptorList.getInstance().print(bw, netDescIndx);
 			}
 		}
 		return true;
