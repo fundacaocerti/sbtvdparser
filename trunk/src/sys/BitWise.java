@@ -96,7 +96,7 @@ public class BitWise {
 	private void loopTrap() {
 		maxLoops--;
 		if (maxLoops == 0)
-			throw (new RuntimeException("Infinite loop err:"));
+			throw (new RuntimeException("Infinite loop err:")); //$NON-NLS-1$
 	}
 
 	public int pop32() {
@@ -110,8 +110,8 @@ public class BitWise {
 	public static String toHex(int i) {
 		String s = Integer.toHexString(i);
 		if (s.length() % 2 == 1)
-			return "0x0" + Integer.toHexString(i);
-		return "0x" + Integer.toHexString(i);
+			return "0x0" + Integer.toHexString(i); //$NON-NLS-1$
+		return "0x" + Integer.toHexString(i); //$NON-NLS-1$
 	}
 
 	public int pop(int bytes) {
@@ -159,7 +159,7 @@ public class BitWise {
 			if (b < 0)
 				b += 256;
 			System.out.print((char) b);
-			System.out.print("  ");
+			System.out.print("  "); //$NON-NLS-1$
 		}
 		System.out.println();
 		for (int i = from; i < to; i++) {
@@ -167,9 +167,9 @@ public class BitWise {
 			if (b < 0)
 				b += 256;
 			if (b < 0x10)
-				System.out.print("0");
+				System.out.print("0"); //$NON-NLS-1$
 			System.out.print(Integer.toHexString(b));
-			System.out.print(" ");
+			System.out.print(" "); //$NON-NLS-1$
 		}
 		System.out.println();
 	}
@@ -201,19 +201,19 @@ public class BitWise {
 	}
 
 	public String toString() {
-		StringBuilder tmp = new StringBuilder("[");
+		StringBuilder tmp = new StringBuilder("["); //$NON-NLS-1$
 		int b;
 		for (int i = 0; i < bufSize; i++) {
 			b = buf[i];
 			if (b < 0)
 				b += 256;
 			if (b < 0x10)
-				tmp.append("0");
+				tmp.append("0"); //$NON-NLS-1$
 			tmp.append(Integer.toHexString(b));
 			if (i + 1 < bufSize)
-				tmp.append(" ");
+				tmp.append(" "); //$NON-NLS-1$
 		}
-		tmp.append("]");
+		tmp.append("]"); //$NON-NLS-1$
 		return tmp.toString();
 	}
 
@@ -240,19 +240,19 @@ public class BitWise {
 		if (getAvailableSize() < size)
 			size = getAvailableSize();
 		if (size < 1)
-			return "[]";
+			return "[]"; //$NON-NLS-1$
 		StringBuffer sb = new StringBuffer(size);
-		sb.append("[");
+		sb.append("["); //$NON-NLS-1$
 		int b;
 		for (int i = 0; i < size; i++) {
 			b = pop();
 			if (b < 0x10)
-				sb.append("0");
+				sb.append("0"); //$NON-NLS-1$
 			sb.append(Integer.toHexString(b));
 			if (i + 1 < size)
-				sb.append(" ");
+				sb.append(" "); //$NON-NLS-1$
 		}
-		sb.append("]");
+		sb.append("]"); //$NON-NLS-1$
 		return sb.toString();
 	}
 

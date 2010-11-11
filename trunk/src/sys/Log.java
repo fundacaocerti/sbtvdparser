@@ -55,7 +55,7 @@ public class Log {
 			try {
 				logfile.createNewFile();
 			} catch (IOException e1) {
-				System.err.println(Messages.getString("Log.fCreateErr") + logfile.getAbsolutePath() + "]"); //$NON-NLS-1$
+				System.err.println(Messages.getString("Log.fCreateErr") + logfile.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				log = System.err;
 				return;
 			}
@@ -65,9 +65,9 @@ public class Log {
 			log.println();
 			log.println(Messages.getString("Log.start") + DateFormat.getDateTimeInstance().format(new Date())); //$NON-NLS-1$
 			if (tsfile != null)
-				log.println("Parsing [" + tsfile.getAbsolutePath() + "]");
+				log.println("Parsing [" + tsfile.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
-			System.err.println(Messages.getString("Log.fWriteErr") + logfile.getAbsolutePath() + "]"); //$NON-NLS-1$
+			System.err.println(Messages.getString("Log.fWriteErr") + logfile.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			log = System.err;
 			return;
 		}
@@ -78,7 +78,7 @@ public class Log {
 		// if (log == null)
 		// createLogFile();
 		// log.println(msg);
-		GuiMethods.runMethod(GuiMethods.ADDTOLOG, new Object[] { msg + "\n\r" }, true);
+		GuiMethods.runMethod(GuiMethods.ADDTOLOG, new Object[] { msg + "\n\r" }, true); //$NON-NLS-1$
 	}
 
 	// public static void printStackTrace(Exception e) {
@@ -94,13 +94,13 @@ public class Log {
 	// }
 	public static void printStackTrace(Exception e) {
 		StringBuffer log = new StringBuffer();
-		log.append("\n");
+		log.append("\n"); //$NON-NLS-1$
 		if (e.getLocalizedMessage() != null)
-			log.append(e.getLocalizedMessage() + "\n");
-		log.append(e.getClass().getName() + "\n");
+			log.append(e.getLocalizedMessage() + "\n"); //$NON-NLS-1$
+		log.append(e.getClass().getName() + "\n"); //$NON-NLS-1$
 		StackTraceElement[] ste = e.getStackTrace();
 		for (int i = 0; i < ste.length; i++)
-			log.append(ste[i].toString() + "\n");
+			log.append(ste[i].toString() + "\n"); //$NON-NLS-1$
 		printWarning(log.toString());
 	}
 

@@ -8,7 +8,7 @@ public class SBTVDParser {
 	public static void main(String[] cmdArgs) {
 		Persistence.load();
 		Messages.load();
-		if (Persistence.get(Persistence.CHECK_UPDATES).equals("yes"))
+		if (Persistence.get(Persistence.CHECK_UPDATES).equals("yes")) //$NON-NLS-1$
 			new Update().start();
 
 		try {
