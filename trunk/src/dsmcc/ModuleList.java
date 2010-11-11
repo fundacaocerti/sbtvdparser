@@ -37,8 +37,8 @@ import sys.Messages;
 
 public class ModuleList {
 
-	HashMap moduleList = new HashMap();
-	Vector ddbCache = new Vector();
+	HashMap<Integer, Module> moduleList = new HashMap<Integer, Module>();
+	Vector<DdbCache> ddbCache = new Vector<DdbCache>();
 	Module lastOne;
 	int completeModules = 0;
 	int origSize;
@@ -53,12 +53,12 @@ public class ModuleList {
 	}
 
 	public Module getById(Integer id) {
-		return (Module) moduleList.get(id);
+		return moduleList.get(id);
 	}
 
 	public void loadCache() {
 		for (int i = 0; i < ddbCache.size(); i++)
-			((DdbCache) ddbCache.get(i)).load(this);
+			ddbCache.get(i).load(this);
 		ddbCache.removeAllElements();
 	}
 
@@ -101,10 +101,10 @@ public class ModuleList {
 		if (f.exists())
 			f.delete();
 		f.mkdir();
-		Iterator it = moduleList.entrySet().iterator();
+		Iterator<Map.Entry<Integer, Module>> it = moduleList.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry pairs = (Map.Entry) it.next();
-			Module m = (Module) pairs.getValue();
+			Map.Entry<Integer, Module> pairs = it.next();
+			Module m = pairs.getValue();
 			m.save(new File(f, m.toString()));
 		}
 	}
@@ -151,7 +151,7 @@ public class ModuleList {
 		bw.mark();
 		origSize = moduleSize;
 		while ((bw.getByteCount() < userInfoLength) && (bw.getAvailableSize() > 0)) {
-			DSMCCDescriptorList.print(bw, uiLvl, this);
+			DSMCCDescriptorList.getInstance().print(bw, uiLvl, this);
 		}
 		// MainPanel.addTreeItem("moduleInfo: "+bw.getHexSequence(moduleInfoLength),
 		// aModuleLvl);

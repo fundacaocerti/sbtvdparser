@@ -45,7 +45,7 @@ public class DSMCCObject {
 
 	File file = null;
 
-	Vector childrens = new Vector();
+	Vector<DSMCCObject> childrens = new Vector<DSMCCObject>();
 
 	public void addChildren(DSMCCObject file) {
 		isDirectory = true;
@@ -57,7 +57,7 @@ public class DSMCCObject {
 			int dirLvl = MainPanel.addTreeItem(name, msgLvl, MainPanel.DSMCC_TREE);
 			MainPanel.setTreeData(dirLvl, this);
 			for (int i = 0; i < childrens.size(); i++)
-				((DSMCCObject) childrens.get(i)).mountTree(dirLvl);
+				(childrens.get(i)).mountTree(dirLvl);
 		} else {
 			int fileLvl = MainPanel.addTreeItem(
 					"[" + name + Messages.getString("DSMCCObject.size") + lenght, msgLvl, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
@@ -127,7 +127,7 @@ public class DSMCCObject {
 			// e.printStackTrace();
 			// }
 			for (int i = 0; i < childrens.size(); i++)
-				((DSMCCObject) childrens.get(i)).saveIn(file);
+				(childrens.get(i)).saveIn(file);
 		} else
 			try {
 				file.createNewFile();
