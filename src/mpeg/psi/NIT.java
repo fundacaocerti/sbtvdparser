@@ -25,13 +25,14 @@ package mpeg.psi;
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.sbtvd.SpecialSemantic;
 import sys.BitWise;
+import sys.Messages;
 
 public class NIT extends Table {
 
 	public NIT() {
 		id = 0x40;
 		pid = 0x10;
-		name = "NIT actual";
+		name = "NIT actual"; //$NON-NLS-1$
 	}
 
 	public boolean printDescription(byte[] ba) {
@@ -39,26 +40,27 @@ public class NIT extends Table {
 			return false;
 		printSectionInfo();
 		int netDescriptorsLenght = BitWise.stripBits(bw.pop16(), 12, 12);
-		int netDescIndx = addSubItem("network descriptors: (lenght " + netDescriptorsLenght + ")");
+		int netDescIndx = addSubItem(Messages.getString("NIT.netDescriptors") + netDescriptorsLenght + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		bw.mark();
 		while ((bw.getByteCount() < netDescriptorsLenght) && (bw.getAvailableSize() > 0))
-			DescriptorList.print(bw, netDescIndx);
+			DescriptorList.getInstance().print(bw, netDescIndx);
 
 		int byteCount = 0;
 		int tsLoopLenght = BitWise.stripBits(bw.pop16(), 12, 12);
-		int tsLoopIndx = addSubItem("TS loop: (lenght " + tsLoopLenght + ")");
+		int tsLoopIndx = addSubItem(Messages.getString("NIT.tsLoop") + tsLoopLenght + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		while ((byteCount < tsLoopLenght) && (bw.getAvailableSize() > 0)) {
 			// TS_id 16 uimsbf
-			int tsIdIndx = addSubItem("TS_id: " + BitWise.toHex(bw.pop16()), tsLoopIndx);
+			int tsIdIndx = addSubItem("TS_id: " + BitWise.toHex(bw.pop16()), tsLoopIndx); //$NON-NLS-1$
 			int onid = bw.pop16();
-			addSubItem("Original Net ID: " + SpecialSemantic.parseNetworkID(onid), tsIdIndx);
+			addSubItem("Original Net ID: " + SpecialSemantic.parseNetworkID(onid), tsIdIndx); //$NON-NLS-1$
 
 			int tsDescriptorsLenght = BitWise.stripBits(bw.pop16(), 12, 12);
 			byteCount += tsDescriptorsLenght + 6;
 			bw.mark();
-			int tsDescIndx = addSubItem("TS Descriptors (lenght " + BitWise.toHex(tsDescriptorsLenght) + ")", tsIdIndx);
+			int tsDescIndx = addSubItem(
+					Messages.getString("NIT.tsDescriptors") + BitWise.toHex(tsDescriptorsLenght) + ")", tsIdIndx); //$NON-NLS-1$ //$NON-NLS-2$
 			while ((bw.getByteCount() < tsDescriptorsLenght) && (bw.getAvailableSize() > 0))
-				DescriptorList.print(bw, tsDescIndx);
+				DescriptorList.getInstance().print(bw, tsDescIndx);
 		}
 		return true;
 	}
