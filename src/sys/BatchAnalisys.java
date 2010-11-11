@@ -30,15 +30,15 @@ import parsers.Parameters;
 public class BatchAnalisys extends Thread implements Runnable {
 
 	boolean accept(String name) {
-		if (name.toLowerCase().endsWith(".ts"))
+		if (name.toLowerCase().endsWith(".ts")) //$NON-NLS-1$
 			return true;
-		if (name.toLowerCase().endsWith(".trp"))
+		if (name.toLowerCase().endsWith(".trp")) //$NON-NLS-1$
 			return true;
-		if (name.toLowerCase().endsWith(".mpg"))
+		if (name.toLowerCase().endsWith(".mpg")) //$NON-NLS-1$
 			return true;
-		if (name.toLowerCase().endsWith(".mpeg"))
+		if (name.toLowerCase().endsWith(".mpeg")) //$NON-NLS-1$
 			return true;
-		if (name.toLowerCase().endsWith(".lnk"))
+		if (name.toLowerCase().endsWith(".lnk")) //$NON-NLS-1$
 			return true;
 		return false;
 	}
@@ -52,7 +52,7 @@ public class BatchAnalisys extends Thread implements Runnable {
 		this.dirPath = dir;
 		this.cmdlParams = cmdlParams;
 		this.recursive = recursive;
-		setName("batch");
+		setName("batch"); //$NON-NLS-1$
 	}
 
 	public void run() {

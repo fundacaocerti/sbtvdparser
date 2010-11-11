@@ -104,10 +104,10 @@ public class PIDStats {
 		if (foundPids == 0)
 			return;
 
-		PIDStats.setIdentification(0x1fff, "byte stuffing");
-		PIDStats.setIdentification(0x24, "BIT");
-		PIDStats.setIdentification(0x12, "EIT");
-		PIDStats.setIdentification(0x27, "EIT one-seg");
+		PIDStats.setIdentification(0x1fff, Messages.getString("PIDStats.stuffing")); //$NON-NLS-1$
+		PIDStats.setIdentification(0x24, "BIT"); //$NON-NLS-1$
+		PIDStats.setIdentification(0x12, "EIT"); //$NON-NLS-1$
+		PIDStats.setIdentification(0x27, "EIT one-seg"); //$NON-NLS-1$
 
 		QuickSort.sort(sets, foundPids);
 		// int pidStatsLevel = MainPanel.addTreeItem("PID stats", 0,
@@ -123,8 +123,8 @@ public class PIDStats {
 					new Integer(sets[i].pid),
 					new Integer(sets[i].counter),
 					new Integer(maxCount),
-					formatScaleFactor((float) sets[i].counter / Packet.packetCount * bitrate) + "bps (" + sets[i].name
-							+ ")" };
+					formatScaleFactor((float) sets[i].counter / Packet.packetCount * bitrate) + "bps (" + sets[i].name //$NON-NLS-1$
+							+ ")" }; //$NON-NLS-1$
 			GuiMethods.runMethod(GuiMethods.ADDPIDBAR, bar, true);
 			i--;
 		}
@@ -147,16 +147,16 @@ public class PIDStats {
 	}
 
 	public static String formatScaleFactor(float mega) {
-		String pidBitrateStr, multiplier = "M";
+		String pidBitrateStr, multiplier = "M"; //$NON-NLS-1$
 		if (mega < 1) {
 			mega = mega * 1000;
-			multiplier = "K";
+			multiplier = "K"; //$NON-NLS-1$
 		}
 		if (mega < 1) {
 			mega = mega * 1000;
-			multiplier = "";
+			multiplier = ""; //$NON-NLS-1$
 		}
-		pidBitrateStr = Float.toString(mega) + "00";
+		pidBitrateStr = Float.toString(mega) + "00"; //$NON-NLS-1$
 		pidBitrateStr = pidBitrateStr.substring(0, pidBitrateStr.indexOf('.') + 3);
 		return pidBitrateStr + multiplier;
 	}

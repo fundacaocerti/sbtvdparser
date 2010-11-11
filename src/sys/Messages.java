@@ -19,7 +19,7 @@ public class Messages {
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {
-			System.out.println("i18n: missing " + key);
+			System.out.println("i18n: missing " + key); //$NON-NLS-1$
 			return '!' + key + '!';
 		}
 	}
