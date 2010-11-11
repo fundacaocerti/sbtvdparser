@@ -41,7 +41,7 @@ public class LogicTree {
 
 	public LogicTree parent;
 
-	public Vector sons = new Vector();
+	public Vector<LogicTree> sons = new Vector<LogicTree>();
 
 	public Object contents;
 
@@ -67,12 +67,12 @@ public class LogicTree {
 
 	public String toString() {
 		if (contents != null) {
-			return text + " " + contents;
+			return text + " " + contents; //$NON-NLS-1$
 		}
 		return text;
 	}
 
-	private static final String sysEncoding = "UTF-8";
+	private static final String sysEncoding = "UTF-8"; //$NON-NLS-1$
 
 	private int iterator = -1;
 
@@ -82,7 +82,7 @@ public class LogicTree {
 			return this;
 		}
 		while (iterator < sons.size()) {
-			LogicTree lt = ((LogicTree) sons.get(iterator)).getNext();
+			LogicTree lt = (sons.get(iterator)).getNext();
 			if (lt == null)
 				iterator++;
 			else
@@ -93,23 +93,23 @@ public class LogicTree {
 
 	public void print(OutputStream out) throws UnsupportedEncodingException, IOException {
 		for (int i = 0; i < sons.size(); i++)
-			((LogicTree) sons.get(i)).print("  ", i == sons.size() - 1, out);
+			(sons.get(i)).print("  ", i == sons.size() - 1, out); //$NON-NLS-1$
 	}
 
 	public String print(String ident, boolean isTheLast, OutputStream out) throws UnsupportedEncodingException,
 			IOException {
 		out.write(ident.getBytes(sysEncoding));
 		if (isTheLast)
-			out.write("  └─".getBytes(sysEncoding));
+			out.write("  └─".getBytes(sysEncoding)); //$NON-NLS-1$
 		else
-			out.write("  ├─".getBytes(sysEncoding));
+			out.write("  ├─".getBytes(sysEncoding)); //$NON-NLS-1$
 		out.write(text.getBytes(sysEncoding));
-		out.write("\r\n".getBytes(sysEncoding));
+		out.write("\r\n".getBytes(sysEncoding)); //$NON-NLS-1$
 		for (int i = 0; i < sons.size(); i++)
 			if (isTheLast)
-				((LogicTree) sons.get(i)).print(ident + "  ", i == sons.size() - 1, out);
+				(sons.get(i)).print(ident + "  ", i == sons.size() - 1, out); //$NON-NLS-1$
 			else
-				((LogicTree) sons.get(i)).print(ident + "  │", i == sons.size() - 1, out);
+				(sons.get(i)).print(ident + "  │", i == sons.size() - 1, out); //$NON-NLS-1$
 		return text;
 	}
 
@@ -132,7 +132,7 @@ public class LogicTree {
 
 	public static int dirIndxCounter = 0, fileIndxCounter = 0;
 
-	public static Vector fileList = new Vector();
+	public static Vector<LogicTree> fileList = new Vector<LogicTree>();
 
 	private void printInt(int i, OutputStream out) throws IOException {
 		out.write(Integer.toString(i).getBytes());
@@ -160,7 +160,7 @@ public class LogicTree {
 	private void createBonsaiIndexes() {
 		LogicTree lt;
 		for (int i = 0; i < sons.size(); i++) {
-			lt = (LogicTree) sons.get(i);
+			lt = sons.get(i);
 			if (lt.sons.size() != 0) {
 				lt.bonsaiIndx = ++dirIndxCounter;
 				if (bonsaiFDI == -1)
@@ -173,22 +173,22 @@ public class LogicTree {
 			}
 		}
 		for (int i = 0; i < sons.size(); i++)
-			((LogicTree) sons.get(i)).createBonsaiIndexes();
+			(sons.get(i)).createBonsaiIndexes();
 	}
 
 	private void recursiveBPrint(OutputStream out) throws IOException {
 		LogicTree lt;
 		for (int i = 0; i < sons.size(); i++) {
-			lt = (LogicTree) sons.get(i);
+			lt = sons.get(i);
 			if (lt.sons.size() != 0)
 				lt.printNode(out);
 		}
 		for (int i = 0; i < sons.size(); i++)
-			((LogicTree) sons.get(i)).recursiveBPrint(out);
+			(sons.get(i)).recursiveBPrint(out);
 	}
 
 	public void printBonsai(OutputStream out, String id) throws IOException {
-		out.write(("<!--\n\tvar " + id + " = \"").getBytes());
+		out.write(("<!--\n\tvar " + id + " = \"").getBytes()); //$NON-NLS-1$ //$NON-NLS-2$
 		createBonsaiIndexes();
 		printInt(++dirIndxCounter, out);
 		printNode(out);
@@ -196,10 +196,10 @@ public class LogicTree {
 		printInt(fileList.size(), out);
 		LogicTree lt;
 		for (int i = 0; i < fileList.size(); i++) {
-			lt = (LogicTree) fileList.get(i);
+			lt = fileList.get(i);
 			printString(lt.text, out);
 			printInt(lt.parent.bonsaiIndx, out);
 		}
-		out.write("\"\n//-->".getBytes());
+		out.write("\"\n//-->".getBytes()); //$NON-NLS-1$
 	}
 }
