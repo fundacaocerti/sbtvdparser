@@ -47,7 +47,7 @@ public class ESPacket {
 		if (TSP.payloadUnitStartIndicator == 1) {
 			// início da seção
 			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
-				System.out.println("adaptation present");
+				System.out.println("adaptation present"); //$NON-NLS-1$
 			int pointer_field = 0;
 			if (TSP.dataOffset < Packet.buffer.length)
 				pointer_field = Packet.buffer[TSP.dataOffset];

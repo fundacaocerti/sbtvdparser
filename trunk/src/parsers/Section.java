@@ -48,8 +48,8 @@ public class Section {
 				else
 					matches = 0;
 			if (matches == table.searchBytes.length)
-				System.out.println("lowLevelSearch found at filepos: 0x"
-						+ Long.toHexString((Packet.byteCount + i - matches - Packet.realPktLenght + 1)) + " packet: 0x"
+				System.out.println("lowLevelSearch found at filepos: 0x" //$NON-NLS-1$
+						+ Long.toHexString((Packet.byteCount + i - matches - Packet.realPktLenght + 1)) + " packet: 0x" //$NON-NLS-1$
 						+ Long.toHexString(Packet.packetCount));
 		}
 
@@ -64,7 +64,7 @@ public class Section {
 		if (TSP.payloadUnitStartIndicator == 1) {
 			// inicio da seção
 			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
-				System.out.println("adaptation present");
+				System.out.println("adaptation present"); //$NON-NLS-1$
 			int pointer_field = 0;
 			if (TSP.dataOffset < Packet.buffer.length)
 				pointer_field = Packet.buffer[TSP.dataOffset];
@@ -90,8 +90,8 @@ public class Section {
 				try {
 					System.arraycopy(Packet.buffer, srcPosition, sectionPayload, 0, length);
 				} catch (ArrayIndexOutOfBoundsException e) {
-					Log.printStackTrace(new Exception("StreamParser err: " + srcPosition + ", " + length + ", "
-							+ pointer_field + ", " + TSP.dataOffset));
+					Log.printStackTrace(new Exception("StreamParser err: " + srcPosition + ", " + length + ", " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ pointer_field + ", " + TSP.dataOffset)); //$NON-NLS-1$
 					Log.printStackTrace(e);
 				}
 			// MainPanel.addTreeItem("Erros de continuidade:
@@ -101,7 +101,7 @@ public class Section {
 			TableList.tablesParsed[TableList.tableIndex] = table.printDescription(sectionPayload);
 		} else {
 			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
-				System.out.println("adaptation present");
+				System.out.println("adaptation present"); //$NON-NLS-1$
 			table.feedPart(Packet.buffer, TSP.dataOffset, Packet.buffer.length - TSP.dataOffset);
 		}
 	}

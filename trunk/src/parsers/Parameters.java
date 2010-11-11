@@ -43,7 +43,7 @@ import sys.Messages;
 
 public class Parameters {
 
-	public static String initialMessage = "";
+	public static String initialMessage = ""; //$NON-NLS-1$
 
 	static File srcFile;
 
@@ -57,7 +57,7 @@ public class Parameters {
 		try {
 			bis = new BufferedInputStream(new FileInputStream(srcFile), 4000000);
 		} catch (FileNotFoundException e) {
-			initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$
+			initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			Log.printWarning(initialMessage);
 			Log.printStackTrace(new Exception(initialMessage));
 			return null;
@@ -91,7 +91,7 @@ public class Parameters {
 			sb.append(args[i]);
 			sb.append(' ');
 		}
-		sb.append("]");
+		sb.append("]"); //$NON-NLS-1$
 		Log.printWarning(sb.toString());
 		if (args.length == 0) {
 			Log.printWarning(Messages.getString("Parameters.noInput")); //$NON-NLS-1$
@@ -101,10 +101,10 @@ public class Parameters {
 		if (srcPath == null)
 			return;
 		srcFile = new File(srcPath);
-		Log.setLogFile(new File(srcFile.getParentFile(), "log.txt"));
+		Log.setLogFile(new File(srcFile.getParentFile(), "log.txt")); //$NON-NLS-1$
 		Log.setTsFile(srcFile);
 
-		if (srcFile.getName().endsWith(".lnk")) {
+		if (srcFile.getName().endsWith(".lnk")) { //$NON-NLS-1$
 			try {
 				Link lnkp = new Link();
 				lnkp.parse(srcFile.getAbsolutePath());
@@ -112,7 +112,7 @@ public class Parameters {
 				if (!srcFile.exists())
 					srcFile = new File(lnkp.getAlternatePath());
 			} catch (Exception e) {
-				initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$
+				initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				Log.printStackTrace(new Exception(initialMessage));
 				Log.printWarning(initialMessage);
 				return;
@@ -120,7 +120,7 @@ public class Parameters {
 		}
 
 		if (!srcFile.exists() || !srcFile.isFile()) {
-			initialMessage = Messages.getString("Parameters.fNotFound") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$
+			initialMessage = Messages.getString("Parameters.fNotFound") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			Log.printStackTrace(new Exception(initialMessage));
 			Log.printWarning(initialMessage);
 			return;
@@ -128,7 +128,7 @@ public class Parameters {
 
 		bis = getStream();
 
-		if (srcFile.getName().endsWith(".pes")) {
+		if (srcFile.getName().endsWith(".pes")) { //$NON-NLS-1$
 			initMainPanel();
 			IndependentPES pes = new IndependentPES(bis);
 			// TODO: set pes type by user input
@@ -148,15 +148,15 @@ public class Parameters {
 		int[] demuxPids = null;
 		float[] cropPoints = null;
 		for (int i = 1; i < args.length; i++) {
-			if (args[i].equalsIgnoreCase("-noGui"))
+			if (args[i].equalsIgnoreCase("-noGui")) //$NON-NLS-1$
 				noGui = true;
-			if (args[i].equalsIgnoreCase("-noTree"))
+			if (args[i].equalsIgnoreCase("-noTree")) //$NON-NLS-1$
 				noTree = true;
-			if (args[i].equalsIgnoreCase("-noStats"))
+			if (args[i].equalsIgnoreCase("-noStats")) //$NON-NLS-1$
 				noStats = true;
-			if (args[i].equalsIgnoreCase("-filter"))
+			if (args[i].equalsIgnoreCase("-filter")) //$NON-NLS-1$
 				filter = i;
-			if (args[i].equalsIgnoreCase("-limitInput"))
+			if (args[i].equalsIgnoreCase("-limitInput")) //$NON-NLS-1$
 				Packet.limit = i;
 			if (filter > 0 && filter == i - 1)
 				MainPanel.setFilter(args[i]);
@@ -166,18 +166,18 @@ public class Parameters {
 			}
 			if (matchLimit > 0 && matchLimit == i - 1)
 				matchLimit = Integer.parseInt(args[i]);
-			if (args[i].equalsIgnoreCase("-limitMatches"))
+			if (args[i].equalsIgnoreCase("-limitMatches")) //$NON-NLS-1$
 				matchLimit = i;
-			if (args[i].equalsIgnoreCase("-isRegex"))
+			if (args[i].equalsIgnoreCase("-isRegex")) //$NON-NLS-1$
 				MainPanel.setFilterAsRegex();
-			if (args[i].equalsIgnoreCase("-listOnlyMatches"))
+			if (args[i].equalsIgnoreCase("-listOnlyMatches")) //$NON-NLS-1$
 				MainPanel.listOnlyMatches();
-			if (args[i].equalsIgnoreCase("-demux")) {
+			if (args[i].equalsIgnoreCase("-demux")) { //$NON-NLS-1$
 				int j;
-				for (j = i + 2; j < args.length && args[j].startsWith("0x"); j++)
+				for (j = i + 2; j < args.length && args[j].startsWith("0x"); j++) //$NON-NLS-1$
 					;
 				if (j == i + 2) {
-					initialMessage = "PIDs to demux not informed or invalid";
+					initialMessage = Messages.getString("Parameters.pidNotInformed"); //$NON-NLS-1$
 					return;
 				}
 				demuxPids = new int[j - i - 2];
@@ -197,13 +197,13 @@ public class Parameters {
 				}
 				i = j;
 			}
-			if (args[i].equalsIgnoreCase("-crop")) {
+			if (args[i].equalsIgnoreCase("-crop")) { //$NON-NLS-1$
 				cropPoints = new float[2];
 				try {
 					cropPoints[0] = Float.parseFloat(args[i + 2]);
 					cropPoints[1] = Float.parseFloat(args[i + 3]);
 				} catch (NumberFormatException e1) {
-					initialMessage = "Crop points must be in the range 0.0 to 1.0";
+					initialMessage = Messages.getString("Parameters.cropRange"); //$NON-NLS-1$
 					return;
 				}
 
@@ -244,7 +244,7 @@ public class Parameters {
 
 	private static void initMainPanel() {
 		MainPanel.setProgress(0);
-		initialMessage = "Parsing [" + srcFile.getAbsolutePath() + "]";
+		initialMessage = Messages.getString("Parameters.parsing") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		MainPanel.tsNameId = initialMessage;
 		MainPanel.tsNameIndex = MainPanel.addTreeItem(initialMessage, 0);
 		Log.printWarning(initialMessage);
@@ -260,18 +260,18 @@ public class Parameters {
 			((EIT) TableList.getByPid(EIT.ONESEGPID)).printEPG();
 			if (pp != null && pp.bitrateIsValid)
 				pp.printBitrate();
-			MainPanel.addTreeItem("Sync. losses: " + Packet.syncLosses, 0, MainPanel.STATS_TREE);
-			MainPanel.addTreeItem("TEI counter: " + Packet.TEIerrors, 0, MainPanel.STATS_TREE);
+			MainPanel.addTreeItem(Messages.getString("Parameters.syncLoss") + Packet.syncLosses, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
+			MainPanel.addTreeItem(Messages.getString("Parameters.tei") + Packet.TEIerrors, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			int continuityCount = 0;
 			for (int i = 0; i < TableList.continuityErrorCounters.length; i++) {
 				continuityCount += TableList.continuityErrorCounters[i];
 			}
-			int cntLvl = MainPanel.addTreeItem("Continuity error counter: " + continuityCount, 0, MainPanel.STATS_TREE);
+			int cntLvl = MainPanel.addTreeItem(Messages.getString("Parameters.continuity") + continuityCount, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			for (int i = 0; i < TableList.continuityErrorCounters.length; i++)
 				if (TableList.continuityErrorCounters[i] != 1) {
 					Table t = TableList.getByIndex(i);
 					if (t != null)
-						MainPanel.addTreeItem(t.name + ": " + TableList.continuityErrorCounters[i], cntLvl,
+						MainPanel.addTreeItem(t.name + ": " + TableList.continuityErrorCounters[i], cntLvl, //$NON-NLS-1$
 								MainPanel.STATS_TREE);
 					;
 				}

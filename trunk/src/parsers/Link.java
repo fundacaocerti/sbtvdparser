@@ -32,7 +32,7 @@ import sys.Log;
 
 public class Link {
 
-	private String filePath = "", alternatePath = "";
+	private String filePath = "", alternatePath = ""; //$NON-NLS-1$ //$NON-NLS-2$
 
 	public void parse(String fName) {
 		File f = new File(fName);
@@ -87,14 +87,14 @@ public class Link {
 						filePath = getStr(bw);
 					if (bw.getByteCount() == remoteFname) {
 						String tmp = getStr(bw);
-						if (filePath.endsWith("\\"))
+						if (filePath.endsWith("\\")) //$NON-NLS-1$
 							filePath += tmp;
 						else
-							filePath += "\\" + tmp;
-						if (alternatePath.endsWith("\\"))
+							filePath += "\\" + tmp; //$NON-NLS-1$
+						if (alternatePath.endsWith("\\")) //$NON-NLS-1$
 							alternatePath += tmp;
 						else
-							alternatePath += "\\" + tmp;
+							alternatePath += "\\" + tmp; //$NON-NLS-1$
 					}
 				}
 				c = bw.pop();
