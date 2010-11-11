@@ -57,7 +57,7 @@ public class Crop implements SelectionListener {
 		MainPanel.progressBar.layout();
 		MainPanel.setPauseButtonState(MainPanel.STOPPED);
 		if (selected != null)
-			Parameters.startParser(selected, sa, "-crop");
+			Parameters.startParser(selected, sa, "-crop"); //$NON-NLS-1$
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
@@ -67,7 +67,7 @@ public class Crop implements SelectionListener {
 		if (!waitingCrop) {
 			MainPanel.setPauseButtonState(MainPanel.CROP_WAIT);
 			MainPanel.progressBar.setEditMode(true);
-			MainPanel.statusBar.setText("Left click on the progress bar to set start point, right click to stop.");
+			MainPanel.statusBar.setText(Messages.getString("Crop.statusBarTip")); //$NON-NLS-1$
 			waitingCrop = true;
 		} else {
 			MainPanel.progressBar.setEditMode(true);
