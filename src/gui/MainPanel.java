@@ -70,7 +70,7 @@ import sys.Persistence;
 
 public class MainPanel {
 
-	private static Vector msgCache = new Vector();
+	private static Vector<String> msgCache = new Vector<String>();
 
 	public static Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,10"
 
@@ -88,7 +88,7 @@ public class MainPanel {
 
 	private static Display display;
 
-	private static Vector items = new Vector(); // @jve:decl-index=0:
+	private static Vector<LogicTree> items = new Vector<LogicTree>(); // @jve:decl-index=0:
 
 	private static LogicTree[] trees = new LogicTree[5]; // @jve:decl-index=0:
 
@@ -302,8 +302,8 @@ public class MainPanel {
 		SettingsListener setLstnr = new SettingsListener();
 		langPtItem.addSelectionListener(setLstnr);
 		langEnItem.addSelectionListener(setLstnr);
-		langEnItem.setData("en");
-		langPtItem.setData("pt");
+		langEnItem.setData("en"); //$NON-NLS-1$
+		langPtItem.setData("pt"); //$NON-NLS-1$
 
 		openItem = new MenuItem(fileMenu, SWT.PUSH);
 		openFilterItem = new MenuItem(fileMenu, SWT.PUSH);
@@ -332,9 +332,9 @@ public class MainPanel {
 		InputStream isPause = this.getClass().getClassLoader().getResourceAsStream("res/bot_pause.png"); //$NON-NLS-1$
 		imPause = new Image(Display.getCurrent(), isPause);
 		btPause.addSelectionListener(new ButtonListener());
-		btPause.setData("pause");
+		btPause.setData("pause"); //$NON-NLS-1$
 		btStop = new Button(sShell, SWT.NONE);
-		btStop.setData("stop");
+		btStop.setData("stop"); //$NON-NLS-1$
 		InputStream isStop = this.getClass().getClassLoader().getResourceAsStream("res/bot_stop.png"); //$NON-NLS-1$
 		imStop = new Image(Display.getCurrent(), isStop);
 		btStop.setImage(imStop);
@@ -411,16 +411,16 @@ public class MainPanel {
 		openDirItem.setText(Messages.getString("MainPanel.openDir")); //$NON-NLS-1$
 		saveItem.setText(Messages.getString("MainPanel.save")); //$NON-NLS-1$
 		about.setText(Messages.getString("MainPanel.about")); //$NON-NLS-1$
-		if (Persistence.get(Persistence.UI_LANG_IDIOM).equals("pt")) {
-			langPtItem.setText("● " + Messages.getString("MainPanel.langPt"));
-			langEnItem.setText("   " + Messages.getString("MainPanel.langEn"));
+		if (Persistence.get(Persistence.UI_LANG_IDIOM).equals("pt")) { //$NON-NLS-1$
+			langPtItem.setText("● " + Messages.getString("MainPanel.langPt")); //$NON-NLS-1$ //$NON-NLS-2$
+			langEnItem.setText("   " + Messages.getString("MainPanel.langEn")); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			langEnItem.setText("● " + Messages.getString("MainPanel.langEn"));
-			langPtItem.setText("   " + Messages.getString("MainPanel.langPt"));
+			langEnItem.setText("● " + Messages.getString("MainPanel.langEn")); //$NON-NLS-1$ //$NON-NLS-2$
+			langPtItem.setText("   " + Messages.getString("MainPanel.langPt")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		tools.setText("Tools");
-		demux.setText("Demux");
-		crop.setText("Crop");
+		tools.setText(Messages.getString("MainPanel.toolsMenu")); //$NON-NLS-1$
+		demux.setText(Messages.getString("MainPanel.demux")); //$NON-NLS-1$
+		crop.setText(Messages.getString("MainPanel.crop")); //$NON-NLS-1$
 	}
 
 	public static void setProgress(float progress) {
@@ -440,7 +440,7 @@ public class MainPanel {
 	}
 
 	public static void setTreeData(int indx, Object data) {
-		((LogicTree) items.get(indx)).contents = data;
+		items.get(indx).contents = data;
 	}
 
 	public static int addTreeItem(String content, int parent) {
@@ -456,7 +456,7 @@ public class MainPanel {
 	public static void changeTreeItem(String content, int index) {
 		if (targetFilter != null)
 			return;
-		LogicTree lt = (LogicTree) (items.get(index));
+		LogicTree lt = (items.get(index));
 		lt.text = content;
 		lt.treeitem.setText(content);
 	}
@@ -469,7 +469,7 @@ public class MainPanel {
 		if (targetOK) {
 			int ancestor = parent;
 			while (ancestor != filteredId && ancestor != 0) {
-				LogicTree elderOne = ((LogicTree) items.get(ancestor)).parent;
+				LogicTree elderOne = (items.get(ancestor)).parent;
 				if (ancestor == elderOne.indx)
 					break; // an item should not point to itself, but it does
 				ancestor = elderOne.indx;
@@ -483,11 +483,11 @@ public class MainPanel {
 		if (targetFilter != null)
 			if (filterIsRegex) {
 				if (content.matches(targetFilter) && filterLimit != 0) {
-					content += " (filter match)";
+					content += Messages.getString("MainPanel.match"); //$NON-NLS-1$
 					addMatchingItem(parent, rootIndx);
 				}
 			} else if (content.toLowerCase().indexOf(targetFilter.toLowerCase()) != -1 && filterLimit != 0) {
-				content += " (filter match)";
+				content += Messages.getString("MainPanel.match"); //$NON-NLS-1$
 				addMatchingItem(parent, rootIndx);
 			}
 
@@ -495,12 +495,13 @@ public class MainPanel {
 		if (parent == 0)
 			tit = new LogicTree(content, trees[rootIndx], items.size());
 		else
-			tit = new LogicTree(content, (LogicTree) items.get(parent), items.size());
+			tit = new LogicTree(content, items.get(parent), items.size());
 		items.add(tit);
 
 		if (!Parameters.noGui && (targetFilter == null || targetOK || (content == tsNameId && !listOnlyMatches)))
 			GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { tit, new Integer(rootIndx) }, true);
 
+		// TODO: remove this flag and add a listener for the limit-box
 		if (filterLimit == 0)
 			Packet.limitNotReached = false;
 
@@ -510,21 +511,21 @@ public class MainPanel {
 	private static void addMatchingItem(int parent, int rootIndx) {
 		filteredId = items.size();
 		targetOK = true;
-		Vector reverse = new Vector();
+		Vector<LogicTree> reverse = new Vector<LogicTree>();
 		int p = parent;
 		LogicTree topItem = null;
 		int limit = 30;
 		while (limit > 0 && p != 0) {
-			topItem = (LogicTree) items.get(p);
+			topItem = items.get(p);
 			reverse.add(topItem);
 			limit--;
 			p = topItem.parent.indx;
 		}
 		if (topItem != null && p == 0) {
-			topItem.parent = (LogicTree) items.get(tsNameIndex);
+			topItem.parent = items.get(tsNameIndex);
 		}
 		for (int i = reverse.size(); i > 0; i--) {
-			LogicTree lt = (LogicTree) reverse.get(i - 1);
+			LogicTree lt = reverse.get(i - 1);
 			if (!lt.isVisible)
 				GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { lt, new Integer(rootIndx) }, true);
 		}
@@ -579,9 +580,9 @@ public class MainPanel {
 	}
 
 	public static void saveTree(String filePth) {
-		String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"),
-				Messages.getString("MainPanel.stats"), Messages.getString("MainPanel.dsmcc"),
-				Messages.getString("MainPanel.caption") };
+		String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"), //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.getString("MainPanel.stats"), Messages.getString("MainPanel.dsmcc"), //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.getString("MainPanel.caption") }; //$NON-NLS-1$
 		try {
 			File f = new File(filePth);
 			if (f.exists())
@@ -594,11 +595,11 @@ public class MainPanel {
 				}
 			else
 				for (int i = 0; i < trees.length; i++) {
-					fos.write("****".getBytes());
+					fos.write("****".getBytes()); //$NON-NLS-1$
 					fos.write(treeNames[i].getBytes());
-					fos.write("****\n".getBytes());
+					fos.write("****\n".getBytes()); //$NON-NLS-1$
 					trees[i].print(fos);
-					fos.write("\n\n\n".getBytes());
+					fos.write("\n\n\n".getBytes()); //$NON-NLS-1$
 				}
 			fos.flush();
 			fos.close();
