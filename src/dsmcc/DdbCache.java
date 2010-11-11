@@ -2,6 +2,7 @@ package dsmcc;
 
 import gui.MainPanel;
 import sys.BitWise;
+import sys.Messages;
 
 public class DdbCache {
 
@@ -21,8 +22,9 @@ public class DdbCache {
 		Module m = ml.getById(new Integer(moduleId));
 		if (m == null)
 			return;
-		int ddmLvl = MainPanel.addTreeItem("downloadDataMessage", m.partLvl, MainPanel.DSMCC_TREE);
-		MainPanel.addTreeItem("blockNumber: " + BitWise.toHex(blockNumber), ddmLvl, MainPanel.DSMCC_TREE);
+		int ddmLvl = MainPanel.addTreeItem("downloadDataMessage", m.partLvl, MainPanel.DSMCC_TREE); //$NON-NLS-1$
+		MainPanel.addTreeItem(
+				Messages.getString("DdbCache.block") + BitWise.toHex(blockNumber), ddmLvl, MainPanel.DSMCC_TREE); //$NON-NLS-1$
 		ml.feedData(m, data, dataOffset, datLenght, blockNumber, ddmLvl);
 	}
 

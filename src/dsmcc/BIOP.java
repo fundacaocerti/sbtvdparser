@@ -50,7 +50,7 @@ public class BIOP {
 		while (bw.getAvailableSize() > 0)
 			if (!parseMessage(bw, biopLvl)) {
 				// TODO: i18n
-				MainPanel.addTreeItem("Failed to parse module", biopLvl);
+				MainPanel.addTreeItem(Messages.getString("BIOP.moduleErr"), biopLvl); //$NON-NLS-1$
 				break;
 			}
 		if (bw.getAvailableSize() > 0) {
