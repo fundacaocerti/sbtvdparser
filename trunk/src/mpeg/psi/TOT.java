@@ -22,11 +22,12 @@
 //Time Offset Table;
 package mpeg.psi;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 import mpeg.PCR;
 import mpeg.psi.descriptors.DescriptorList;
@@ -62,14 +63,14 @@ public class TOT extends Table {
 			totPacketCounter = Packet.packetCount;
 		// time_offset_section(){
 		// UTC-3_time 40 bslbf
-		ts = parseMJD(bw);
-		String timestamp = formatMJD(ts);
 		calculateTsBitrate();
 		totsParsed++;
 		if (totsParsed > 1) {
 			bw.pop(bw.getAvailableSize());
 			return false;
 		}
+		ts = parseMJD(bw);
+		String timestamp = formatMJD(ts);
 
 		printBasicInfo();
 		addSubItem("UTC-3_time: " + timestamp);
@@ -111,26 +112,36 @@ public class TOT extends Table {
 
 	static Date ts = null;
 
-	public static String getTimeStamp(long secondOffset) {
+	public static String getTimeStamp(double secondOffset) {
 		if (ts == null)
 			return null;
 		secondOffset -= PCR.getTimestamp(totPacketCounter);
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(ts);
 		calendar.add(Calendar.SECOND, (int) secondOffset);
+		calendar.add(Calendar.MILLISECOND, (int) (secondOffset * 1000 % 1000));
 		return formatMJD(calendar.getTime());
 	}
 
 	public static String formatMJD(Date d) {
 		if (d != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat();
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss.SSS");
 			return sdf.format(d);
 		}
 		return "invalid MJD";
 	}
 
 	public static Date parseMJD(BitWise bw) {
-		int[] ts = new int[6];
+		// if no ids were returned, something is wrong. get out.
+		String[] ids = TimeZone.getAvailableIDs(-3 * 60 * 60 * 1000);
+		if (ids.length == 0)
+			return null;
+
+		// times in TOT and EPG are always GMT-3
+		SimpleTimeZone brt = new SimpleTimeZone(-3 * 60 * 60 * 1000, ids[0]);
+		GregorianCalendar gc = new GregorianCalendar(brt);
+
+		int[] ts = new int[3];
 		int mjd = bw.pop16();
 
 		// tks to the web
@@ -145,50 +156,32 @@ public class TOT extends Table {
 		tmp = month / 11;
 		month = month + 2 - 12 * tmp;
 		year = 100 * (n - 49) + year + tmp;
-		if (year > 1990) {
-			ts[2] = day;
-			ts[1] = month;
-			ts[0] = year;
-		} else
+		if (year < 1990)
 			return null;
 
 		currentTimeStamp = 0;
 		int secondPerUnit = 3600;
 		for (int i = 0; i < 3; i++) {
 			tmp = bw.pop();
-			if ((tmp > 9 && tmp < 0x10) || (tmp > 0x19 && tmp < 0x20) || (tmp > 0x23))
+
+			try {
+				tmp = Integer.valueOf(Integer.toHexString(tmp)).intValue();
+			} catch (NumberFormatException e) {
 				return null;
-			tmp = Integer.valueOf(Integer.toHexString(tmp)).intValue();
+			}
 			currentTimeStamp += tmp * secondPerUnit;
 			secondPerUnit = secondPerUnit / 60;
 			ts[i] = tmp;
 		}
 
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < 3; i++) {
-			if (ts[2 - i] < 10)
-				sb.append('0');
-			sb.append(Integer.toString(ts[2 - i]));
-			if (i < 2)
-				sb.append('-');
-		}
-		sb.append(' ');
-		for (int i = 0; i < 3; i++) {
-			if (ts[i + 3] < 10)
-				sb.append('0');
-			sb.append(Integer.toString(ts[i + 3]));
-			if (i < 2)
-				sb.append(':');
-		}
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("DD-MM-yyyy HH:mm:ss");
-			Date d = sdf.parse(sb.toString());
-			System.out.println(sb.toString() + " > " + formatMJD(d));
-			return d;
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		gc.set(GregorianCalendar.YEAR, year);
+		gc.set(GregorianCalendar.MONTH, month - 1);
+		gc.set(GregorianCalendar.DAY_OF_MONTH, day);
+		gc.set(GregorianCalendar.HOUR_OF_DAY, ts[0]);
+		gc.set(GregorianCalendar.MINUTE, ts[1]);
+		gc.set(GregorianCalendar.SECOND, ts[2]);
+		// SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		// System.out.println(sdf.format(gc.getTime()) + " / " + gc.getTime());
+		return gc.getTime();
 	}
 }
