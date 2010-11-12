@@ -23,6 +23,10 @@
 package mpeg.psi;
 
 import gui.MainPanel;
+
+import java.util.Date;
+
+import mpeg.PCR;
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.psi.descriptors.ParentalRating;
 import mpeg.psi.descriptors.ShortEvent;
@@ -110,7 +114,7 @@ public class EIT extends Table {
 		int loopLevel = addSubItem("Event loop:");
 		while (bw.getAvailableSize() > 0) {
 			int id = bw.pop16();
-			int[] start = TOT.parseMJD(bw);
+			Date start = TOT.parseMJD(bw);
 			int hexTime;
 			StringBuffer duration = new StringBuffer();
 			for (i = 0; i < 3; i++) {
@@ -136,7 +140,7 @@ public class EIT extends Table {
 			int descLevel = addSubItem("Descriptors loop:", evtLevel);
 			int mark = bw.getByteCount();
 			while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
-				DescriptorList.print(bw, descLevel);
+				DescriptorList.getInstance().print(bw, descLevel);
 			}
 			String evtName = ShortEvent.evtName;
 			ShortEvent.evtName = "n/d";
@@ -173,8 +177,14 @@ public class EIT extends Table {
 			statLevel = addSubItem("Full-seg EIT Stats", 0, MainPanel.STATS_TREE);
 		else
 			statLevel = addSubItem("One-seg EIT Stats", 0, MainPanel.STATS_TREE);
-		long totalPackets = Packet.packetCount;
-		float duration = (float) (totalPackets / TOT.lastBitrate * 188 * 8 / 1e6);
+
+		float bitrate = PCR.getAverageBitrate();
+		if (Float.isInfinite(bitrate) || bitrate == 0)
+			bitrate = TOT.lastBitrate;
+		if (bitrate == 0)
+			return;
+		int duration = (int) (Packet.packetCount / bitrate * Packet.realPktLenght * 8 / 1e6);
+
 		addSubItem("EITs: " + (EITbasic + EIText + EITpf), statLevel);
 		if (duration != 0) {
 			addSubItem("EIT-p/f sections/s: " + (EITpf / duration), statLevel, MainPanel.STATS_TREE);

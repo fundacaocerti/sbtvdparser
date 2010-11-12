@@ -63,7 +63,7 @@ public class PCR {
 		double sec = getTimestamp(packetNumber);
 		String seconds = Double.toString(sec) + "000"; //$NON-NLS-1$
 		seconds = seconds.substring(0, seconds.indexOf('.') + 4);
-		String utcTime = TOT.getTimeStamp(Math.round(sec));
+		String utcTime = TOT.getTimeStamp(sec);
 		if (utcTime != null)
 			return Messages.getString("PCR.realTimestamp") + " " + seconds + "s (" + utcTime + " UTC-3)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return Messages.getString("PCR.offsetTimestamp") + " " + seconds + "s"; //$NON-NLS-1$ //$NON-NLS-2$
