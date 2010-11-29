@@ -89,7 +89,7 @@ public class Parameters {
 		sb.append(Messages.getString("Parameters.command")); //$NON-NLS-1$
 		for (int i = 0; i < args.length; i++) {
 			sb.append(args[i]);
-			sb.append(' ');
+			sb.append(", ");//$NON-NLS-1$
 		}
 		sb.append("]"); //$NON-NLS-1$
 		Log.printWarning(sb.toString());
@@ -195,7 +195,7 @@ public class Parameters {
 					// TODO handle it
 					e.printStackTrace();
 				}
-				i = j;
+				i = j - 1;
 			}
 			if (args[i].equalsIgnoreCase("-crop")) { //$NON-NLS-1$
 				cropPoints = new float[2];
@@ -260,13 +260,15 @@ public class Parameters {
 			((EIT) TableList.getByPid(EIT.ONESEGPID)).printEPG();
 			if (pp != null && pp.bitrateIsValid)
 				pp.printBitrate();
-			MainPanel.addTreeItem(Messages.getString("Parameters.syncLoss") + Packet.syncLosses, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
+			MainPanel.addTreeItem(
+					Messages.getString("Parameters.syncLoss") + Packet.syncLosses, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			MainPanel.addTreeItem(Messages.getString("Parameters.tei") + Packet.TEIerrors, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			int continuityCount = 0;
 			for (int i = 0; i < TableList.continuityErrorCounters.length; i++) {
 				continuityCount += TableList.continuityErrorCounters[i];
 			}
-			int cntLvl = MainPanel.addTreeItem(Messages.getString("Parameters.continuity") + continuityCount, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
+			int cntLvl = MainPanel.addTreeItem(
+					Messages.getString("Parameters.continuity") + continuityCount, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			for (int i = 0; i < TableList.continuityErrorCounters.length; i++)
 				if (TableList.continuityErrorCounters[i] != 1) {
 					Table t = TableList.getByIndex(i);

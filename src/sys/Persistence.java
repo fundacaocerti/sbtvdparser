@@ -18,8 +18,8 @@ public class Persistence {
 	public static final String CHECK_UPDATES = "checkUpdates"; //$NON-NLS-1$
 	public static final String LAST_READ_DIR = "lastOpenDir"; //$NON-NLS-1$
 	public static final String LAST_SAVE_DIR = "lastSaveDir"; //$NON-NLS-1$
-	public static final String CURRENT_SW_VERSION = "0.3"; //$NON-NLS-1$
-	public static final String CURRENT_SW_DATE = "12ac3f278fb"; //$NON-NLS-1$
+	public static final String CURRENT_SW_VERSION = "0.31"; //$NON-NLS-1$
+	public static final String CURRENT_SW_DATE = "12c983f9c9a"; //$NON-NLS-1$ 2010-29-11
 
 	static File f = new File(System.getProperty("user.dir"), "sbtvdp.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 	static Properties p = new Properties();
@@ -64,7 +64,8 @@ public class Persistence {
 	}
 
 	private static void reportFileErr(String operation) {
-		MainPanel.cacheMessage(Messages.getString("Persistence.errPrefix") + operation + Messages.getString("Persistence.errPosfix")); //$NON-NLS-1$ //$NON-NLS-2$
+		MainPanel
+				.cacheMessage(Messages.getString("Persistence.errPrefix") + operation + Messages.getString("Persistence.errPosfix")); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			MainPanel.cacheMessage(Messages.getString("Persistence.file") + f.getCanonicalPath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			MainPanel.cacheMessage(Messages.getString("Persistence.errHelp")); //$NON-NLS-1$
