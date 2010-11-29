@@ -27,7 +27,8 @@ import parsers.Packet;
 
 public class PIDStats {
 
-	static final int MAXPIDS = 300;
+	static final int MAXPIDS = 300, SAMPLES = 4096;// 5,3 min.
+	static final float measureRate = 0.125f; // em segundos
 
 	static Set[] sets = new Set[MAXPIDS];
 
@@ -37,7 +38,7 @@ public class PIDStats {
 		public int pid, counter, lastCount;
 		public float lastTimestamp;
 		public String name = Messages.getString("PIDStats.unknown"); //$NON-NLS-1$
-		public float[] bitrates = new float[512];
+		public float[] bitrates = new float[SAMPLES];
 		public Object data;
 
 		public int getValue() {
@@ -81,13 +82,11 @@ public class PIDStats {
 				sets[i].lastCount = sets[i].counter;
 				sets[i].lastTimestamp = PCR.getCurrentTimestamp();
 				int position = (int) (PCR.getCurrentTimestamp() / measureRate);
-				if (position < 512)
+				if (position < SAMPLES)
 					sets[i].bitrates[position] = snapshot;
 			}
 		}
 	}
-
-	static float measureRate = 1; // em segundos
 
 	static void addPid(int pid) {
 		if (foundPids == MAXPIDS)
@@ -119,10 +118,7 @@ public class PIDStats {
 			// MainPanel.addTreeItem("pid " + Integer.toHexString(sets[i].pid)
 			// + ": " + pidBitrateStr + " " + multiplier + " ("
 			// + sets[i].name + ")", pidStatsLevel);
-			Object[] bar = {
-					new Integer(sets[i].pid),
-					new Integer(sets[i].counter),
-					new Integer(maxCount),
+			Object[] bar = { new Integer(sets[i].pid), new Integer(sets[i].counter), new Integer(maxCount),
 					formatScaleFactor((float) sets[i].counter / Packet.packetCount * bitrate) + "bps (" + sets[i].name //$NON-NLS-1$
 							+ ")" }; //$NON-NLS-1$
 			GuiMethods.runMethod(GuiMethods.ADDPIDBAR, bar, true);
