@@ -1,0 +1,82 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="pt-br">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>First release</title>
+</head>
+
+<body>
+
+<p><font face="Arial"><b>
+<a href="https://sourceforge.net/projects/sbtvdparser/files/Fifth_release/SBTVD_parser_v0.31.zip/download">Latest release (v0.31)</a></b> 2010-11-29 </font>
+<input type="hidden" name="releasedate" value="12c983f9c9a"/>
+<p><font face="Arial">New features:<br>
+ &bull Demux - tool to select and filter PIDs for extraction into a new TS<br>
+ &bull Crop - tool for selecting start and stop points in the progress bar and crop the TS into a new file<br>
+ &bull Timestamps - when any item is selected in the PSI, caption or carousel trees the status bar shows the reception time-stamp of the item.<br>
+ &bull Bitrates - the bitrate graphs now hold 5 min. of data and the sampling time selection was implemented.<br>
+ &bull Save - now when saving a description text file every info. tree is saved along in it.<br>
+ &bull Usability - las used folder is saved and recalled in the open/save dialogs and language selection is applied on-the-fly and persisted<br>
+Bugfixes:<br>
+ &bull Many bugs related to timestamps<br>
+ &bull Many internationalization tags were updated<br>
+Refatoring:<br>
+ &bull Code now adherent to java 1.5<br>
+ &bull Refactoring of the descriptor hierarchy + extended evt. descriptor<br>
+ &bull Better performance with the usage of HashMaps is several points<br></p>
+<hr>
+
+<p><font face="Arial"><b>
+<a href="https://sourceforge.net/projects/sbtvdparser/files/Fourth_release/SBTVD_parser_v0.3.zip/download">Fourth release (v0.3)</a></b> 2010-09-19 </font>
+<input type="hidden" name="releasedate" value="12b2b47abd3"/>
+<p><font face="Arial">New features:<br>
+ &bull implemented the persistence classes<br>
+ &bull implemented the update checker (http parser)<br>
+ &bull implemented the update info. dialog<br>
+ &bull added implementation of the regex filter<br>
+ &bull DII block size now used for DDB insertion in modules<br>
+Bugfixes:<br>
+ &bull Show 4 bytes from CRC (not 3)<br>
+ &bull DSMCC progress bar (more than 100%)<br>
+ &bull BW getHexSequence fail in empty descriptors<br>
+ &bull missing i18n items and settings<br>
+ &bull if module size is an exact multiple of partLenght it would fail<br>
+ &bull encoding bug for update message<br>
+refatoring:<br>
+ &bull moved the dialogs to a sub-package<br></p>
+<hr>
+
+<p><font face="Arial"><b>
+<a href="https://sourceforge.net/projects/sbtvdparser/files/Third_release/SBTVD_parser_v0.21.zip/download">Third release (v0.21)</a></b> 2010-07-14 </font>
+<input type="hidden" name="releasedate" value="129d1e40e98"/>
+<p><font face="Arial">Same contents as the previous one, plus:<br>
+GUI in English (US-default) or Portuguese (BR) - set by a property file;<br></p>
+<hr>
+<b><a href="https://sourceforge.net/projects/sbtvdparser/files/Second_release/SBTVDparser_0.2.zip/download">Second release (v0.2)</a></b> 2010-07-11 </font>
+<p><font face="Arial">Same contents as the previous one, plus:<br>
+New descriptors for the AIT;<br>
+Refactoring of the DSMCC mount process; added DDB message caching;<br>
+carroussels can be mounted even if incomplete, modules can be saved, added<br>
+suport for compressed carroussels<br>
+Bugfixes: continuity counters; packet sync; CRC labels<br></p>
+<hr>
+<b>
+<a href="https://sourceforge.net/projects/sbtvdparser/files/First_release/TSParser.zip/download">First release (v0.1)</a> </b>2010-06-21</p>
+<p>This release contains a fairly stable working version of 
+the parser.<br>
+The zip file contains these archives:<br>
+- COPYNG.txt - The GPL licence.<br>
+- swt.jar - Sun SWT version 3.557 for windows<br>
+- tsp.jar - the program itself<br>
+- TS parser.lnk - a windows launcher link (runs javaw.exe -jar tsp.jar)<br></p>
+<p><b>For Linux users:</b></p>
+<p>
+<a href="https://sourceforge.net/projects/sbtvdparser/forums/forum/1167658/topic/3760924">
+Running the parser in Ubuntu</a></font></p>
+
+<p><a href="http://libswt.sourceforge.net/">http://libswt.sourceforge.net/</a></p>
+
+</body>
+
+</html>
