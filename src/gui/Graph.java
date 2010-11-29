@@ -72,7 +72,12 @@ public class Graph extends Composite {
 		sampleTime = new Slider(this, SWT.NONE);
 		sampleTime.setToolTipText(Messages.getString("Graph.sampletime")); //$NON-NLS-1$
 		// sampleTime.setSize(120, sampleTime.getSize().x);
-		sampleTime.setSelection(70);
+		sampleTime.setMinimum(0);
+		sampleTime.setSelection(0);
+		sampleTime.setMaximum(8);
+		sampleTime.setThumb(2);
+		sampleTime.setIncrement(1);
+		sampleTime.setPageIncrement(1);
 		sampleTime.setLayoutData(gridData1);
 		info = new Label(this, SWT.NONE);
 		info.setText(Messages.getString("Graph.default")); //$NON-NLS-1$
@@ -93,24 +98,22 @@ public class Graph extends Composite {
 				vz = 1 / (1 - vz);
 			else
 				vz += 1;
-			float samp = (float) sampleTime.getSelection() / 5;
-			if (samp < 14)
-				samp = (float) 0.1395 / ((float) 13.95 - samp);
-			else
-				samp -= 13;
+			timescale = (float) Math.pow(2, sampleTime.getSelection() - 3);
 			float offs = (30 - vPos.getSelection()) * max / 30;
 			StringBuilder sb = new StringBuilder();
 			sb.append(Messages.getString("Graph.sample")); //$NON-NLS-1$
-			String s = Float.toString(samp) + "000"; //$NON-NLS-1$
-			sb.append(s.substring(0, 5));
+			if (timescale < 1)
+				sb.append("1:" + Math.round(1 / timescale));
+			else
+				sb.append(Math.round(timescale));
 			sb.append(Messages.getString("Graph.from")); //$NON-NLS-1$
 			sb.append((Float.toString(offs) + "000").substring(0, 4)); //$NON-NLS-1$
 			sb.append(Messages.getString("Graph.to")); //$NON-NLS-1$
 			sb.append((Float.toString(max / vz + offs) + "00").substring(0, 4)); //$NON-NLS-1$
 			sb.append("Mbps"); //$NON-NLS-1$
 			info.setText(sb.toString());
-			graphArea.setScaling(vz, offs, samp);
-			canvas.redraw();
+			graphArea.setScaling(vz, offs, timescale);
+			resample();
 		}
 	}
 
@@ -144,26 +147,44 @@ public class Graph extends Composite {
 		canvas.addMouseMoveListener(new graphXYLabel());
 	}
 
-	static float[] grData = null;
+	static float[] grData = new float[xRes], sourceGrData;
 	private Slider vZoom = null;
 	private Slider vPos = null;
 	private Slider sampleTime = null;
 	private Label info = null;
+	static float timescale = 1 / 8;
 
-	public static void plot(float[] data) {
-		grData = data;
+	public static void setPlotData(float[] data) {
+		sourceGrData = data;
+		z.widgetSelected(null);
+	}
+
+	private static void resample() {
+
+		int avg = (int) (timescale * 8);
+		int i = 0;
+		for (i = 0; i < grData.length; i++)
+			grData[i] = 0;
+		for (i = 0; i < grData.length; i++) {
+			grData[i] = 0;
+			if ((i + 1) * avg > sourceGrData.length)
+				break;
+			for (int j = 0; j < avg; j++)
+				grData[i] += sourceGrData[i * avg + j] / avg;
+		}
+
 		min = 100;
 		max = 0;
-		for (int i = 0; i < data.length; i++) {
-			if (data[i] < min)
-				min = data[i];
-			if (data[i] > max)
-				max = data[i];
+		for (int j = 0; j < i; j++) {
+			if (grData[j] < min)
+				min = grData[j];
+			if (grData[j] > max)
+				max = grData[j];
 		}
 
 		ratio = yRes / (max - min);
-		graphArea.setData(data, min, max, ratio);
-		z.widgetSelected(null);
+		graphArea.setData(grData, min, max, ratio);
+
 		canvas.redraw();
 	}
 
