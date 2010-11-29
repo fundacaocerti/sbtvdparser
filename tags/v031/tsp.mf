@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: sys.SBTVDParser
+Class-Path: /usr/share/java/swt.jar swt.jar
+
+
