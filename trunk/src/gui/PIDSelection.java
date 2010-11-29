@@ -37,7 +37,7 @@ public class PIDSelection implements SelectionListener {
 		int selIndx = ((Combo) e.getSource()).getSelectionIndex();
 		// int pid = PIDStats.getPid(selIndx);
 		float[] bitrates = PIDStats.getBitrates(selIndx);
-		Graph.plot(bitrates);
+		Graph.setPlotData(bitrates);
 	}
 
 }

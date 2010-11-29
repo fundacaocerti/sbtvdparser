@@ -46,6 +46,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -152,12 +154,8 @@ public class MainPanel {
 		log = new Text(tabFolder, SWT.BORDER | SWT.V_SCROLL | SWT.WRAP);
 		log.setEditable(false);
 
-		bitrateArea = new Group(tabFolder, SWT.BORDER);
-		bitrateArea.setLayout(new GridLayout());
-		brGraph = new Graph(bitrateArea, SWT.BORDER);
-		createPidSelector();
-		pidLabel = new Label(bitrateArea, SWT.NONE);
-		graphInfo = new Label(bitrateArea, SWT.NONE);
+		createBitRateGraphTab();
+
 		createStatsGroup();
 
 		ccTree = new Tree(tabFolder, SWT.BORDER);
@@ -220,13 +218,17 @@ public class MainPanel {
 		pidStats.setLayout(gridLayout1);
 	}
 
-	/**
-	 * This method initializes pidSelector
-	 * 
-	 */
-	private void createPidSelector() {
+	private void createBitRateGraphTab() {
+		bitrateArea = new Group(tabFolder, SWT.BORDER);
+		bitrateArea.setLayout(new RowLayout());
+		((RowLayout) bitrateArea.getLayout()).type = SWT.VERTICAL;
+		brGraph = new Graph(bitrateArea, SWT.BORDER);
+		brGraph.setLayoutData(new RowData(300, 240));
 		pidSelector = new Combo(bitrateArea, SWT.READ_ONLY);
+		pidSelector.setLayoutData(new RowData(260, 30));
 		pidSelector.addSelectionListener(new PIDSelection());
+		pidLabel = new Label(bitrateArea, SWT.NONE);
+		graphInfo = new Label(bitrateArea, SWT.NONE);
 	}
 
 	public void initialize() {

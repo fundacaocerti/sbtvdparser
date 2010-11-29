@@ -61,6 +61,7 @@ public class PIDStats {
 	// }
 
 	public static void clear() {
+		MainPanel.pidSelector.removeAll();
 		barCount = 0;
 		Control[] c = MainPanel.pidStats.getChildren();
 		for (int i = 0; i < c.length; i++)

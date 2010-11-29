@@ -35,7 +35,6 @@ public class Paint implements PaintListener {
 		e.gc.fillRectangle(e.x, e.y, e.width, e.height);
 		if (data == null)
 			return;
-		e.gc.setForeground(e.gc.getDevice().getSystemColor(SWT.COLOR_GREEN));
 		int maxPlot = e.x + e.width;
 		if (data.length < maxPlot)
 			maxPlot = data.length;
@@ -47,10 +46,17 @@ public class Paint implements PaintListener {
 				e.gc
 						.drawLine(selection, e.height, selection, e.height
 								- (int) ((data[i] - min - vPos) * ratio * vZoom));
-				MainPanel.graphInfo.setText(i + "s - " + PIDStats.formatScaleFactor(data[i])); //$NON-NLS-1$
+				MainPanel.graphInfo.setText((Float.toString(i * hZoom) + "000").substring(0, 5)//$NON-NLS-1$
+						+ "s - " + PIDStats.formatScaleFactor(data[i])); //$NON-NLS-1$
 				e.gc.setForeground(e.gc.getDevice().getSystemColor(SWT.COLOR_GREEN));
 			} else {
-				e.gc.drawLine(i, e.height, i, e.height - (int) ((data[i] - min - vPos) * ratio * vZoom));
+				int lineLenght = (int) ((data[i] - min - vPos) * ratio * vZoom);
+				e.gc.setForeground(e.gc.getDevice().getSystemColor(SWT.COLOR_GREEN));
+				e.gc.drawLine(i, e.height, i, e.height - lineLenght);
+				if (lineLenght > 3) {
+					e.gc.setForeground(e.gc.getDevice().getSystemColor(SWT.COLOR_DARK_GREEN));
+					e.gc.drawLine(i, e.height, i, e.height - lineLenght + 3);
+				}
 			}
 		}
 		// selection = e.x;
