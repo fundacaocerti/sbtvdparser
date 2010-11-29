@@ -73,7 +73,10 @@ public class PCR {
 		double bits = (Packet.packetCount - lastPacketCount) * Packet.realPktLenght * 8;
 		if (firstTimestamp == lastTimeStamp)
 			return 0;
-		return (float) (bits / smoothAvgBitrate[2] + (lastTimeStamp - firstTimestamp));
+		float currentTs = (float) (bits / smoothAvgBitrate[2] + (lastTimeStamp - firstTimestamp));
+		if (currentTs < 0 || currentTs > 60 * 60 * 24)
+			currentTs = 0;
+		return currentTs;
 	}
 
 	public void update(BitWise bw) {
