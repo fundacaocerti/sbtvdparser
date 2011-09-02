@@ -28,6 +28,8 @@ public class TableList {
 
 	static Vector<Table> tableList = new Vector<Table>();
 
+	static Table forcedTable;
+
 	public static int[] continuityErrorCounters = new int[200];
 
 	// TODO: use a hashmap
@@ -73,6 +75,10 @@ public class TableList {
 		return tableList.size();
 	}
 
+	public static void forceTable(Table table) {
+		forcedTable = table;
+	}
+
 	public static void addTable(Table table) {
 		tableList.add(table);
 	}
@@ -90,6 +96,8 @@ public class TableList {
 		Arrays.fill(continuityErrorCounters, 0);
 		tableList.removeAllElements();
 		setDefaultPids();
+		if (forcedTable != null)
+			addTable(forcedTable);
 		tableIndex = 0;
 	}
 }

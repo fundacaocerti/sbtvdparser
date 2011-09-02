@@ -31,6 +31,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import mpeg.TSP;
 import mpeg.pes.CC;
@@ -141,7 +143,7 @@ public class Parameters {
 		Packet.estimate = Packet.fileLenght / TSP.TS_PACKET_LEN;
 		// redefined when packet size is assured
 		Packet.limit = 0;
-		int filter = 0;
+		int filter = 0, forcePid = 0;
 		int matchLimit = 0;
 		MainPanel.setFilter(null);
 		CC.reset();
@@ -154,10 +156,60 @@ public class Parameters {
 				noTree = true;
 			if (args[i].equalsIgnoreCase("-noStats")) //$NON-NLS-1$
 				noStats = true;
+			if (args[i].equalsIgnoreCase("-forcePid")) //$NON-NLS-1$
+				forcePid = i;
 			if (args[i].equalsIgnoreCase("-filter")) //$NON-NLS-1$
 				filter = i;
 			if (args[i].equalsIgnoreCase("-limitInput")) //$NON-NLS-1$
 				Packet.limit = i;
+			if (forcePid > 0 && forcePid == i - 2) {
+				if (args[i - 1].startsWith("0x")) {
+					int pid = Integer.parseInt(args[i - 1].substring(2), 16);
+					String table = "mpeg.psi." + args[i];
+					System.out.println(table + " for pid " + pid);
+					try {
+						Class<?> cl = Class.forName(table);
+						if (cl.getSuperclass() == Table.class) {
+							Constructor<?> c = cl.getConstructor(new Class[] { int.class });
+							TableList.forceTable((Table) c.newInstance(new Object[] { pid }));
+							break;
+						} else
+							System.out.println("Not a table");
+					} catch (ClassNotFoundException e) {
+						System.out.println("ClassNotFoundException: " + e.getMessage());
+					} catch (SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchMethodException e) {
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Class<?> cl;
+					try {
+						cl = Class.forName(table);
+						TableList.forceTable((Table) cl.newInstance());
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 			if (filter > 0 && filter == i - 1)
 				MainPanel.setFilter(args[i]);
 			if (Packet.limit > 0 && Packet.limit == i - 1) {
