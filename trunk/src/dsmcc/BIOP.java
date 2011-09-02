@@ -44,11 +44,11 @@ public class BIOP {
 		this.fl = fl;
 	}
 
-	public void parseModule(BitWise bw, int moduleLvl) {
+	public void parseModule(BitWise bw, int moduleLvl, int moduleId) {
 		int biopLvl = MainPanel.addTreeItem("BIOP", moduleLvl); //$NON-NLS-1$
 		bw.mark();
 		while (bw.getAvailableSize() > 0)
-			if (!parseMessage(bw, biopLvl)) {
+			if (!parseMessage(bw, biopLvl, moduleId)) {
 				// TODO: i18n
 				MainPanel.addTreeItem(Messages.getString("BIOP.moduleErr"), biopLvl); //$NON-NLS-1$
 				break;
@@ -63,7 +63,7 @@ public class BIOP {
 		}
 	}
 
-	public boolean parseMessage(BitWise bw, int biopLvl) {
+	public boolean parseMessage(BitWise bw, int biopLvl, int moduleId) {
 		int msglvl = MainPanel.addTreeItem(Messages.getString("BIOP.message") + msgNumb++, biopLvl); //$NON-NLS-1$
 		// 0x42494F50 == BIOP
 		if (bw.pop() != 0x42 || bw.pop() != 0x49 || bw.pop() != 0x4F || bw.pop() != 0x50)
@@ -77,7 +77,7 @@ public class BIOP {
 		/* int message_type = */bw.pop();
 		int message_size = bw.pop32();
 		int mark = bw.getAbsolutePosition();
-		Long objKey = parseObjKey(bw, msglvl);
+		Long objKey = parseObjKey(bw, msglvl, moduleId);
 		// objectKind_length == 4
 		bw.pop(4);
 		int objKind = bw.pop32();
@@ -144,18 +144,18 @@ public class BIOP {
 		return true;
 	}
 
-	private Long parseObjKey(BitWise bw, int msgLvl) {
+	private long parseObjKey(BitWise bw, int msgLvl, int moduleId) {
 		int objectKey_length = bw.pop();
 		long objKey = 0;
 		for (int i = 0; i < objectKey_length; i++)
 			objKey = objKey << 8 | (byte) bw.pop();
 		MainPanel.addTreeItem("objKey: 0x" + Long.toHexString(objKey), msgLvl); //$NON-NLS-1$
-		return new Long(objKey);
+		return objKey << 16 | moduleId;
 	}
 
 	Long parseIOR(BitWise bw, int iorLvl) {
 		iorLvl = MainPanel.addTreeItem("IOR", iorLvl); //$NON-NLS-1$
-		Long objKey = null;
+		long objKey = 0;
 		int type_id_length = bw.pop32();
 		bw.pop(type_id_length); // IOR:Type id
 		if (type_id_length % 4 != 0) // CDR alignment rule
@@ -173,15 +173,16 @@ public class BIOP {
 				if (bw.pop32() == 0x49534F50) {
 					bw.pop();// component_data_length
 					MainPanel.addTreeItem("carouselId: " + BitWise.toHex(bw.pop32()), iorLvl); //$NON-NLS-1$
-					MainPanel.addTreeItem("moduleId: " + BitWise.toHex(bw.pop16()), iorLvl); //$NON-NLS-1$
+					int moduleId = bw.pop16();
+					MainPanel.addTreeItem("moduleId: " + BitWise.toHex(moduleId), iorLvl); //$NON-NLS-1$
 					bw.pop16(); // BIOP version
-					objKey = parseObjKey(bw, iorLvl);
+					objKey = parseObjKey(bw, iorLvl, moduleId);
 				}
 
 			}
 			bw.pop(profile_data_length - bw.getByteCount());
 		}
-		return objKey;
+		return new Long(objKey);
 	}
 
 	String parseName(BitWise bw) {
@@ -217,7 +218,7 @@ public class BIOP {
 					fis.read(ba);
 					BitWise bw = new BitWise(ba);
 					BIOP me = new BIOP(fl);
-					me.parseModule(bw, 0);
+					me.parseModule(bw, 0, 0);
 					fis.close();
 				} catch (Exception e) {
 					e.printStackTrace();
