@@ -128,7 +128,7 @@ public class Module {
 			MainPanel.setTreeData(treeLvl, this);
 			BIOP b = new BIOP(moduleList.fileList);
 			BitWise bw = new BitWise(this.data);
-			b.parseModule(bw, treeLvl);
+			b.parseModule(bw, treeLvl, id);
 			moduleList.increaseCompleted();
 			if (moduleList.isReadyToMount())
 				moduleList.mountFS();
