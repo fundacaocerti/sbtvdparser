@@ -37,6 +37,7 @@ import mpeg.psi.TableList;
 
 import org.eclipse.swt.SWT;
 
+import sys.BitWise;
 import sys.Log;
 import sys.Messages;
 import sys.PIDStats;
@@ -260,14 +261,29 @@ public class Packet extends Thread {
 		limitNotReached = true;
 		Section sp = new Section();
 		ESPacket pp = new ESPacket();
+		int[] miniBlacklist = new int[10];
+		for (int i = 0; i < miniBlacklist.length; i++)
+			miniBlacklist[i] = -1;
+		int blPos = 0;
+		boolean process;
 		do {
 			while (paused)
 				Thread.sleep(100);
+			process = true;
 			parsePacket();
 			PIDStats.increasePid(TSP.pid);
-
-			sp.parseTable();
-			pp.parsePES();
+			for (int i = 0; i < miniBlacklist.length; i++)
+				if (miniBlacklist[i] == TSP.pid)
+					process = false;
+			if (process)
+				try {
+					sp.parseTable();
+					pp.parsePES();
+				} catch (RuntimeException e) {
+					miniBlacklist[blPos++] = TSP.pid;
+					Log.printStackTrace(e);
+					Log.printWarning("PID " + BitWise.toHex(TSP.pid) + " caused an exception and is now blacklisted");
+				}
 
 			if (jumpOK) {
 				MainPanel.setProgress((float) packetCount / estimate);

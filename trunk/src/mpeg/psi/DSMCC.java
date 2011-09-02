@@ -46,7 +46,8 @@ public class DSMCC extends Table {
 		id = 0x3c;
 		this.pid = pid;
 		name = "DSMCC"; //$NON-NLS-1$
-		progressLvl = MainPanel.addTreeItem(Messages.getString("DSMCC.mount") + pid + " 0%", 0, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
+		progressLvl = MainPanel.addTreeItem(
+				Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " 0%", 0, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
 		// setLowLevelSearch(new byte[] {0x10, 0x02, (byte)0x80});
 		moduleList = new ModuleList(this);
 	}
@@ -58,14 +59,15 @@ public class DSMCC extends Table {
 	public void updateProgress(int bytes) {
 		downloaded += bytes;
 		if (totalLenght == 0)
-			GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] { Messages.getString("DSMCC.mount") + pid + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
+			GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] {
+					Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
 					new Integer(progressLvl) }, true);
 		else
 			GuiMethods
 					.runMethod(
 							GuiMethods.CHANGEITEM,
 							new Object[] {
-									Messages.getString("DSMCC.mount") + pid + " " + (downloaded * 100 / totalLenght) + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " " + (downloaded * 100 / totalLenght) + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							true);
 	}
 
