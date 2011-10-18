@@ -39,7 +39,7 @@ public class DescriptorList {
 					PartialReception.class, StreamIdentifier.class, DataComponent.class, Component.class,
 					ApplicationSignaling.class, NetworkName.class, ParentalRating.class, ShortEvent.class,
 					Service.class, DataContent.class, AudioComponent.class, CarouselID.class, AssociationTag.class,
-					ExtendedEvent.class };
+					ExtendedEvent.class, LocalTimeOffset.class };
 		}
 		return thisClass;
 	}
