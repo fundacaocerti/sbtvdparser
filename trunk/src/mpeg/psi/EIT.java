@@ -127,7 +127,7 @@ public class EIT extends Table {
 			}
 
 			int evtLevel = addSubItem("event_id: " + BitWise.toHex(id), loopLevel);
-			addSubItem("start_time: " + TOT.formatMJD(start), evtLevel);
+			addSubItem("start_time (GMT-3): " + TOT.formatMJD(start), evtLevel);
 			addSubItem("duration: " + duration.toString(), evtLevel);
 
 			String[] runningStatus = { "undefined", "not running", "starts soon", "paused", "running", "off-air",
