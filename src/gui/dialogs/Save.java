@@ -46,7 +46,7 @@ public class Save implements SelectionListener {
 		FileDialog fd = new FileDialog(s, SWT.SAVE);
 		fd.setText(Messages.getString("MenuSave.save")); //$NON-NLS-1$
 		// fd.setFilterPath("C:/");
-		String[] filterExt = { "*.txt", "*.htm" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[] filterExt = { "*.txt", "*.htm", "*.xml" }; //$NON-NLS-1$ //$NON-NLS-2$
 		fd.setFilterExtensions(filterExt);
 		String selected = fd.open();
 		if (selected != null)
