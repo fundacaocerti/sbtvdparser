@@ -39,6 +39,7 @@ public class Persistence {
 			else
 				reportFileErr(Messages.getString("Persistence.create")); //$NON-NLS-1$
 		} catch (IOException e) {
+			System.out.println("Cannot read neither create [" + f.getAbsolutePath() + "] - check permissions."); //$NON-NLS-1$
 			reportFileErr(Messages.getString("Persistence.access")); //$NON-NLS-1$
 		}
 
