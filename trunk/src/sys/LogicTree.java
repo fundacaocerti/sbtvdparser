@@ -25,6 +25,7 @@ import gui.MainPanel;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
@@ -201,5 +202,46 @@ public class LogicTree {
 			printInt(lt.parent.bonsaiIndx, out);
 		}
 		out.write("\"\n//-->".getBytes()); //$NON-NLS-1$
+	}
+
+	public void printXML(OutputStream out) throws IOException {
+		PrintWriter pw = new PrintWriter(out);
+		pw.write("<TransportStream Name=\"");
+		String tmp = searchItem("NIT.*;.*loop.*;TS_id.*;descri.*;.*information;ts_name.*", 0, this);
+		pw.write(tmp.substring(tmp.indexOf('[') + 1, tmp.indexOf(']')));
+		pw.write("\" Id=\"");
+		tmp = searchItem("NIT.*;.*loop.*;TS_id.*", 0, this);
+		pw.write(tmp.substring(tmp.indexOf("0x") + 2));
+		pw.write("\" NetworkId=\"");
+		tmp = searchItem("NIT.*;.*loop.*;TS_id.*;Orig.*", 0, this);
+		pw.write(tmp.substring(tmp.indexOf("0x") + 2, tmp.indexOf('(') - 1));
+		pw.write("\"> \n\t<TSDesc>");
+		tmp = searchItem(".*\\[.*\\]", 0, this);
+		pw.write(tmp);
+		pw.write("</TSDesc>\n\t<Services>\n\t\t<Service ServiceName=\"");
+		tmp = searchItem("SDT.*;Services;service.*", 0, this);
+		pw.write(tmp.substring(tmp.indexOf("0x") + 2));
+
+		pw.flush();
+		pw.close();
+	}
+
+	private String searchItem(String string, int level, LogicTree root) {
+		int end = string.indexOf(';', level);
+		String toSearch;
+		if (end > 0)
+			toSearch = string.substring(level, end);
+		else
+			toSearch = string.substring(level);
+		LogicTree lt;
+		for (int i = 0; i < root.sons.size(); i++) {
+			lt = root.sons.get(i);
+			if (lt.text.matches(toSearch))
+				if (end < 0)
+					return lt.text;
+				else
+					return searchItem(string, end + 1, lt);
+		}
+		return "!";
 	}
 }
