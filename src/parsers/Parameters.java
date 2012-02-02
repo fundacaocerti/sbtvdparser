@@ -325,7 +325,7 @@ public class Parameters {
 		if (noGui)
 			synchronized (pp) {
 				try {
-					pp.wait();
+					pp.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
