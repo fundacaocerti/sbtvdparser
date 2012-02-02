@@ -232,10 +232,12 @@ public class MainPanel {
 	}
 
 	public void initialize() {
-		display = Display.getDefault();
-		createSShell();
-		sShell.open();
-		createDND();
+		if (!Parameters.noGui) {
+			display = Display.getDefault();
+			createSShell();
+			sShell.open();
+			createDND();
+		}
 		for (int i = 0; i < msgCache.size(); i++)
 			addTreeItem(msgCache.get(i).toString(), 0);
 		msgCache.removeAllElements();
@@ -546,7 +548,7 @@ public class MainPanel {
 	}
 
 	public static void printTree() {
-		if (display != null && !display.isDisposed())
+		if (!Parameters.noGui && display != null && !display.isDisposed())
 			display.asyncExec(null);
 		else
 			try {
@@ -557,6 +559,19 @@ public class MainPanel {
 			} catch (IOException e1) {
 				Log.printStackTrace(e1);
 			}
+	}
+
+	public static void printTabsAsText() {
+		try {
+			for (int i = 1; i < trees.length; i++) {
+				trees[i].print(System.out);
+			}
+			return;
+		} catch (UnsupportedEncodingException e1) {
+			Log.printStackTrace(e1);
+		} catch (IOException e1) {
+			Log.printStackTrace(e1);
+		}
 	}
 
 	public static void guiThreadExec(Runnable r, boolean sync) {
@@ -573,12 +588,12 @@ public class MainPanel {
 			for (int i = 0; i < tmp.length; i++)
 				GuiMethods.runMethod(GuiMethods.CLEARTREE, tmp[i], true);
 			items.removeAllElements();
+			GuiMethods.runMethod(GuiMethods.SETPROGRESSBAR, new Integer(0), false);
+			PIDStats.clear();
 		}
 		for (int i = 0; i < trees.length; i++)
 			trees[i] = new LogicTree("root", null, 0); //$NON-NLS-1$
 		// TableList.resetList();
-		GuiMethods.runMethod(GuiMethods.SETPROGRESSBAR, new Integer(0), false);
-		PIDStats.clear();
 	}
 
 	public static void saveTree(String filePth) {
@@ -595,6 +610,8 @@ public class MainPanel {
 				for (int i = 0; i < trees.length; i++) {
 					trees[i].printBonsai(fos, treeNames[i]);
 				}
+			else if (filePth.endsWith("xml")) //$NON-NLS-1$
+				trees[PSI_TREE].printXML(fos);
 			else
 				for (int i = 0; i < trees.length; i++) {
 					fos.write("****".getBytes()); //$NON-NLS-1$
