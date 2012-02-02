@@ -13,6 +13,7 @@ public class SBTVDParser {
 
 		try {
 			MainPanel thisClass = null;
+			Parameters.preParse(cmdArgs);
 			if (!Parameters.noGui) {// TODO: how can the parameters be accessed
 				// before the cmdArgs?
 				thisClass = new MainPanel();

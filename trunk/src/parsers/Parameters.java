@@ -85,7 +85,9 @@ public class Parameters {
 		}
 	}
 
-	public static void startParser(String[] args) {
+	public static void preParse(String[] args) {
+		if (args.length != 0 && args[0].equalsIgnoreCase("-help"))
+			printHelp();
 		startArgs = args;
 		StringBuffer sb = new StringBuffer();
 		sb.append(Messages.getString("Parameters.command")); //$NON-NLS-1$
@@ -94,7 +96,41 @@ public class Parameters {
 			sb.append(", ");//$NON-NLS-1$
 		}
 		sb.append("]"); //$NON-NLS-1$
+		for (int i = 1; i < args.length; i++) {
+			if (args[i].equalsIgnoreCase("-noGui")) //$NON-NLS-1$
+				noGui = true;
+			if (args[i].equalsIgnoreCase("-noTree")) //$NON-NLS-1$
+				noTree = true;
+			if (args[i].equalsIgnoreCase("-noStats")) //$NON-NLS-1$
+				noStats = true;
+			if (args[i].equalsIgnoreCase("-help")) {//$NON-NLS-1$
+				printHelp();
+			}
+		}
 		Log.printWarning(sb.toString());
+	}
+
+	private static void printHelp() {
+		System.out.println("usage: java -Djava.library.path=/usr/lib/jni -jar tsp.jar [filename] [options]");
+		System.out.println("\n[filename] is the TransportStream file to be parsed");
+		System.out
+				.println("options are:\n\t-noGui: do not open a graphical interface, print parsing resylts to stdout - limited functionality");
+		System.out.println("\t-noTree: supress PSI tree from the output");
+		System.out.println("\t-noStats: supress table/bitrate statistics from the output");
+		System.out
+				.println("\t-forcePid 0xNNN TableName: force the informed PID to be parsed as TableName, if known - in case it's not referenced by other tables");
+		System.out.println("\t\tTableName: one of AIT, CAT, DSMCC, EIT, IIP, NIT, PAT, PMT, SDT, SDTT, TOT or TSDT");
+		System.out.println("\t-filter: ");
+		System.out.println("\t\t-limitInput: ");
+		System.out.println("\t\t-limitMatches: ");
+		System.out.println("\t\t-isRegex: ");
+		System.out.println("\t\t-listOnlyMatches: ");
+		System.out.println("\t-demux: ");
+		System.out.println("\t-crop: ");
+		System.exit(0);
+	}
+
+	public static void startParser(String[] args) {
 		if (args.length == 0) {
 			Log.printWarning(Messages.getString("Parameters.noInput")); //$NON-NLS-1$
 			return;
@@ -150,12 +186,6 @@ public class Parameters {
 		int[] demuxPids = null;
 		float[] cropPoints = null;
 		for (int i = 1; i < args.length; i++) {
-			if (args[i].equalsIgnoreCase("-noGui")) //$NON-NLS-1$
-				noGui = true;
-			if (args[i].equalsIgnoreCase("-noTree")) //$NON-NLS-1$
-				noTree = true;
-			if (args[i].equalsIgnoreCase("-noStats")) //$NON-NLS-1$
-				noStats = true;
 			if (args[i].equalsIgnoreCase("-forcePid")) //$NON-NLS-1$
 				forcePid = i;
 			if (args[i].equalsIgnoreCase("-filter")) //$NON-NLS-1$
@@ -292,6 +322,14 @@ public class Parameters {
 			pp.bos = bos;
 		}
 		pp.start();
+		if (noGui)
+			synchronized (pp) {
+				try {
+					pp.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 	}
 
 	private static void initMainPanel() {
@@ -336,7 +374,8 @@ public class Parameters {
 		// if (!noStats)
 		// SimpleAssertions.checkSBTVDConformity(MainPanel.getTreeRoot());
 		if (noGui)
-			System.exit(0);
+			MainPanel.printTabsAsText();
+		// System.exit(0);
 	}
 
 	public static boolean isAlive() {
