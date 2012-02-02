@@ -18,8 +18,8 @@ public class Persistence {
 	public static final String CHECK_UPDATES = "checkUpdates"; //$NON-NLS-1$
 	public static final String LAST_READ_DIR = "lastOpenDir"; //$NON-NLS-1$
 	public static final String LAST_SAVE_DIR = "lastSaveDir"; //$NON-NLS-1$
-	public static final String CURRENT_SW_VERSION = "0.31"; //$NON-NLS-1$
-	public static final String CURRENT_SW_DATE = "12c983f9c9a"; //$NON-NLS-1$ 2010-29-11
+	public static final String CURRENT_SW_VERSION = "0.32"; //$NON-NLS-1$
+	public static final String CURRENT_SW_DATE = "1353efe604b"; //$NON-NLS-1$ 2012-02-02
 
 	static File f = new File(System.getProperty("user.dir"), "sbtvdp.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 	static Properties p = new Properties();
