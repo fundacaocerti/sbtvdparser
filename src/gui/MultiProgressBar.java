@@ -1,5 +1,6 @@
 package gui;
 
+import gui.dialogs.Crop;
 import mpeg.PCR;
 
 import org.eclipse.swt.SWT;
@@ -61,6 +62,7 @@ public class MultiProgressBar extends Composite implements Listener {
 			labelsGd[i] = gd;
 			labels[i] = label;
 			label.addListener(SWT.MouseMove, this);
+			label.addListener(SWT.MouseDown, this);
 		}
 		labels[1].setBackground(display.getSystemColor(SWT.COLOR_DARK_BLUE));
 		start = 0;
@@ -99,15 +101,6 @@ public class MultiProgressBar extends Composite implements Listener {
 		totalTime = t;
 	}
 
-	public void setEditMode(boolean editable) {
-		if (editable)
-			for (int i = 0; i < labels.length; i++)
-				labels[i].addListener(SWT.MouseDown, this);
-		else
-			for (int i = 0; i < labels.length; i++)
-				labels[i].removeListener(SWT.MouseDown, this);
-	}
-
 	public void handleEvent(Event e) {
 		if (e.type == SWT.MouseMove) {
 			int abs = e.x + ((Label) e.widget).getLocation().x;
@@ -123,7 +116,10 @@ public class MultiProgressBar extends Composite implements Listener {
 				labels[2].setToolTipText(tooltip);
 		}
 		if (e.type == SWT.MouseDown) {
-			if (e.button == 1)
+			if (!Crop.isWaitingCrop()) {
+				MainPanel.sShell.setCursor(GuiMethods.busyCursor);
+				Packet.jumpTo(cursor);
+			} else if (e.button == 1)
 				setStartPoint(cursor);
 			else
 				setStopPoint(cursor);
@@ -141,7 +137,6 @@ public class MultiProgressBar extends Composite implements Listener {
 
 		MultiProgressBar mpb = new MultiProgressBar(sShell, SWT.BORDER, 600);
 		mpb.setTotalTime(22.3f);
-		mpb.setEditMode(true);
 		sShell.open();
 		sShell.pack();
 		while (!sShell.isDisposed()) {

@@ -320,6 +320,7 @@ public class Packet extends Thread {
 		byteCount = filePosition;
 		jump = false;
 		jumpOK = true;
+		MainPanel.setCursor(SWT.CURSOR_ARROW);
 	}
 
 	private static long filePosition;
