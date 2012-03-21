@@ -36,7 +36,7 @@ public class PCR {
 	static double lastTimeStamp = -1;
 	static double[] smoothAvgBitrate;
 
-	static long firstPacketCount = 0, lastPacketCount = 0;
+	static long firstPacketCount = 0, lastPacketCount = 0, lastpcr = 0, pcrWrap = 0;
 
 	private PCR() {
 		smoothAvgBitrate = new double[3];
@@ -83,9 +83,17 @@ public class PCR {
 		long pcr_base = bw.pop16();
 		pcr_base = (pcr_base << 16) + bw.pop16();
 		int pcr_extension = bw.pop16();
-		pcr_base = (pcr_base << 1) + (pcr_extension & 0x80);
+		pcr_base = ((pcr_base << 1) | (pcr_extension & 0x80));
+		if (pcr_base < 1e4 && lastpcr > 0x1ffff0000l) {// PCR wrap
+			Log.printWarning("PCR wrapped: " + getFormatedTimestamp(Packet.packetCount)); //$NON-NLS-1$
+			pcrWrap += 0x1ffffffffl;
+		}
+		lastpcr = pcr_base;
+		pcr_base += pcrWrap;
+		// The first 33 bits are based on a 90 kHz clock. The last 9 are based
+		// on a 27 MHz clock.
 		pcr_extension = BitWise.stripBits(pcr_extension, 9, 9);
-		long pcr = pcr_base * 300 + pcr_extension;
+		long pcr = pcr_base * 300 + pcr_extension;// ticks of a 27MHz clock
 		float timeStamp = ((float) pcr) / 27000000;
 		if (firstTimestamp == -1) {
 			firstTimestamp = timeStamp;
@@ -93,7 +101,7 @@ public class PCR {
 			firstPacketCount = Packet.packetCount;
 			lastPacketCount = firstPacketCount;
 		} else {
-			if (timeStamp - lastTimeStamp > 2 || timeStamp - lastTimeStamp < 0) {
+			if (timeStamp - lastTimeStamp > 2 || timeStamp - lastTimeStamp < -1) {
 				lastTimeStamp = timeStamp;
 				Log.printWarning("PCR err"); //$NON-NLS-1$
 				Log.printWarning("lts: " + lastTimeStamp); //$NON-NLS-1$
