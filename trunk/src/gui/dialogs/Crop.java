@@ -46,7 +46,6 @@ public class Crop implements SelectionListener {
 	}
 
 	public static void crop() {
-		MainPanel.progressBar.setEditMode(false);
 		FileDialog fd = new FileDialog(parent, SWT.SAVE);
 		fd.setText(Messages.getString("MenuSave.save")); //$NON-NLS-1$
 		String selected = fd.open();
@@ -58,6 +57,9 @@ public class Crop implements SelectionListener {
 		MainPanel.setPauseButtonState(MainPanel.STOPPED);
 		if (selected != null)
 			Parameters.startParser(selected, sa, "-crop"); //$NON-NLS-1$
+		else {
+			waitingCrop = false;
+		}
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
@@ -66,11 +68,8 @@ public class Crop implements SelectionListener {
 	public void widgetSelected(SelectionEvent e) {
 		if (!waitingCrop) {
 			MainPanel.setPauseButtonState(MainPanel.CROP_WAIT);
-			MainPanel.progressBar.setEditMode(true);
 			MainPanel.statusBar.setText(Messages.getString("Crop.statusBarTip")); //$NON-NLS-1$
 			waitingCrop = true;
-		} else {
-			MainPanel.progressBar.setEditMode(true);
 		}
 	}
 }

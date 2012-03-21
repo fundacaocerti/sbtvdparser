@@ -21,7 +21,6 @@
  */
 package gui.dialogs;
 
-import gui.GuiMethods;
 import gui.MainPanel;
 import mpeg.PCR;
 
@@ -34,12 +33,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import parsers.Packet;
 import sys.LogicTree;
 import sys.Messages;
 
@@ -59,17 +56,11 @@ public class CopyPopUp implements Listener {
 	}
 
 	public void handleEvent(Event event) {
+		System.out.println("click");
 		if (event.type == SWT.MouseDown) {
 			mouseButton = event.button;
 			x = event.x;
 			y = event.y;
-			if (event.widget.getClass() == ProgressBar.class) {
-				ProgressBar pb = (ProgressBar) event.widget;
-				if (pb.getSelection() != 100) {
-					MainPanel.sShell.setCursor(GuiMethods.busyCursor);
-					Packet.jumpTo((float) x / (pb.getSize().x - 3));
-				}
-			}
 			if (event.widget.getClass() == Tree.class && mouseButton == 3) {
 				// if (event.item != null)
 				// lt = (LogicTree) ((TreeItem) event.item).getData();
