@@ -25,6 +25,22 @@ public class CRC32 {
 
 	public static int[] crctab = new int[256];
 
+	public static void main(String[] args) {
+		byte[] bin = new byte[args[0].length() / 3 + 2];
+		int ch;
+		String hex = args[0].toUpperCase();
+		for (int i = 0; i < hex.length(); i++) {
+			ch = hex.charAt(i);
+			if (ch >= '0' && ch <= '9')
+				bin[i / 3] = (byte) ((bin[i / 3] << 4) | ch - '0');
+			if (ch >= 'A' && ch <= 'F')
+				bin[i / 3] = (byte) ((bin[i / 3] << 4) | ch + 10 - 'A');
+		}
+		makeTable();
+		System.out.println(BitWise.toHex(calc(bin, 0, args[0].length() / 3)));
+
+	}
+
 	// fucking endianess
 	static int reverseInt(int b) {
 		int r = 0;
