@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import mpeg.PCR;
 import mpeg.TSP;
 import mpeg.pes.CC;
 import mpeg.psi.EIT;
@@ -80,6 +81,7 @@ public class Parameters {
 			newParms[startArgs.length] = op;
 			newParms[startArgs.length + 1] = outFile;
 			System.arraycopy(pids, 0, newParms, startArgs.length + 2, pids.length);
+			preParse(newParms);
 			startParser(newParms);
 			startArgs = oldParms;
 		}
@@ -345,6 +347,10 @@ public class Parameters {
 		if (noTree)
 			System.out.println(initialMessage);
 		if (!noStats) {
+			int statLevel = MainPanel.addTreeItem("TS bitrate (bps): " + Math.round(PCR.getAverageBitrate() * 1000000),
+					0, MainPanel.STATS_TREE);
+			// MainPanel.addTreeItem("TS bitrate (bps): ", statLevel,
+			// MainPanel.STATS_TREE);
 			((EIT) TableList.getByPid(EIT.FULLSEGPID)).printStatistics();
 			((EIT) TableList.getByPid(EIT.FULLSEGPID)).printEPG();
 			((EIT) TableList.getByPid(EIT.ONESEGPID)).printEPG();
