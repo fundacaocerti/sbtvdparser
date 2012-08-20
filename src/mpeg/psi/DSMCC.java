@@ -59,9 +59,9 @@ public class DSMCC extends Table {
 	public void updateProgress(int bytes) {
 		downloaded += bytes;
 		if (totalLenght == 0)
-			GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] {
-					Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
-					new Integer(progressLvl) }, true);
+			GuiMethods.runMethod(GuiMethods.CHANGEITEM,
+					new Object[] { Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
+							new Integer(progressLvl) }, true);
 		else
 			GuiMethods
 					.runMethod(
@@ -191,9 +191,9 @@ public class DSMCC extends Table {
 				return;
 			int ddmLvl = addSubItem("downloadDataMessage", m.partLvl); //$NON-NLS-1$
 			addSubItem("blockNumber: " + BitWise.toHex(blockNumber), ddmLvl); //$NON-NLS-1$
-			moduleList.feedData(m, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize() + 1, blockNumber, ddmLvl);
+			moduleList.feedData(m, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize(), blockNumber, ddmLvl);
 		} else {
-			moduleList.cacheData(moduleId, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize() + 1, blockNumber);
+			moduleList.cacheData(moduleId, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize(), blockNumber);
 		}
 	}
 
