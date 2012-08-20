@@ -76,6 +76,7 @@ public class FileDropListener implements DropTargetListener {
 				// source file is in a remote location
 				return;
 			String[] files = (String[]) event.data;
+			Parameters.preParse(new String[] { files[0] });
 			Parameters.startParser(new String[] { files[0] });
 		}
 	}
