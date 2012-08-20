@@ -27,7 +27,7 @@ import parsers.Packet;
 
 public class PIDStats {
 
-	static final int MAXPIDS = 300, SAMPLES = 4096;// 5,3 min.
+	static final int MAXPIDS = 300, SAMPLES = 16384;// 20 min.
 	static final float measureRate = 0.125f; // em segundos
 
 	static Set[] sets = new Set[MAXPIDS];
