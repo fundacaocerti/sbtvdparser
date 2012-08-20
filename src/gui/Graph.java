@@ -160,6 +160,8 @@ public class Graph extends Composite {
 	}
 
 	private static void resample() {
+		if (sourceGrData == null)
+			return;
 
 		int avg = (int) (timescale * 8);
 		int i = 0;
