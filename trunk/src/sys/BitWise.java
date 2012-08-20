@@ -81,13 +81,14 @@ public class BitWise {
 	}
 
 	public int pop() {
+		if (readPtr >= bufSize) {
+			loopTrap();
+			return 0;
+		}
 		int i = buf[readPtr];
 		if (i < 0)
 			i += 256;
-		if (readPtr < bufSize - 1)
-			readPtr++;
-		else
-			loopTrap();
+		readPtr++;
 		return i;
 	}
 
@@ -115,13 +116,14 @@ public class BitWise {
 	}
 
 	public int pop(int bytes) {
+		if (readPtr > bufSize - bytes || readPtr == bufSize) {
+			loopTrap();
+			return 0;
+		}
 		int i = buf[readPtr];
 		if (i < 0)
 			i += 256;
-		if (readPtr <= bufSize - bytes)
-			readPtr += bytes;
-		else
-			loopTrap();
+		readPtr += bytes;
 		return i;
 	}
 
@@ -179,7 +181,7 @@ public class BitWise {
 	}
 
 	public int getAvailableSize() {
-		return bufSize - readPtr - 1;
+		return bufSize - readPtr;
 	}
 
 	public void setBufferSize(int size) {
