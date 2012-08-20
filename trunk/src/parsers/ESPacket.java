@@ -38,7 +38,7 @@ public class ESPacket {
 		// TSP.print();
 		if ((TSP.continuityCounter - continuityOld != 1) && (continuityOld - TSP.continuityCounter != 15)
 				&& (continuityOld != -1))
-			TableList.continuityErrorCounters[PESList.pesCount]++;
+			TableList.continuityErrorCounters[PESList.getLenght()]++;
 		continuityOld = TSP.continuityCounter;
 
 		if (Packet.layer > 0 && Packet.layer < 4)

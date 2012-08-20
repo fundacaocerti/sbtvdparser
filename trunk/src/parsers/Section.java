@@ -98,7 +98,7 @@ public class Section {
 			// "+list.continuityErrorCounters[list.tableIndex],
 			// 0);
 			table.resetMultissection();
-			TableList.tablesParsed[TableList.tableIndex] = table.printDescription(sectionPayload);
+			table.parsed = table.printDescription(sectionPayload);
 		} else {
 			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
 				System.out.println("adaptation present"); //$NON-NLS-1$

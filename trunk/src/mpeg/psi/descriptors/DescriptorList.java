@@ -90,7 +90,7 @@ public class DescriptorList {
 		exception = false;
 		for (int i = 0; i < descList.length; i++) {
 			Class<?> descClass = descList[i];
-			if (thisClass.getTag(descClass) == tag) {
+			if (getInstance().getTag(descClass) == tag) {
 				Descriptor d = thisClass.getDescriptor(descClass, treeIndex, bw);
 				d.setUp(treeIndex, bw);
 				thisClass.invokeMethod(descClass, d, "printDescription");

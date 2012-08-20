@@ -22,14 +22,13 @@
 package mpeg.pes;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class PESList {
 
-	static PES[] pesList = new PES[100];
+	static HashMap<Integer, PES> pesList = new HashMap<Integer, PES>();
 
 	public static int[] continuityErrorCounters = new int[200];
-
-	public static int pesCount = 0;
 
 	// TODO: remover todos os publics e por os métodos que usam as vars.
 	public static void setDefaultPids() {
@@ -39,23 +38,19 @@ public class PESList {
 	public static PES getByPid(int pid) {
 		if (pid == 0xFFFF)
 			return null;
-		for (int i = 0; i < pesCount; i++)
-			if (pesList[i].pid == pid || pesList[i].pidAlt == pid)
-				return pesList[i];
-		return null;
+		return pesList.get(new Integer(pid));
 	}
 
 	public static int getLenght() {
-		return pesCount;
+		return pesList.size();
 	}
 
 	public static void addElementaryStream(PES pes) {
-		pesList[pesCount] = pes;
-		pesCount++;
+		pesList.put(new Integer(pes.pid), pes);
 	}
 
 	public static void resetList() {
+		pesList.clear();
 		Arrays.fill(continuityErrorCounters, 0);
-		pesCount = 0;
 	}
 }

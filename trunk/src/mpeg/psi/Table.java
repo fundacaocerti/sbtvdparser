@@ -31,6 +31,8 @@ import sys.PIDStats;
 
 public class Table {
 
+	public boolean parsed = false;
+
 	public String name = null;
 
 	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF, crcFails = 0, versionNumber = -1, crc,
@@ -203,7 +205,7 @@ public class Table {
 		bufWriteIndx += writeSize;
 
 		if (readyToParse())
-			TableList.tablesParsed[TableList.tableIndex] = printDescription(bigBuffer);
+			parsed = printDescription(bigBuffer);
 	}
 
 	int eitGroup = 0;
