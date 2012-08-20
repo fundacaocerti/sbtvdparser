@@ -32,9 +32,6 @@ public class TableList {
 
 	public static int[] continuityErrorCounters = new int[200];
 
-	// TODO: use a hashmap
-	public static boolean[] tablesParsed = new boolean[200];
-
 	public static int tableIndex = 0;
 
 	// TODO: remover todos os publics e p�r os m�todos que usam as vars.
@@ -86,13 +83,12 @@ public class TableList {
 	public static boolean tablesCaught() {
 		boolean res = true;
 		for (int i = 0; i < tableList.size(); i++)
-			if (!tablesParsed[i])
+			if (!tableList.get(i).parsed)
 				res = false;
 		return res;
 	}
 
 	public static void resetList() {
-		Arrays.fill(tablesParsed, false);
 		Arrays.fill(continuityErrorCounters, 0);
 		tableList.removeAllElements();
 		setDefaultPids();
