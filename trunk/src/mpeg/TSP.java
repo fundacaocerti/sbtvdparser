@@ -53,16 +53,17 @@ public class TSP {
 		adaptationFieldControl = BitWise.stripBits(content[2], 6, 2);
 		continuityCounter = BitWise.stripBits(content[2], 4, 4);
 		AdaptationField.lenght = 0;
+		dataOffset = 3;
 		/*
 		 * 00 Reserved for future use by ISO/IEC 01 No adaptation_field, payload
 		 * only 10 Adaptation_field only, no payload 11 Adaptation_field
 		 * followed by payload
 		 */
 		if (adaptationFieldControl == 2 || adaptationFieldControl == 3) {
-			AdaptationField.parse(content, 4, pid);
+			AdaptationField.parse(content, 3, pid);
 		}
 		if (adaptationFieldControl == 1 || adaptationFieldControl == 3) {
-			dataOffset = 3 + AdaptationField.lenght;
+			dataOffset += AdaptationField.lenght;
 		}
 	}
 }

@@ -63,16 +63,13 @@ public class Section {
 
 		if (TSP.payloadUnitStartIndicator == 1) {
 			// inicio da seção
-			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
-				System.out.println("adaptation present"); //$NON-NLS-1$
 			int pointer_field = 0;
 			if (TSP.dataOffset < Packet.buffer.length)
 				pointer_field = Packet.buffer[TSP.dataOffset];
 			if (pointer_field < 0)
 				pointer_field += 256;
 			int srcPosition = TSP.dataOffset + 1;// 1 is the
-
-			if (pointer_field > 0) { // remainder of the last packet
+			if (pointer_field > 0) { // pointer field
 				table.feedPart(Packet.buffer, srcPosition, pointer_field);
 				srcPosition += pointer_field;
 			}
