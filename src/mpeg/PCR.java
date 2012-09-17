@@ -42,7 +42,7 @@ public class PCR {
 		smoothAvgBitrate = new double[3];
 		smoothAvgBitrate[0] = 0;// Mbps
 		smoothAvgBitrate[1] = 0;
-		smoothAvgBitrate[2] = 30;
+		smoothAvgBitrate[2] = 30000000;
 	}
 
 	public static PCR getInstance() {
@@ -94,14 +94,14 @@ public class PCR {
 		// on a 27 MHz clock.
 		pcr_extension = BitWise.stripBits(pcr_extension, 9, 9);
 		long pcr = pcr_base * 300 + pcr_extension;// ticks of a 27MHz clock
-		float timeStamp = ((float) pcr) / 27000000;
+		double timeStamp = ((double) pcr) / 27000000;
 		if (firstTimestamp == -1) {
 			firstTimestamp = timeStamp;
 			lastTimeStamp = timeStamp;
 			firstPacketCount = Packet.packetCount;
 			lastPacketCount = firstPacketCount;
 		} else {
-			if (timeStamp - lastTimeStamp > 2 || timeStamp - lastTimeStamp < -1) {
+			if (timeStamp - lastTimeStamp > 2 || timeStamp - lastTimeStamp < 0) {
 				lastTimeStamp = timeStamp;
 				Log.printWarning("PCR err"); //$NON-NLS-1$
 				Log.printWarning("lts: " + lastTimeStamp); //$NON-NLS-1$

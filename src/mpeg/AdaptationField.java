@@ -36,13 +36,14 @@ public class AdaptationField {
 			lenght = 0;
 		if (pcrPid == pid) {
 			BitWise bw = new BitWise(content);
-			bw.setOffset(offset);
-			bw.setBufferSize(lenght + offset + 1);
+			bw.setOffset(offset+1);
+			bw.setBufferSize(lenght + offset + 2);
 			boolean pcrFlag = BitWise.stripBits(bw.pop(), 5, 1) == 1;
 			if (pcrFlag) {
 				PCR.getInstance().update(bw);
 			}
 		}
+		lenght++;
 	}
 
 }
