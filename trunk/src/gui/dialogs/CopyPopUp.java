@@ -56,7 +56,6 @@ public class CopyPopUp implements Listener {
 	}
 
 	public void handleEvent(Event event) {
-		System.out.println("click");
 		if (event.type == SWT.MouseDown) {
 			mouseButton = event.button;
 			x = event.x;
