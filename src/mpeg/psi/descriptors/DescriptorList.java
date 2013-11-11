@@ -37,9 +37,9 @@ public class DescriptorList {
 			thisClass = new DescriptorList();
 			thisClass.descList = new Class<?>[] { TSinformation.class, TerrestrialSystemDelivery.class,
 					PartialReception.class, StreamIdentifier.class, DataComponent.class, Component.class,
-					ApplicationSignaling.class, NetworkName.class, ParentalRating.class, ShortEvent.class,
-					Service.class, DataContent.class, AudioComponent.class, CarouselID.class, AssociationTag.class,
-					ExtendedEvent.class, LocalTimeOffset.class };
+					ApplicationSignaling.class, NetworkName.class, ParentalRating.class, ShortEvent.class, Service.class,
+					DataContent.class, AudioComponent.class, CarouselID.class, AssociationTag.class, ExtendedEvent.class,
+					LocalTimeOffset.class, ComponentName.class, DataStreamAlignment.class, SatelliteSystemDelivery.class };
 		}
 		return thisClass;
 	}
@@ -94,8 +94,7 @@ public class DescriptorList {
 				Descriptor d = thisClass.getDescriptor(descClass, treeIndex, bw);
 				d.setUp(treeIndex, bw);
 				thisClass.invokeMethod(descClass, d, "printDescription");
-				if (!exception)
-					return;
+				if (!exception) return;
 			}
 		}
 		Descriptor d = new Descriptor();
