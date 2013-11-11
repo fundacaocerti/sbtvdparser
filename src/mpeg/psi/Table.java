@@ -149,9 +149,12 @@ public class Table {
 			// bw.printBuffer(0, 20);
 			return false;
 		}
+		int lastCrc = crc;
 		crc = 0;
 		for (int i = -1; i < 3; i++)
 			crc = (crc << 8) | ((ba[section_length + i]) & 0xff);
+		if (crc == lastCrc)
+			return false; //no need to re-parse
 		if (readyToParse())
 			return true;
 		if (readTableID < id || readTableID > idLimit) { // EITs have ranges
