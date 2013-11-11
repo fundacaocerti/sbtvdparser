@@ -51,7 +51,7 @@ public class LocalTimeOffset extends Descriptor {
 			addSubItem("offset: " + bw.consumeBits(4) + "" + bw.consumeBits(4) + "h " + bw.consumeBits(4) + ""
 					+ bw.consumeBits(4) + "m", level);
 			// time_of_change 40
-			addSubItem("time of change: " + TOT.formatMJD(TOT.parseMJD(bw)), level);
+			addSubItem("time of change: " + TOT.parseMJD(bw), level);
 			// next_time_offset 16
 			addSubItem("next time offset: " + bw.consumeBits(4) + "" + bw.consumeBits(4) + "h " + bw.consumeBits(4)
 					+ "" + bw.consumeBits(4) + "m", level);
