@@ -36,25 +36,22 @@ public class EPG {
 
 	BitWise bw = new BitWise(null);
 
-	private class Evt {
+	private class Evt implements Comparable<Evt> {
 		public String[] description;
-
-		Date startTime;
-
-		// evt[1] = TOT.formatMJD(start);
-		public boolean startsBefore(Evt e) {
-			if (e.startTime == null || startTime == null)
-				return false;
-			return startTime.before(e.startTime);
-		}
+		String startTime;
+		public Date startDate;
 
 		public String toString() {
-			return description[0] + " - " + TOT.formatMJD(startTime) + " " + description[1] + " : " + description[2] //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return description[0] + " - " + startTime + " " + description[1] + " : " + description[2] //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					+ "(" + description[4] + ") " + description[3]; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		public int compareTo(Evt e) {
+			return startDate.compareTo(e.startDate);
 		}
 	}
 
-	public void addEvent(int id, Date start, String duration, String name, String description, String rating) {
+	public void addEvent(int id, String start, String duration, String name, String description, String rating) {
 		String[] desc = new String[6];
 		desc[0] = BitWise.toHex(id);
 		desc[1] = duration;
@@ -64,14 +61,13 @@ public class EPG {
 		Evt e = new Evt();
 		e.description = desc;
 		e.startTime = start;
-		int i = 0;
-		while (i < evtList.size() && e.startsBefore(evtList.elementAt(i)))
-			i++;
-		evtList.add(i, e);
+		e.startDate = TOT.parseMJD(start);
+		evtList.add(e);
 	}
 
 	public void printDescription(int epgLevel) {
 		int i = 0;
+		java.util.Collections.sort(evtList);
 		while (i < evtList.size()) {
 			String s = (evtList.elementAt(i++)).toString();
 			// MainPanel.addTreeItem(s, epgLevel, MainPanel.EPG_TREE);
