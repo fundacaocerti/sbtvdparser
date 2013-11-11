@@ -23,9 +23,6 @@
 package mpeg.psi;
 
 import gui.MainPanel;
-
-import java.util.Date;
-
 import mpeg.PCR;
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.psi.descriptors.ParentalRating;
@@ -114,7 +111,7 @@ public class EIT extends Table {
 		int loopLevel = addSubItem("Event loop:");
 		while (bw.getAvailableSize() > 0) {
 			int id = bw.pop16();
-			Date start = TOT.parseMJD(bw);
+			String start = TOT.parseMJD(bw);
 			int hexTime;
 			StringBuffer duration = new StringBuffer();
 			for (i = 0; i < 3; i++) {
@@ -127,7 +124,7 @@ public class EIT extends Table {
 			}
 
 			int evtLevel = addSubItem("event_id: " + BitWise.toHex(id), loopLevel);
-			addSubItem("start_time (GMT-3): " + TOT.formatMJD(start), evtLevel);
+			addSubItem("start_time (GMT-3): " + start, evtLevel);
 			addSubItem("duration: " + duration.toString(), evtLevel);
 
 			String[] runningStatus = { "undefined", "not running", "starts soon", "paused", "running", "off-air",
