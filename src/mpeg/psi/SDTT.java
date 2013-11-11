@@ -81,7 +81,7 @@ public class SDTT extends Table {
 			// for(i=0;i<N;i++){
 			while (sheduleLenght > 0) {
 				// start_time 40
-				addSubItem("start_time: " + TOT.formatMJD(TOT.parseMJD(bw)), sheduleLoop);
+				addSubItem("start_time: " + TOT.parseMJD(bw), sheduleLoop);
 				// duration 24
 				int duration = bw.pop16() << 8 + bw.pop();
 				addSubItem("duration: " + duration, sheduleLoop);

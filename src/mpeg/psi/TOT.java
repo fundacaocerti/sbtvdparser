@@ -22,12 +22,11 @@
 //Time Offset Table;
 package mpeg.psi;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
 
 import mpeg.PCR;
 import mpeg.psi.descriptors.DescriptorList;
@@ -56,11 +55,10 @@ public class TOT extends Table {
 		lastBitrate = 0;
 	}
 
+	@Override
 	public boolean printDescription(byte[] ba) {
-		if (!verifySection(ba))
-			return false;
-		if (totPacketCounter == 0)
-			totPacketCounter = Packet.packetCount;
+		if (!verifySection(ba)) return false;
+		if (totPacketCounter == 0) totPacketCounter = Packet.packetCount;
 		// time_offset_section(){
 		// UTC-3_time 40 bslbf
 		calculateTsBitrate();
@@ -69,11 +67,8 @@ public class TOT extends Table {
 			bw.pop(bw.getAvailableSize());
 			return false;
 		}
-		ts = parseMJD(bw);
-		String timestamp = formatMJD(ts);
-
 		printBasicInfo();
-		addSubItem("UTC-3_time: " + timestamp);
+		addSubItem("UTC-3_time: " + parseMJD(bw));
 		// reserved 4 bslbf
 		bw.consumeBits(4);
 		// descriptors_loop_length 12 uimsbf
@@ -92,19 +87,13 @@ public class TOT extends Table {
 		if (lastpacketCounter != 0) {
 			long packetsFromLastTOT = Packet.packetCount - lastpacketCounter;
 			int secondsFromLastTOT;
-			if (currentTimeStamp < lastTimeStamp)
-				secondsFromLastTOT = currentTimeStamp + 3600 - lastTimeStamp;
-			else
-				secondsFromLastTOT = currentTimeStamp - lastTimeStamp;
+			if (currentTimeStamp < lastTimeStamp) secondsFromLastTOT = currentTimeStamp + 3600 - lastTimeStamp;
+			else secondsFromLastTOT = currentTimeStamp - lastTimeStamp;
 			float bitrate;
-			if (Packet.is204b)
-				bitrate = (float) packetsFromLastTOT / secondsFromLastTOT * 204 * 8 / 1000000;
-			else
-				bitrate = (float) packetsFromLastTOT / secondsFromLastTOT * 188 * 8 / 1000000;
-			if (lastBitrate == 0)
-				lastBitrate = bitrate;
-			else
-				lastBitrate = (lastBitrate * (totsParsed - 1) + bitrate) / totsParsed;
+			if (Packet.is204b) bitrate = (float) packetsFromLastTOT / secondsFromLastTOT * 204 * 8 / 1000000;
+			else bitrate = (float) packetsFromLastTOT / secondsFromLastTOT * 188 * 8 / 1000000;
+			if (lastBitrate == 0) lastBitrate = bitrate;
+			else lastBitrate = (lastBitrate * (totsParsed - 1) + bitrate) / totsParsed;
 		}
 		lastTimeStamp = currentTimeStamp;
 		lastpacketCounter = Packet.packetCount;
@@ -113,8 +102,7 @@ public class TOT extends Table {
 	static Date ts = null;
 
 	public static String getTimeStamp(double secondOffset) {
-		if (ts == null)
-			return null;
+		if (ts == null) return null;
 		secondOffset -= PCR.getTimestamp(totPacketCounter);
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(ts);
@@ -123,23 +111,28 @@ public class TOT extends Table {
 		return formatMJD(calendar.getTime());
 	}
 
+	static SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss.SSS");
+
 	public static String formatMJD(Date d) {
 		if (d != null) {
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss.SSS");
 			return sdf.format(d);
 		}
 		return "invalid MJD";
 	}
 
-	public static Date parseMJD(BitWise bw) {
-		// if no ids were returned, something is wrong. get out.
-		String[] ids = TimeZone.getAvailableIDs(-3 * 60 * 60 * 1000);
-		if (ids.length == 0)
-			return null;
+	public static Date parseMJD(String d) {
+		if (d != null) {
+			try {
+				return sdf.parse(d);
+			} catch (ParseException e) {
+				return new Date();
+			}
+		}
+		return new Date();
+	}
 
-		// times in TOT and EPG are always GMT-3
-		SimpleTimeZone brt = new SimpleTimeZone(-3 * 60 * 60 * 1000, ids[0]);
-		GregorianCalendar gc = new GregorianCalendar(brt);
+	public static String parseMJD(BitWise bw) {
+		StringBuffer gc = new StringBuffer();
 
 		int[] ts = new int[3];
 		int mjd = bw.pop16();
@@ -156,8 +149,7 @@ public class TOT extends Table {
 		tmp = month / 11;
 		month = month + 2 - 12 * tmp;
 		year = 100 * (n - 49) + year + tmp;
-		if (year < 1990)
-			return null;
+		if (year < 1990) return null;
 
 		currentTimeStamp = 0;
 		int secondPerUnit = 3600;
@@ -173,15 +165,19 @@ public class TOT extends Table {
 			secondPerUnit = secondPerUnit / 60;
 			ts[i] = tmp;
 		}
-
-		gc.set(GregorianCalendar.YEAR, year);
-		gc.set(GregorianCalendar.MONTH, month - 1);
-		gc.set(GregorianCalendar.DAY_OF_MONTH, day);
-		gc.set(GregorianCalendar.HOUR_OF_DAY, ts[0]);
-		gc.set(GregorianCalendar.MINUTE, ts[1]);
-		gc.set(GregorianCalendar.SECOND, ts[2]);
+		// "dd/MMM/yyyy HH:mm:ss.SSS"
+		if (day < 10) gc.append('0');
+		gc.append(day).append('/');
+		gc.append("JanFevMarAbrMaiJunJulAgoSetOutNovDez".substring(month * 3 - 3, month * 3)).append('/');
+		gc.append(year).append(' ');
+		if (ts[0] < 10) gc.append('0');
+		gc.append(ts[0]).append(':');
+		if (ts[1] < 10) gc.append('0');
+		gc.append(ts[1]).append(':');
+		if (ts[2] < 10) gc.append('0');
+		gc.append(ts[2]);
 		// SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		// System.out.println(sdf.format(gc.getTime()) + " / " + gc.getTime());
-		return gc.getTime();
+		return gc.toString();
 	}
 }
