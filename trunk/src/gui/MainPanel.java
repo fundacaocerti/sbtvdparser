@@ -46,8 +46,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -135,7 +133,7 @@ public class MainPanel {
 	public static ScrolledComposite scrComp = null;
 
 	private void createTabFolder() {
-		GridData gridData = new GridData();
+		final GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
@@ -174,7 +172,7 @@ public class MainPanel {
 
 		psiTab.setControl(mainTree);
 		epgTab.setControl(epgTree);
-		statsTab.setControl(scrComp);
+		statsTab.setControl(statsTree);
 		ccTab.setControl(ccTree);
 		dsmccTab.setControl(dsmccTree);
 		logTab.setControl(log);
@@ -186,15 +184,7 @@ public class MainPanel {
 	 * 
 	 */
 	private void createStatsGroup() {
-		GridData gridData3 = new GridData();
-		gridData3.grabExcessHorizontalSpace = true;
-		gridData3.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData3.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData3.verticalSpan = 0;
-		gridData3.grabExcessVerticalSpace = true;
-		GridLayout gridLayout1 = new GridLayout();
-		gridLayout1.numColumns = 2;
-		GridData gridData = new GridData();
+		final GridData gridData = new GridData();
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.widthHint = 200;
@@ -202,33 +192,43 @@ public class MainPanel {
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 
-		scrComp = new ScrolledComposite(tabFolder, SWT.V_SCROLL);
-		scrComp.setLayout(new GridLayout());
-		scrComp.setMinSize(400, 400);
-		scrComp.setExpandHorizontal(true);
-		scrComp.setExpandVertical(true);
 		statsGroup = new Composite(scrComp, SWT.NONE);
-		scrComp.setContent(statsGroup);
-		statsGroup.setLayout(new GridLayout());
-		statsTree = new Tree(statsGroup, SWT.BORDER);
-		statsTree.setLayoutData(gridData);
 
-		pidStats = new Group(statsGroup, SWT.V_SCROLL);
-		pidStats.setLayoutData(gridData3);
-		pidStats.setLayout(gridLayout1);
+		statsGroup.setLayout(new GridLayout());
+		statsTree = new Tree(tabFolder, SWT.BORDER);
+		statsTree.setLayoutData(gridData);
 	}
 
 	private void createBitRateGraphTab() {
 		bitrateArea = new Group(tabFolder, SWT.BORDER);
-		bitrateArea.setLayout(new RowLayout());
-		((RowLayout) bitrateArea.getLayout()).type = SWT.VERTICAL;
+		bitrateArea.setLayout(new GridLayout());
+		// ((RowLayout) bitrateArea.getLayout()).type = SWT.VERTICAL;
 		brGraph = new Graph(bitrateArea, SWT.BORDER);
-		brGraph.setLayoutData(new RowData(300, 240));
+		brGraph.setLayoutData(new GridData(300, 240));
 		pidSelector = new Combo(bitrateArea, SWT.READ_ONLY);
-		pidSelector.setLayoutData(new RowData(260, 30));
+		pidSelector.setLayoutData(new GridData(260, 30));
 		pidSelector.addSelectionListener(new PIDSelection());
 		pidLabel = new Label(bitrateArea, SWT.NONE);
 		graphInfo = new Label(bitrateArea, SWT.NONE);
+
+		scrComp = new ScrolledComposite(bitrateArea, SWT.V_SCROLL);
+		scrComp.setLayout(new GridLayout());
+		scrComp.setMinSize(400, 400);
+		scrComp.setExpandHorizontal(true);
+		scrComp.setExpandVertical(true);
+		pidStats = new Group(scrComp, SWT.V_SCROLL);
+		scrComp.setContent(pidStats);
+		final GridData gridData3 = new GridData();
+		gridData3.grabExcessHorizontalSpace = true;
+		gridData3.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+		gridData3.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
+		gridData3.verticalSpan = 0;
+		gridData3.grabExcessVerticalSpace = true;
+		final GridLayout gridLayout1 = new GridLayout();
+		gridLayout1.numColumns = 2;
+		pidStats.setLayout(gridLayout1);
+		pidStats.setLayoutData(gridData3);
+		scrComp.setLayoutData(gridData3);
 	}
 
 	public void initialize() {
@@ -236,6 +236,7 @@ public class MainPanel {
 			display = Display.getDefault();
 			createSShell();
 			sShell.open();
+			sShell.layout(true, true);
 			createDND();
 		}
 		for (int i = 0; i < msgCache.size(); i++)
@@ -244,24 +245,21 @@ public class MainPanel {
 	}
 
 	public void handleEvents() {
-		while (!sShell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
+		while (!sShell.isDisposed())
+			if (!display.readAndDispatch()) display.sleep();
 	}
 
 	public void dispose() {
 		try { // in case the display is already disposed
-			if (display != null)
-				display.dispose();
-		} catch (org.eclipse.swt.SWTException e) {
+			if (display != null) display.dispose();
+		} catch (final org.eclipse.swt.SWTException e) {
 		}
 		isOpen = false;
 	}
 
 	private void createDND() {
-		int dndOps = DND.DROP_LINK | DND.DROP_COPY | DND.DROP_DEFAULT;
-		DropTarget target = new DropTarget(sShell, dndOps);
+		final int dndOps = DND.DROP_LINK | DND.DROP_COPY | DND.DROP_DEFAULT;
+		final DropTarget target = new DropTarget(sShell, dndOps);
 		target.setTransfer(new Transfer[] { fileTransfer });
 		target.addDropListener(new FileDropListener());
 	}
@@ -270,11 +268,11 @@ public class MainPanel {
 			langEnItem, tools, demux, crop;
 
 	private void createSShell() {
-		GridData progressGridData = new GridData();
+		final GridData progressGridData = new GridData();
 		progressGridData.grabExcessHorizontalSpace = true;
 		progressGridData.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
 		progressGridData.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		GridLayout gridLayout = new GridLayout();
+		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 5;
 
 		sShell = new Shell();
@@ -298,12 +296,12 @@ public class MainPanel {
 		tools.setMenu(toolsMenu);
 		demux = new MenuItem(toolsMenu, SWT.PUSH);
 		crop = new MenuItem(toolsMenu, SWT.PUSH);
-		Demux demuxListener = new Demux(sShell);
+		final Demux demuxListener = new Demux(sShell);
 		demux.addSelectionListener(demuxListener);
-		Crop cropListener = new Crop(sShell);
+		final Crop cropListener = new Crop(sShell);
 		crop.addSelectionListener(cropListener);
 
-		SettingsListener setLstnr = new SettingsListener();
+		final SettingsListener setLstnr = new SettingsListener();
 		langPtItem.addSelectionListener(setLstnr);
 		langEnItem.addSelectionListener(setLstnr);
 		langEnItem.setData("en"); //$NON-NLS-1$
@@ -312,7 +310,7 @@ public class MainPanel {
 		openItem = new MenuItem(fileMenu, SWT.PUSH);
 		openFilterItem = new MenuItem(fileMenu, SWT.PUSH);
 		openItem.setAccelerator(SWT.CTRL + 'A');
-		Open openFileListener = new Open(sShell, openItem, openFilterItem);
+		final Open openFileListener = new Open(sShell, openItem, openFilterItem);
 		openItem.addSelectionListener(openFileListener);
 
 		openFilterItem.setAccelerator(SWT.CTRL + 'F');
@@ -324,7 +322,7 @@ public class MainPanel {
 
 		saveItem = new MenuItem(fileMenu, SWT.PUSH);
 		saveItem.setAccelerator(SWT.CTRL + 'S');
-		Save saveFileListener = new Save(sShell);
+		final Save saveFileListener = new Save(sShell);
 
 		about = new MenuItem(fileMenu, SWT.PUSH);
 		about.addSelectionListener(new About(sShell));
@@ -333,20 +331,20 @@ public class MainPanel {
 		inputLimit = new Text(sShell, SWT.BORDER);
 		inputLimit.setTextLimit(10);
 		btPause = new Button(sShell, SWT.NONE);
-		InputStream isPause = this.getClass().getClassLoader().getResourceAsStream("res/bot_pause.png"); //$NON-NLS-1$
+		final InputStream isPause = this.getClass().getClassLoader().getResourceAsStream("res/bot_pause.png"); //$NON-NLS-1$
 		imPause = new Image(Display.getCurrent(), isPause);
 		btPause.addSelectionListener(new ButtonListener());
 		btPause.setData("pause"); //$NON-NLS-1$
 		btStop = new Button(sShell, SWT.NONE);
 		btStop.setData("stop"); //$NON-NLS-1$
-		InputStream isStop = this.getClass().getClassLoader().getResourceAsStream("res/bot_stop.png"); //$NON-NLS-1$
+		final InputStream isStop = this.getClass().getClassLoader().getResourceAsStream("res/bot_stop.png"); //$NON-NLS-1$
 		imStop = new Image(Display.getCurrent(), isStop);
 		btStop.setImage(imStop);
 		btStop.setEnabled(false);
 		btStop.addSelectionListener(new ButtonListener());
-		InputStream isPlay = this.getClass().getClassLoader().getResourceAsStream("res/bot_play.png"); //$NON-NLS-1$
+		final InputStream isPlay = this.getClass().getClassLoader().getResourceAsStream("res/bot_play.png"); //$NON-NLS-1$
 		imPlay = new Image(Display.getCurrent(), isPlay);
-		InputStream isCrop = this.getClass().getClassLoader().getResourceAsStream("res/bot_crop.png"); //$NON-NLS-1$
+		final InputStream isCrop = this.getClass().getClassLoader().getResourceAsStream("res/bot_crop.png"); //$NON-NLS-1$
 		imCrop = new Image(Display.getCurrent(), isCrop);
 		progressBar = new MultiProgressBar(sShell, SWT.BORDER, 500);
 		// progressBar.setLayoutData(progressGridData);
@@ -354,17 +352,19 @@ public class MainPanel {
 		createTabFolder();
 		saveItem.addSelectionListener(saveFileListener);
 
-		CopyPopUp mouseListener = new CopyPopUp(sShell, 80);
+		final CopyPopUp mouseListener = new CopyPopUp(sShell, 80);
 		mainTree.addListener(SWT.Selection, mouseListener);
 		mainTree.addListener(SWT.MouseDown, mouseListener);
 
-		DSMCCSavePopUp savePopUp = new DSMCCSavePopUp(sShell, 80);
+		final DSMCCSavePopUp savePopUp = new DSMCCSavePopUp(sShell, 80);
 		dsmccTree.addListener(SWT.Selection, savePopUp);
 		dsmccTree.addListener(SWT.MouseDown, savePopUp);
 		progressBar.addListener(SWT.MouseDown, mouseListener);
 
 		statusBar = new Label(sShell, SWT.LEFT);
-		GridData statusGd = new GridData();
+		statusBar.setText(" ");
+		statusBar.computeSize(50, 50);
+		final GridData statusGd = new GridData();
 		statusGd.horizontalSpan = 5;
 		statusGd.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 
@@ -375,19 +375,17 @@ public class MainPanel {
 
 	public static final int PLAING = 0, PAUSED = 1, CROP_WAIT = 2, STOPPED = 3;
 
-	public static void setPauseButtonState(int state) {
-		String[] tooltips = { Messages.getString("MainPanel.pauseTip"), //$NON-NLS-1$
+	public static void setPauseButtonState(final int state) {
+		final String[] tooltips = { Messages.getString("MainPanel.pauseTip"), //$NON-NLS-1$
 				Messages.getString("MainPanel.playTip"), //$NON-NLS-1$
 				Messages.getString("MainPanel.cropTip"), //$NON-NLS-1$
 				Messages.getString("MainPanel.openPlayTip") //$NON-NLS-1$
 		};
-		Image[] images = { imPause, imPlay, imCrop, imPlay };
+		final Image[] images = { imPause, imPlay, imCrop, imPlay };
 		btPause.setToolTipText(tooltips[state]);
 		btPause.setImage(images[state]);
-		if (state == PLAING || state == PAUSED)
-			btStop.setEnabled(true);
-		else
-			btStop.setEnabled(false);
+		if (state == PLAING || state == PAUSED) btStop.setEnabled(true);
+		else btStop.setEnabled(false);
 	}
 
 	public static void setTexts() {
@@ -427,40 +425,37 @@ public class MainPanel {
 		crop.setText(Messages.getString("MainPanel.crop")); //$NON-NLS-1$
 	}
 
-	public static void setProgress(float progress) {
+	public static void setProgress(final float progress) {
 		GuiMethods.runMethod(GuiMethods.SETPROGRESSBAR, new Float(progress), true);
 	}
 
 	public static void getLimit() {
-		if (Parameters.noGui)
-			return;
+		if (Parameters.noGui) return;
 		GuiMethods.runMethod(GuiMethods.GETLIMITBOX, null, false);
 	}
 
-	public static void setLimit(long limit) {
-		if (Parameters.noGui)
-			return;
+	public static void setLimit(final long limit) {
+		if (Parameters.noGui) return;
 		GuiMethods.runMethod(GuiMethods.SETLIMITBOX, new Long(limit), false);
 	}
 
-	public static void setTreeData(int indx, Object data) {
+	public static void setTreeData(final int indx, final Object data) {
 		items.get(indx).contents = data;
 	}
 
-	public static int addTreeItem(String content, int parent) {
+	public static int addTreeItem(final String content, final int parent) {
 		return addTreeItem(content, parent, PSI_TREE);
 	}
 
 	// this messages can be added before the MainPanel is created, and will be
 	// shown later
-	public static void cacheMessage(String content) {
+	public static void cacheMessage(final String content) {
 		msgCache.add(content);
 	}
 
-	public static void changeTreeItem(String content, int index) {
-		if (targetFilter != null)
-			return;
-		LogicTree lt = (items.get(index));
+	public static void changeTreeItem(final String content, final int index) {
+		if (targetFilter != null) return;
+		final LogicTree lt = items.get(index);
 		lt.text = content;
 		lt.treeitem.setText(content);
 	}
@@ -469,53 +464,48 @@ public class MainPanel {
 	public static String tsNameId = null;
 	public static int tsNameIndex = 0;
 
-	public static int addTreeItem(String content, int parent, int rootIndx) {
+	public static int addTreeItem(String content, final int parent, final int rootIndx) {
 		if (targetOK) {
 			int ancestor = parent;
 			while (ancestor != filteredId && ancestor != 0) {
-				LogicTree elderOne = (items.get(ancestor)).parent;
-				if (ancestor == elderOne.indx)
-					break; // an item should not point to itself, but it does
+				final LogicTree elderOne = items.get(ancestor).parent;
+				if (ancestor == elderOne.indx) break; // an item should not point to itself, but it does
 				ancestor = elderOne.indx;
 			}
 			if (ancestor == 0) {
 				targetOK = false;
-				if (content.toLowerCase().indexOf(targetFilter.toLowerCase()) == -1)
-					return 0;
+				if (content.toLowerCase().indexOf(targetFilter.toLowerCase()) == -1) return 0;
 			}
 		}
-		if (targetFilter != null)
-			if (filterIsRegex) {
-				if (content.matches(targetFilter) && filterLimit != 0) {
-					content += Messages.getString("MainPanel.match"); //$NON-NLS-1$
-					addMatchingItem(parent, rootIndx);
-				}
-			} else if (content.toLowerCase().indexOf(targetFilter.toLowerCase()) != -1 && filterLimit != 0) {
+		if (targetFilter != null) if (filterIsRegex) {
+			if (content.matches(targetFilter) && filterLimit != 0) {
+				content += Messages.getString("MainPanel.match"); //$NON-NLS-1$
+				addMatchingItem(parent, rootIndx);
+			}
+		} else
+			if (content.toLowerCase().indexOf(targetFilter.toLowerCase()) != -1 && filterLimit != 0) {
 				content += Messages.getString("MainPanel.match"); //$NON-NLS-1$
 				addMatchingItem(parent, rootIndx);
 			}
 
 		LogicTree tit;
-		if (parent == 0)
-			tit = new LogicTree(content, trees[rootIndx], items.size());
-		else
-			tit = new LogicTree(content, items.get(parent), items.size());
+		if (parent == 0) tit = new LogicTree(content, trees[rootIndx], items.size());
+		else tit = new LogicTree(content, items.get(parent), items.size());
 		items.add(tit);
 
-		if (!Parameters.noGui && (targetFilter == null || targetOK || (content == tsNameId && !listOnlyMatches)))
-			GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { tit, new Integer(rootIndx) }, true);
+		if (!Parameters.noGui && (targetFilter == null || targetOK || content == tsNameId && !listOnlyMatches)) GuiMethods
+				.runMethod(GuiMethods.ADDTREEITEM, new Object[] { tit, new Integer(rootIndx) }, true);
 
 		// TODO: remove this flag and add a listener for the limit-box
-		if (filterLimit == 0)
-			Packet.limitNotReached = false;
+		if (filterLimit == 0) Packet.limitNotReached = false;
 
 		return items.size() - 1;
 	}
 
-	private static void addMatchingItem(int parent, int rootIndx) {
+	private static void addMatchingItem(final int parent, final int rootIndx) {
 		filteredId = items.size();
 		targetOK = true;
-		Vector<LogicTree> reverse = new Vector<LogicTree>();
+		final Vector<LogicTree> reverse = new Vector<LogicTree>();
 		int p = parent;
 		LogicTree topItem = null;
 		int limit = 30;
@@ -525,13 +515,11 @@ public class MainPanel {
 			limit--;
 			p = topItem.parent.indx;
 		}
-		if (topItem != null && p == 0) {
-			topItem.parent = items.get(tsNameIndex);
-		}
+		if (topItem != null && p == 0) topItem.parent = items.get(tsNameIndex);
 		for (int i = reverse.size(); i > 0; i--) {
-			LogicTree lt = reverse.get(i - 1);
-			if (!lt.isVisible)
-				GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { lt, new Integer(rootIndx) }, true);
+			final LogicTree lt = reverse.get(i - 1);
+			if (!lt.isVisible) GuiMethods.runMethod(GuiMethods.ADDTREEITEM, new Object[] { lt, new Integer(rootIndx) },
+					true);
 		}
 		filterLimit--;
 	}
@@ -542,49 +530,43 @@ public class MainPanel {
 
 	public static Group pidStats = null;
 
-	public static Tree getTree(int rootIndx) {
-		Tree trees[] = { mainTree, epgTree, statsTree, dsmccTree, ccTree };
+	public static Tree getTree(final int rootIndx) {
+		final Tree trees[] = { mainTree, epgTree, statsTree, dsmccTree, ccTree };
 		return trees[rootIndx];
 	}
 
 	public static void printTree() {
-		if (!Parameters.noGui && display != null && !display.isDisposed())
-			display.asyncExec(null);
-		else
-			try {
-				trees[PSI_TREE].print(System.out);
-				return;
-			} catch (UnsupportedEncodingException e1) {
-				Log.printStackTrace(e1);
-			} catch (IOException e1) {
-				Log.printStackTrace(e1);
-			}
-	}
-
-	public static void printTabsAsText() {
-		try {
-			for (int i = 1; i < trees.length; i++) {
-				trees[i].print(System.out);
-			}
+		if (!Parameters.noGui && display != null && !display.isDisposed()) display.asyncExec(null);
+		else try {
+			trees[PSI_TREE].print(System.out);
 			return;
-		} catch (UnsupportedEncodingException e1) {
+		} catch (final UnsupportedEncodingException e1) {
 			Log.printStackTrace(e1);
-		} catch (IOException e1) {
+		} catch (final IOException e1) {
 			Log.printStackTrace(e1);
 		}
 	}
 
-	public static void guiThreadExec(Runnable r, boolean sync) {
-		if (!Parameters.noGui && display != null && !display.isDisposed() && r != null)
-			if (sync)
-				display.syncExec(r);
-			else
-				display.asyncExec(r);
+	public static void printTabsAsText() {
+		try {
+			for (int i = 1; i < trees.length; i++)
+				trees[i].print(System.out);
+			return;
+		} catch (final UnsupportedEncodingException e1) {
+			Log.printStackTrace(e1);
+		} catch (final IOException e1) {
+			Log.printStackTrace(e1);
+		}
+	}
+
+	public static void guiThreadExec(final Runnable r, final boolean sync) {
+		if (!Parameters.noGui && display != null && !display.isDisposed() && r != null) if (sync) display.syncExec(r);
+		else display.asyncExec(r);
 	}
 
 	public static void clearTree() {
 		if (!Parameters.noGui) {
-			Tree tmp[] = { mainTree, epgTree, statsTree, dsmccTree, ccTree };
+			final Tree tmp[] = { mainTree, epgTree, statsTree, dsmccTree, ccTree };
 			for (int i = 0; i < tmp.length; i++)
 				GuiMethods.runMethod(GuiMethods.CLEARTREE, tmp[i], true);
 			items.removeAllElements();
@@ -596,24 +578,22 @@ public class MainPanel {
 		// TableList.resetList();
 	}
 
-	public static void saveTree(String filePth) {
-		String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"), //$NON-NLS-1$ //$NON-NLS-2$
+	public static void saveTree(final String filePth) {
+		final String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"), //$NON-NLS-1$ //$NON-NLS-2$
 				Messages.getString("MainPanel.stats"), Messages.getString("MainPanel.dsmcc"), //$NON-NLS-1$ //$NON-NLS-2$
 				Messages.getString("MainPanel.caption") }; //$NON-NLS-1$
 		try {
-			File f = new File(filePth);
-			if (f.exists())
-				f.delete();
+			final File f = new File(filePth);
+			if (f.exists()) f.delete();
 			f.createNewFile();
-			FileOutputStream fos = new FileOutputStream(f);
+			final FileOutputStream fos = new FileOutputStream(f);
 			if (filePth.endsWith("htm")) //$NON-NLS-1$
-				for (int i = 0; i < trees.length; i++) {
-					trees[i].printBonsai(fos, treeNames[i]);
-				}
-			else if (filePth.endsWith("xml")) //$NON-NLS-1$
-				trees[PSI_TREE].printXML(fos);
+			for (int i = 0; i < trees.length; i++)
+				trees[i].printBonsai(fos, treeNames[i]);
 			else
-				for (int i = 0; i < trees.length; i++) {
+				if (filePth.endsWith("xml")) //$NON-NLS-1$
+				trees[PSI_TREE].printXML(fos);
+				else for (int i = 0; i < trees.length; i++) {
 					fos.write("****".getBytes()); //$NON-NLS-1$
 					fos.write(treeNames[i].getBytes());
 					fos.write("****\n".getBytes()); //$NON-NLS-1$
@@ -622,15 +602,13 @@ public class MainPanel {
 				}
 			fos.flush();
 			fos.close();
-		} catch (Exception e) {
-			if (Parameters.noGui)
-				System.err.println(e.getMessage());
-			else
-				new TreeItem(mainTree, SWT.NONE).setText(e.getMessage());
+		} catch (final Exception e) {
+			if (Parameters.noGui) System.err.println(e.getMessage());
+			else new TreeItem(mainTree, SWT.NONE).setText(e.getMessage());
 		}
 	}
 
-	public static void setFilter(String filter) {
+	public static void setFilter(final String filter) {
 		targetFilter = filter;
 		targetOK = false;
 		filteredId = 0;
@@ -640,17 +618,17 @@ public class MainPanel {
 		filterLimit = 1;
 	}
 
-	public static void setCursor(int type) {
+	public static void setCursor(final int type) {
 		GuiMethods.runMethod(GuiMethods.SETCURSOR, new Integer(type), false);
 	}
 
-	public static void setTitle(String text) {
+	public static void setTitle(final String text) {
 		GuiMethods.runMethod(GuiMethods.SETTITLE, text, true);
 	}
 
 	private static int filterLimit = 1;
 
-	public static void setFilterLimit(int fLimit) {
+	public static void setFilterLimit(final int fLimit) {
 		filterLimit = fLimit;
 	}
 

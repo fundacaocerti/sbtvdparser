@@ -47,8 +47,8 @@ public class PIDStats {
 		pb.setToolTipText(name);
 		pb.setLayoutData(gd);
 		barCount++;
-		MainPanel.statsTree.pack(true);
-		MainPanel.statsGroup.pack(true);
+		// MainPanel.statsTree.pack(true);
+		// MainPanel.statsGroup.pack(true);
 		MainPanel.scrComp.setMinSize(400, 100 + barCount * 24);
 		MainPanel.pidSelector.add(pidText + " - " + name); //$NON-NLS-1$
 	}
@@ -56,7 +56,7 @@ public class PIDStats {
 	// public static void scaleBars() {
 	// for (int i = 0; i < bars.size(); i++) {
 	// ((ProgressBar)bars.elementAt(i)).setSelection(10);
-	//			
+	//
 	// }
 	// }
 
