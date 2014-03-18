@@ -59,7 +59,7 @@ public class Parameters {
 	public static InputStream getStream() {
 		try {
 			bis = new BufferedInputStream(new FileInputStream(srcFile), 4000000);
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			Log.printWarning(initialMessage);
 			Log.printStackTrace(new Exception(initialMessage));
@@ -69,15 +69,14 @@ public class Parameters {
 	}
 
 	public static void startParser() {
-		if (startArgs != null)
-			startParser(startArgs);
+		if (startArgs != null) startParser(startArgs);
 	}
 
-	public static void startParser(String outFile, String[] pids, String op) {
+	public static void startParser(final String outFile, final String[] pids, final String op) {
 		if (startArgs != null) {
-			String[] newParms = new String[startArgs.length + 2 + pids.length];
+			final String[] newParms = new String[startArgs.length + 2 + pids.length];
 			System.arraycopy(startArgs, 0, newParms, 0, startArgs.length);
-			String[] oldParms = startArgs;
+			final String[] oldParms = startArgs;
 			newParms[startArgs.length] = op;
 			newParms[startArgs.length + 1] = outFile;
 			System.arraycopy(pids, 0, newParms, startArgs.length + 2, pids.length);
@@ -87,11 +86,10 @@ public class Parameters {
 		}
 	}
 
-	public static void preParse(String[] args) {
-		if (args.length != 0 && args[0].equalsIgnoreCase("-help"))
-			printHelp();
+	public static void preParse(final String[] args) {
+		if (args.length != 0 && args[0].equalsIgnoreCase("-help")) printHelp();
 		startArgs = args;
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		sb.append(Messages.getString("Parameters.command")); //$NON-NLS-1$
 		for (int i = 0; i < args.length; i++) {
 			sb.append(args[i]);
@@ -100,14 +98,12 @@ public class Parameters {
 		sb.append("]"); //$NON-NLS-1$
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-noGui")) //$NON-NLS-1$
-				noGui = true;
+			noGui = true;
 			if (args[i].equalsIgnoreCase("-noTree")) //$NON-NLS-1$
-				noTree = true;
+			noTree = true;
 			if (args[i].equalsIgnoreCase("-noStats")) //$NON-NLS-1$
-				noStats = true;
-			if (args[i].equalsIgnoreCase("-help")) {//$NON-NLS-1$
-				printHelp();
-			}
+			noStats = true;
+			if (args[i].equalsIgnoreCase("-help")) printHelp();
 		}
 		Log.printWarning(sb.toString());
 	}
@@ -132,31 +128,28 @@ public class Parameters {
 		System.exit(0);
 	}
 
-	public static void startParser(String[] args) {
+	public static void startParser(final String[] args) {
+		startArgs = args;
 		if (args.length == 0) {
 			Log.printWarning(Messages.getString("Parameters.noInput")); //$NON-NLS-1$
 			return;
 		}
-		String srcPath = args[0];
-		if (srcPath == null)
-			return;
+		final String srcPath = args[0];
+		if (srcPath == null) return;
 		srcFile = new File(srcPath);
 		Log.setLogFile(new File(srcFile.getParentFile(), "log.txt")); //$NON-NLS-1$
 		Log.setTsFile(srcFile);
 
-		if (srcFile.getName().endsWith(".lnk")) { //$NON-NLS-1$
-			try {
-				Link lnkp = new Link();
-				lnkp.parse(srcFile.getAbsolutePath());
-				srcFile = new File(lnkp.getFilePath());
-				if (!srcFile.exists())
-					srcFile = new File(lnkp.getAlternatePath());
-			} catch (Exception e) {
-				initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-				Log.printStackTrace(new Exception(initialMessage));
-				Log.printWarning(initialMessage);
-				return;
-			}
+		if (srcFile.getName().endsWith(".lnk")) try {
+			final Link lnkp = new Link();
+			lnkp.parse(srcFile.getAbsolutePath());
+			srcFile = new File(lnkp.getFilePath());
+			if (!srcFile.exists()) srcFile = new File(lnkp.getAlternatePath());
+		} catch (final Exception e) {
+			initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			Log.printStackTrace(new Exception(initialMessage));
+			Log.printWarning(initialMessage);
+			return;
 		}
 
 		if (!srcFile.exists() || !srcFile.isFile()) {
@@ -170,7 +163,7 @@ public class Parameters {
 
 		if (srcFile.getName().endsWith(".pes")) { //$NON-NLS-1$
 			initMainPanel();
-			IndependentPES pes = new IndependentPES(bis);
+			final IndependentPES pes = new IndependentPES(bis);
 			// TODO: set pes type by user input
 			pes.start();
 			return;
@@ -189,73 +182,68 @@ public class Parameters {
 		float[] cropPoints = null;
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].equalsIgnoreCase("-forcePid")) //$NON-NLS-1$
-				forcePid = i;
+			forcePid = i;
 			if (args[i].equalsIgnoreCase("-filter")) //$NON-NLS-1$
-				filter = i;
+			filter = i;
 			if (args[i].equalsIgnoreCase("-limitInput")) //$NON-NLS-1$
-				Packet.limit = i;
-			if (forcePid > 0 && forcePid == i - 2) {
-				if (args[i - 1].startsWith("0x")) {
-					int pid = Integer.parseInt(args[i - 1].substring(2), 16);
-					String table = "mpeg.psi." + args[i];
-					System.out.println(table + " for pid " + pid);
-					try {
-						Class<?> cl = Class.forName(table);
-						if (cl.getSuperclass() == Table.class) {
-							Constructor<?> c = cl.getConstructor(new Class[] { int.class });
-							TableList.forceTable((Table) c.newInstance(new Object[] { pid }));
-							break;
-						} else
-							System.out.println("Not a table");
-					} catch (ClassNotFoundException e) {
-						System.out.println("ClassNotFoundException: " + e.getMessage());
-					} catch (SecurityException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InstantiationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Class<?> cl;
-					try {
-						cl = Class.forName(table);
-						TableList.forceTable((Table) cl.newInstance());
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (InstantiationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			Packet.limit = i;
+			if (forcePid > 0 && forcePid == i - 2) if (args[i - 1].startsWith("0x")) {
+				final int pid = Integer.parseInt(args[i - 1].substring(2), 16);
+				final String table = "mpeg.psi." + args[i];
+				System.out.println(table + " for pid " + pid);
+				try {
+					final Class<?> cl = Class.forName(table);
+					if (cl.getSuperclass() == Table.class) {
+						final Constructor<?> c = cl.getConstructor(new Class[] { int.class });
+						TableList.forceTable((Table) c.newInstance(new Object[] { pid }));
+						break;
+					} else System.out.println("Not a table");
+				} catch (final ClassNotFoundException e) {
+					System.out.println("ClassNotFoundException: " + e.getMessage());
+				} catch (final SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final NoSuchMethodException e) {
+				} catch (final IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Class<?> cl;
+				try {
+					cl = Class.forName(table);
+					TableList.forceTable((Table) cl.newInstance());
+				} catch (final ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-			if (filter > 0 && filter == i - 1)
-				MainPanel.setFilter(args[i]);
+			if (filter > 0 && filter == i - 1) MainPanel.setFilter(args[i]);
 			if (Packet.limit > 0 && Packet.limit == i - 1) {
 				Packet.limit = Long.parseLong(args[i]);
 				Packet.estimate = Packet.limit;
 			}
-			if (matchLimit > 0 && matchLimit == i - 1)
-				matchLimit = Integer.parseInt(args[i]);
+			if (matchLimit > 0 && matchLimit == i - 1) matchLimit = Integer.parseInt(args[i]);
 			if (args[i].equalsIgnoreCase("-limitMatches")) //$NON-NLS-1$
-				matchLimit = i;
+			matchLimit = i;
 			if (args[i].equalsIgnoreCase("-isRegex")) //$NON-NLS-1$
-				MainPanel.setFilterAsRegex();
+			MainPanel.setFilterAsRegex();
 			if (args[i].equalsIgnoreCase("-listOnlyMatches")) //$NON-NLS-1$
-				MainPanel.listOnlyMatches();
+			MainPanel.listOnlyMatches();
 			if (args[i].equalsIgnoreCase("-demux")) { //$NON-NLS-1$
 				int j;
 				for (j = i + 2; j < args.length && args[j].startsWith("0x"); j++) //$NON-NLS-1$
@@ -268,14 +256,13 @@ public class Parameters {
 				for (int k = 0; k < demuxPids.length; k++)
 					demuxPids[k] = Integer.parseInt(args[k + i + 2].substring(2), 16);
 				// TODO:
-				File f = new File(args[i + 1]);
-				if (f.exists())
-					f.delete();
+				final File f = new File(args[i + 1]);
+				if (f.exists()) f.delete();
 				try {
 					f.createNewFile();
-					FileOutputStream fos = new FileOutputStream(f);
+					final FileOutputStream fos = new FileOutputStream(f);
 					bos = new BufferedOutputStream(fos);
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					// TODO handle it
 					e.printStackTrace();
 				}
@@ -286,32 +273,28 @@ public class Parameters {
 				try {
 					cropPoints[0] = Float.parseFloat(args[i + 2]);
 					cropPoints[1] = Float.parseFloat(args[i + 3]);
-				} catch (NumberFormatException e1) {
+				} catch (final NumberFormatException e1) {
 					initialMessage = Messages.getString("Parameters.cropRange"); //$NON-NLS-1$
 					return;
 				}
 
-				File f = new File(args[i + 1]);
-				if (f.exists())
-					f.delete();
+				final File f = new File(args[i + 1]);
+				if (f.exists()) f.delete();
 				try {
 					f.createNewFile();
-					FileOutputStream fos = new FileOutputStream(f);
+					final FileOutputStream fos = new FileOutputStream(f);
 					bos = new BufferedOutputStream(fos);
-				} catch (IOException e) { // TODO handle it
+				} catch (final IOException e) { // TODO handle it
 					e.printStackTrace();
 				}
 				i += 3;
 
 			}
 		}
-		if (matchLimit > 0)
-			MainPanel.setFilterLimit(matchLimit);
-		else
-			MainPanel.setFilterLimit(-1);
+		if (matchLimit > 0) MainPanel.setFilterLimit(matchLimit);
+		else MainPanel.setFilterLimit(-1);
 		// if (!noGui)
-		if (!batchResults)
-			MainPanel.clearTree();
+		if (!batchResults) MainPanel.clearTree();
 		initMainPanel();
 		TOT.reset();
 		pp = new Packet(bis);
@@ -324,14 +307,13 @@ public class Parameters {
 			pp.bos = bos;
 		}
 		pp.start();
-		if (noGui)
-			synchronized (pp) {
-				try {
-					pp.join();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		if (noGui) synchronized (pp) {
+			try {
+				pp.join();
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
 			}
+		}
 	}
 
 	private static void initMainPanel() {
@@ -344,43 +326,36 @@ public class Parameters {
 	}
 
 	public static void printStats() {
-		if (noTree)
-			System.out.println(initialMessage);
+		if (noTree) System.out.println(initialMessage);
 		if (!noStats) {
-			int statLevel = MainPanel.addTreeItem("TS bitrate (bps): " + Math.round(PCR.getAverageBitrate() * 1000000),
-					0, MainPanel.STATS_TREE);
+			final int statLevel = MainPanel.addTreeItem(
+					"TS bitrate (bps): " + Math.round(PCR.getAverageBitrate() * 1000000), 0, MainPanel.STATS_TREE);
 			// MainPanel.addTreeItem("TS bitrate (bps): ", statLevel,
 			// MainPanel.STATS_TREE);
 			((EIT) TableList.getByPid(EIT.FULLSEGPID)).printStatistics();
 			((EIT) TableList.getByPid(EIT.FULLSEGPID)).printEPG();
 			((EIT) TableList.getByPid(EIT.ONESEGPID)).printEPG();
-			if (pp != null && pp.bitrateIsValid)
-				pp.printBitrate();
-			MainPanel.addTreeItem(
-					Messages.getString("Parameters.syncLoss") + Packet.syncLosses, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
+			if (pp != null && pp.bitrateIsValid) pp.printBitrate();
+			MainPanel.addTreeItem(Messages.getString("Parameters.syncLoss") + Packet.syncLosses, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			MainPanel.addTreeItem(Messages.getString("Parameters.tei") + Packet.TEIerrors, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			int continuityCount = 0;
-			for (int i = 0; i < TableList.continuityErrorCounters.length; i++) {
+			for (int i = 0; i < TableList.continuityErrorCounters.length; i++)
 				continuityCount += TableList.continuityErrorCounters[i];
-			}
-			int cntLvl = MainPanel.addTreeItem(
+			final int cntLvl = MainPanel.addTreeItem(
 					Messages.getString("Parameters.continuity") + continuityCount, 0, MainPanel.STATS_TREE); //$NON-NLS-1$
 			for (int i = 0; i < TableList.continuityErrorCounters.length; i++)
 				if (TableList.continuityErrorCounters[i] != 1) {
-					Table t = TableList.getByIndex(i);
-					if (t != null)
-						MainPanel.addTreeItem(t.name + ": " + TableList.continuityErrorCounters[i], cntLvl, //$NON-NLS-1$
-								MainPanel.STATS_TREE);
+					final Table t = TableList.getByIndex(i);
+					if (t != null) MainPanel.addTreeItem(t.name + ": " + TableList.continuityErrorCounters[i], cntLvl, //$NON-NLS-1$
+							MainPanel.STATS_TREE);
 					;
 				}
 		}
 		// MainPanel.addTreeItem("parsing done", 0);
-		if (!noTree)
-			MainPanel.printTree();
+		if (!noTree) MainPanel.printTree();
 		// if (!noStats)
 		// SimpleAssertions.checkSBTVDConformity(MainPanel.getTreeRoot());
-		if (noGui)
-			MainPanel.printTabsAsText();
+		if (noGui) MainPanel.printTabsAsText();
 		// System.exit(0);
 	}
 
