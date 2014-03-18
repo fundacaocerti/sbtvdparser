@@ -35,7 +35,7 @@ public class DescriptorList {
 	public static DescriptorList getInstance() {
 		if (thisClass == null) {
 			thisClass = new DescriptorList();
-			thisClass.descList = new Class<?>[] { TSinformation.class, TerrestrialSystemDelivery.class,
+			thisClass.descList = new Class<?>[] { TSinformation.class, TerrestrialSystemDelivery.class, ServiceList.class,
 					PartialReception.class, StreamIdentifier.class, DataComponent.class, Component.class,
 					ApplicationSignaling.class, NetworkName.class, ParentalRating.class, ShortEvent.class, Service.class,
 					DataContent.class, AudioComponent.class, CarouselID.class, AssociationTag.class, ExtendedEvent.class,
@@ -48,11 +48,11 @@ public class DescriptorList {
 	// private DescriptorList() {
 	// }
 
-	int getTag(Class<?> cl) {
+	int getTag(final Class<?> cl) {
 		int tag = 0;
 		try {
 			tag = cl.getField("tag").getInt(cl);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.err.println("getTag(" + cl.getName() + ")");
 			System.err.println(e.getLocalizedMessage());
 			exception = true;
@@ -63,21 +63,21 @@ public class DescriptorList {
 	static final Class<?>[] noType = null;
 	static final Object[] noObj = null;
 
-	void invokeMethod(Class<?> cl, Object o, String method) {
+	void invokeMethod(final Class<?> cl, final Object o, final String method) {
 		try {
-			(cl.cast(o)).getClass().getMethod(method, noType).invoke(o, noObj);
-		} catch (Exception e) {
+			cl.cast(o).getClass().getMethod(method, noType).invoke(o, noObj);
+		} catch (final Exception e) {
 			Log.printStackTrace(new Exception("invokeMethod(" + cl.getName() + ", " + o.getClass().getName() + ")"));
 			Log.printStackTrace(e);
 			exception = true;
 		}
 	}
 
-	Descriptor getDescriptor(Class<?> cl, int treeIndex, BitWise bw) {
+	Descriptor getDescriptor(final Class<?> cl, final int treeIndex, final BitWise bw) {
 		Descriptor d = null;
 		try {
-			d = (Descriptor) (cl.getConstructors()[0]).newInstance(noObj);
-		} catch (Exception e) {
+			d = (Descriptor) cl.getConstructors()[0].newInstance(noObj);
+		} catch (final Exception e) {
 			System.err.println("getDescriptor(" + cl.getName() + ", " + treeIndex + ")");
 			System.err.println(e.getLocalizedMessage());
 			exception = true;
@@ -85,19 +85,19 @@ public class DescriptorList {
 		return d;
 	}
 
-	public void print(BitWise bw, int treeIndex) {
-		int tag = Descriptor.preparse(bw);
+	public void print(final BitWise bw, final int treeIndex) {
+		final int tag = Descriptor.preparse(bw);
 		exception = false;
 		for (int i = 0; i < descList.length; i++) {
-			Class<?> descClass = descList[i];
+			final Class<?> descClass = descList[i];
 			if (getInstance().getTag(descClass) == tag) {
-				Descriptor d = thisClass.getDescriptor(descClass, treeIndex, bw);
+				final Descriptor d = thisClass.getDescriptor(descClass, treeIndex, bw);
 				d.setUp(treeIndex, bw);
 				thisClass.invokeMethod(descClass, d, "printDescription");
 				if (!exception) return;
 			}
 		}
-		Descriptor d = new Descriptor();
+		final Descriptor d = new Descriptor();
 		d.setUp(treeIndex, bw);
 		d.print();
 	}

@@ -117,8 +117,11 @@ public class Descriptor {
 		int startIndx = tableBw.getAbsolutePosition();
 		// descriptor_tag 8 uimsbf
 		parsedTag = tableBw.pop();
+		addSubItem("descriptor_tag: " + BitWise.toHex(parsedTag), treeIndex);
 		// descriptor_length 8 uimsbf
 		descriptor_length = tableBw.pop();
+		addSubItem("descriptor_length: " + BitWise.toHex(descriptor_length), treeIndex);
+		
 		tableBw.pop(descriptor_length);
 		bw = tableBw.getCopy(startIndx, descriptor_length + 2);
 		bw.pop(2);

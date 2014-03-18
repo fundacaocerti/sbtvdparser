@@ -23,14 +23,13 @@ package mpeg.pes;
 
 import gui.MainPanel;
 import sys.BitWise;
-import sys.Messages;
 
 public class PES {
 
 	public String name = null;
 
-	public int id = 0xFFFF, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF, crcFails = 0, pidAlt = -1,
-			bufWriteIndx = 0, esId = 0, packetLenght = 0;
+	public int id = -1, pid = -1, treeIndx, layer = 0, idLimit = 0xFFFF, crcFails = 0, pidAlt = -1, bufWriteIndx = 0,
+			esId = 0, packetLenght = 0;
 
 	BitWise bw;
 
@@ -38,23 +37,21 @@ public class PES {
 
 	protected int thisPacket;
 
-	public void startPacket(byte[] source, int srcOffset, int writeSize) {
+	public void startPacket(final byte[] source, final int srcOffset, final int writeSize) {
 		bw = new BitWise(source);
 		bw.setOffset(srcOffset);
-		if (bw.pop() != 0 & bw.pop() != 0 & bw.pop() != 1) {
-			return;
-		}
+		if (bw.pop() != 0 & bw.pop() != 0 & bw.pop() != 1) return;
 		esId = bw.pop();
-		if (esId != id) {
-			int errMsg = addSubItem(Messages.getString("PES.notRec") + BitWise.toHex(esId)); //$NON-NLS-1$
-			addSubItem(Messages.getString("PES.expectedTid") + BitWise.toHex(id) + " - " + name, errMsg); //$NON-NLS-1$ //$NON-NLS-2$
+		if (id != -1 && esId != id) {
+			final int errMsg = addSubItem("Conteúdo da ES não reconhecido: " + BitWise.toHex(esId)); //$NON-NLS-1$
+			addSubItem("TID esperado: " + BitWise.toHex(id) + " - " + name, errMsg); //$NON-NLS-1$ //$NON-NLS-2$
 			// addSubItem("content: ["+bw.getHexSequence(section_length)+"]",
 			// errMsg);
 			return;
-		}
+		} else addSubItem("ES_id: " + BitWise.toHex(esId));
 		packetLenght = bw.pop16();
-		if (packetLenght > 10000 || packetLenght == 0) // my safety limit
-			return;
+		if (packetLenght > 100000 || packetLenght == 0) // my safety limit
+		return;
 		bigBuffer = new byte[packetLenght];
 		bw = new BitWise(bigBuffer);
 		bufWriteIndx = 0;
@@ -62,24 +59,19 @@ public class PES {
 	}
 
 	public void parse() {
+		parseExtHeader(thisPacket);
 		bw.printBuffer();
 	}
 
-	public void feedPart(byte[] source, int srcOffset, int writeSize) {
-		if (bigBuffer == null)
-			return;
-		if (bufWriteIndx == bigBuffer.length) {
-			return;
-		}
-		if (bufWriteIndx + writeSize > bigBuffer.length)
-			writeSize = bigBuffer.length - bufWriteIndx;
-		if (srcOffset + writeSize > source.length)
-			writeSize = source.length - srcOffset;
+	public void feedPart(final byte[] source, final int srcOffset, int writeSize) {
+		if (bigBuffer == null) return;
+		if (bufWriteIndx == bigBuffer.length) return;
+		if (bufWriteIndx + writeSize > bigBuffer.length) writeSize = bigBuffer.length - bufWriteIndx;
+		if (srcOffset + writeSize > source.length) writeSize = source.length - srcOffset;
 		System.arraycopy(source, srcOffset, bigBuffer, bufWriteIndx, writeSize);
 		bufWriteIndx += writeSize;
 
-		if (bufWriteIndx == bigBuffer.length)
-			printHeader();
+		if (bufWriteIndx == bigBuffer.length) printHeader();
 	}
 
 	public void printHeader() {
@@ -97,11 +89,10 @@ public class PES {
 	// && stream_id != program_stream_directory
 	// && stream_id != DSMCC_stream
 	// && stream_id != ITU-T Rec. H.222.1 type E stream) {
-	public void parseExtHeader(int parent) {
-		int hdr = addSubItem("header", parent); //$NON-NLS-1$
+	public void parseExtHeader(final int parent) {
+		final int hdr = addSubItem("header", parent); //$NON-NLS-1$
 		// '10' 2 bslbf
-		if (bw.consumeBits(2) != 2)
-			return;
+		if (bw.consumeBits(2) != 2) addSubItem("bad magic!", hdr);
 		// System.out.println("PES_scrambling_control: "+bw.consumeBits(2));
 		// System.out.println("PES_priority: "+bw.consumeBits(1));
 		// System.out.println("data_alignment_indicator: "+bw.consumeBits(1));
@@ -109,24 +100,23 @@ public class PES {
 		// System.out.println("original_or_copy: "+bw.consumeBits(1));
 		bw.consumeBits(bw.remainingBits);
 
-		int PTS_DTS_flags = bw.consumeBits(2);
+		final int PTS_DTS_flags = bw.consumeBits(2);
 		addSubItem("PTS_DTS_flags: " + bw.printBin(PTS_DTS_flags, 2), hdr); //$NON-NLS-1$
 		addSubItem("ESCR_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
 		addSubItem("ES_rate_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
 		addSubItem("DSM_trick_mode_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
 		addSubItem("additional_copy_info_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
 		addSubItem("PES_CRC_flag: " + bw.consumeBits(1), hdr); //$NON-NLS-1$
-		boolean PES_extension_flag = bw.consumeBits(1) == 1;
+		final boolean PES_extension_flag = bw.consumeBits(1) == 1;
 		addSubItem("PES_extension_flag: " + PES_extension_flag, hdr); //$NON-NLS-1$
 		// bw.consumeBits(bw.remainingBits);
 
-		int header_data_length = bw.pop();
+		final int header_data_length = bw.pop();
 		addSubItem("PES_header_data_length: " + header_data_length, hdr); //$NON-NLS-1$
 		bw.mark();
 		// PES_header_data_length 8 uimsbf
 		// if (PTS_DTS_flags = = '10') {
-		if (PTS_DTS_flags == 2)
-			addSubItem("PTS: " + PTS_DTS.parse(bw, 2) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
+		if (PTS_DTS_flags == 2) addSubItem("PTS: " + PTS_DTS.parse(bw, 2) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
 		if (PTS_DTS_flags == 3) {
 			addSubItem("PTS: " + PTS_DTS.parse(bw, 3) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
 			addSubItem("DTS: " + PTS_DTS.parse(bw, 1) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
@@ -239,11 +229,11 @@ public class PES {
 		// System.out.println();
 	}
 
-	public int addSubItem(String msg, int parent) {
+	public int addSubItem(final String msg, final int parent) {
 		return MainPanel.addTreeItem(msg, parent);
 	}
 
-	public int addSubItem(String msg) {
+	public int addSubItem(final String msg) {
 		return MainPanel.addTreeItem(msg, treeIndx);
 	}
 }

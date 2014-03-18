@@ -74,7 +74,7 @@ public class MainPanel {
 
 	public static Shell sShell = null; // @jve:decl-index=0:visual-constraint="10,10"
 
-	private static Tree mainTree = null;
+	static Tree mainTree = null;
 
 	private static Tree epgTree = null;
 
@@ -99,6 +99,10 @@ public class MainPanel {
 	public static Text inputLimit = null;
 
 	private static Label limitLabel = null;
+
+	public static Text searchText = null;
+
+	private static Label searchLabel = null;
 
 	static GuiMethods gm = new GuiMethods(); // @jve:decl-index=0:
 
@@ -137,7 +141,7 @@ public class MainPanel {
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
-		gridData.horizontalSpan = 5;
+		gridData.horizontalSpan = 7;
 		gridData.verticalAlignment = GridData.FILL;
 
 		tabFolder = new TabFolder(sShell, SWT.NONE);
@@ -237,6 +241,7 @@ public class MainPanel {
 			createSShell();
 			sShell.open();
 			sShell.layout(true, true);
+			sShell.pack();
 			createDND();
 		}
 		for (int i = 0; i < msgCache.size(); i++)
@@ -273,11 +278,11 @@ public class MainPanel {
 		progressGridData.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
 		progressGridData.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 		final GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 5;
+		gridLayout.numColumns = 7;
 
 		sShell = new Shell();
 		sShell.setLayout(gridLayout);
-		sShell.setSize(new Point(800, 600));
+		sShell.setSize(new Point(800, 400));
 
 		menuBar = new Menu(sShell, SWT.BAR);
 		sShell.setMenuBar(menuBar);
@@ -349,6 +354,10 @@ public class MainPanel {
 		progressBar = new MultiProgressBar(sShell, SWT.BORDER, 500);
 		// progressBar.setLayoutData(progressGridData);
 
+		searchLabel = new Label(sShell, SWT.NONE);
+		searchText = new Text(sShell, SWT.BORDER);
+		searchText.addKeyListener(new TreeSearch(this));
+
 		createTabFolder();
 		saveItem.addSelectionListener(saveFileListener);
 
@@ -365,7 +374,7 @@ public class MainPanel {
 		statusBar.setText(" ");
 		statusBar.computeSize(50, 50);
 		final GridData statusGd = new GridData();
-		statusGd.horizontalSpan = 5;
+		statusGd.horizontalSpan = 7;
 		statusGd.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 
 		statusBar.setLayoutData(statusGd);
@@ -390,6 +399,7 @@ public class MainPanel {
 
 	public static void setTexts() {
 		limitLabel.setText(Messages.getString("MainPanel.limit")); //$NON-NLS-1$
+		searchLabel.setText(Messages.getString("MainPanel.search")); //$NON-NLS-1$
 		sShell.setText(Messages.getString("MainPanel.shellTitle")); //$NON-NLS-1$
 		inputLimit.setToolTipText(Messages.getString("MainPanel.limitTip")); //$NON-NLS-1$
 		setPauseButtonState(STOPPED);

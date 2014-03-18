@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import mpeg.TSP;
-import mpeg.pes.CC;
+import mpeg.pes.PES;
 import mpeg.pes.PESList;
 import mpeg.psi.TableList;
 
@@ -44,34 +44,33 @@ public class IndependentPES extends Thread {
 
 	public static byte[] buffer = new byte[6], bigBuffer;
 
-	public IndependentPES(InputStream bis) {
+	public IndependentPES(final InputStream bis) {
 		super();
 		this.bis = bis;
 	}
 
+	@Override
 	public void run() {
 		try {
-			if (bis == null)
-				return;
+			if (bis == null) return;
 			counter = 0;
 			byteCount = 0;
 			TableList.resetList();
 			PESList.resetList();
 			PIDStats.reset();
-			if (limit > 0)
-				MainPanel.setLimit(limit);
+			if (limit > 0) MainPanel.setLimit(limit);
 			MainPanel.getLimit();
 			try {
 				mainLoop();
 				bis.close();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset)); //$NON-NLS-1$
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
 			MainPanel.setProgress(1);
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			Log.printStackTrace(e);
 			e.printStackTrace();
 		}
@@ -80,11 +79,11 @@ public class IndependentPES extends Thread {
 	public static boolean limitNotReached = true;
 
 	private void mainLoop() throws InterruptedException, IOException {
-		CC pp = new CC(1);
+		// CC pp = new CC(1);
+		final PES pp = new PES();
 		int readBytes = 0;
 		readBytes = bis.read(buffer);
-		if (readBytes < 0)
-			return;
+		if (readBytes < 0) return;
 		do {
 			byteCount += readBytes;
 			pp.startPacket(buffer, 0, buffer.length);
@@ -93,7 +92,7 @@ public class IndependentPES extends Thread {
 			byteCount += readBytes;
 			pp.feedPart(bigBuffer, 0, bigBuffer.length);
 			readBytes = bis.read(buffer);
-		} while (((MainPanel.isOpen || Parameters.noGui) && readBytes != -1));
+		} while ((MainPanel.isOpen || Parameters.noGui) && readBytes != -1);
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
 	}
 }

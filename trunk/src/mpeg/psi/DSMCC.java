@@ -47,7 +47,7 @@ public class DSMCC extends Table {
 		this.pid = pid;
 		name = "DSMCC"; //$NON-NLS-1$
 		progressLvl = MainPanel.addTreeItem(
-				Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " 0%", 0, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.getString("DSMCC.mount") + " " + BitWise.toHex(pid) + " 0%", 0, MainPanel.DSMCC_TREE); //$NON-NLS-1$ //$NON-NLS-2$
 		// setLowLevelSearch(new byte[] {0x10, 0x02, (byte)0x80});
 		moduleList = new ModuleList(this);
 	}
@@ -60,14 +60,14 @@ public class DSMCC extends Table {
 		downloaded += bytes;
 		if (totalLenght == 0)
 			GuiMethods.runMethod(GuiMethods.CHANGEITEM,
-					new Object[] { Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
+					new Object[] { Messages.getString("DSMCC.mount") + " " + BitWise.toHex(pid) + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
 							new Integer(progressLvl) }, true);
 		else
 			GuiMethods
 					.runMethod(
 							GuiMethods.CHANGEITEM,
 							new Object[] {
-									Messages.getString("DSMCC.mount") + BitWise.toHex(pid) + " " + (downloaded * 100 / totalLenght) + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									Messages.getString("DSMCC.mount") + " " + BitWise.toHex(pid) + " " + (downloaded * 100 / totalLenght) + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							true);
 	}
 
@@ -95,7 +95,7 @@ public class DSMCC extends Table {
 			downloadDataMessage();
 			break;
 		case 0x3D:
-			addSubItem("DSMCC_descriptor_list msg.", progressLvl);
+			streamEventDescriptor();
 			break;
 		case 0x3E:
 			addSubItem("DSMCC_private_data_byte [" + bw.getHexSequence(bw.getAvailableSize()) + "]", progressLvl);
@@ -195,6 +195,41 @@ public class DSMCC extends Table {
 		} else {
 			moduleList.cacheData(moduleId, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize(), blockNumber);
 		}
+	}
+	
+	void streamEventDescriptor() {
+		int sedLvl = addSubItem("stream event descriptor", progressLvl);
+		addSubItem("descriptor_tag: " + BitWise.toHex(bw.pop()), sedLvl);
+		
+		int descriptor_length = bw.pop();
+		addSubItem("descriptor_length: " + descriptor_length, sedLvl);
+		
+		int emgi = bw.pop16();
+		int event_msg_group_id = BitWise.stripBits(emgi, 12, 12);
+		addSubItem("event_msg_group_id: " + BitWise.toHex(event_msg_group_id), sedLvl);
+		addSubItem("reserved_for_future_use: " + BitWise.stripBits(emgi, 16, 4), sedLvl);
+
+		int time_mode = bw.pop();
+		addSubItem("time_mode: " + BitWise.toHex(time_mode), sedLvl);
+		
+//		if (time_mode == 0) {
+			addSubItem("reserved_for_future_use: " + BitWise.toHex(bw.pop(5)), sedLvl);
+//		}
+		
+		int event_msg_type = bw.pop();
+		addSubItem("event_msg_type: " + BitWise.toHex(event_msg_type), sedLvl);
+		
+		int event_msg_id = bw.pop16();
+		addSubItem("event_msg_id: " + BitWise.toHex(event_msg_id), sedLvl);
+		
+		int necLvl = addSubItem("nclEditingCommand", sedLvl);
+		
+		int command_tag = bw.pop();
+		addSubItem("command_tag: " + BitWise.toHex(command_tag), necLvl);
+		
+		addSubItem("unknown_field: " + BitWise.toHex(bw.pop()), necLvl);
+		
+		addSubItem("parameters: \"" + bw.getString() +"\"", necLvl);
 	}
 
 	int messageLength;
