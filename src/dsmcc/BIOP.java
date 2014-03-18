@@ -134,8 +134,68 @@ public class BIOP {
 			// TODO: show these events
 			break;
 		case 0x73746500: // "ste" == StreamEvent
-			System.out.println("StreamEvent"); //$NON-NLS-1$
-			// TODO: show these events
+			objectInfo_length = bw.pop16();
+			MainPanel.addTreeItem("objectInfo_length: " + objectInfo_length, msglvl);
+			
+			int aDescription_length = bw.pop();
+			MainPanel.addTreeItem("aDescription_length: " + aDescription_length, msglvl);
+			MainPanel.addTreeItem("aDescription_bytes: " + bw.getHexSequence(aDescription_length), msglvl);
+			
+			int duration_aSeconds = bw.pop32();
+			MainPanel.addTreeItem("duration_aSeconds: " + duration_aSeconds, msglvl);
+			
+			int duration_aMicroSeconds = bw.pop32();
+			MainPanel.addTreeItem("duration_aMicroSeconds: " + duration_aMicroSeconds, msglvl);
+			
+			int Audio = bw.pop();
+			MainPanel.addTreeItem("Audio: " + Audio, msglvl);
+			
+			int Video = bw.pop();
+			MainPanel.addTreeItem("Video: " + Video, msglvl);
+			
+			int Data = bw.pop();
+			MainPanel.addTreeItem("Data: " + Data, msglvl);
+			
+			int eventNames_count = bw.pop16();
+			MainPanel.addTreeItem("eventNames_count: " + eventNames_count, msglvl);
+			int eventName_length_sum = 0;
+			for (int i = 0; i < eventNames_count; i++) {
+				int eventName_length = bw.pop();
+				MainPanel.addTreeItem("eventName_length: " + eventName_length, msglvl);
+				eventName_length_sum += eventName_length;
+				MainPanel.addTreeItem("eventName: " + bw.getString(eventName_length), msglvl); // TODO toString
+			}
+			
+			MainPanel.addTreeItem("objInfo: " + bw.getHexSequence(objectInfo_length - (aDescription_length + 10) - (2 + eventNames_count + eventName_length_sum)), msglvl);
+			
+			int serviceContextList_count = bw.pop();
+			MainPanel.addTreeItem("serviceContextList_count: " + serviceContextList_count, msglvl);
+			
+			MainPanel.addTreeItem("serviceContextList: " + bw.getHexSequence(eventNames_count), msglvl);
+			
+			int messageBody_length = bw.pop();
+			MainPanel.addTreeItem("messageBody_length: " + messageBody_length, msglvl);
+			
+			int taps_count = bw.pop();
+			MainPanel.addTreeItem("taps_count: " + taps_count, msglvl);
+			for (int i = 0; i < taps_count; i++) {
+				int id = bw.pop16();
+				MainPanel.addTreeItem("id: " + BitWise.toHex(id), msglvl);
+				
+				int use = bw.pop16();
+				MainPanel.addTreeItem("use: " + BitWise.toHex(use), msglvl);
+				
+				int association_tag = bw.pop16();
+				MainPanel.addTreeItem("association_tag: " + BitWise.toHex(association_tag), msglvl);
+				
+				int selector_length = bw.pop();
+				MainPanel.addTreeItem("selector_length: " + BitWise.toHex(selector_length), msglvl);
+			}
+			
+			int eventIds_count = bw.pop();
+			MainPanel.addTreeItem("eventIds_count: " + eventIds_count, msglvl);
+			
+			MainPanel.addTreeItem("eventIds: " + bw.getHexSequence(eventIds_count * 2), msglvl);
 			break;
 		default:
 			break;

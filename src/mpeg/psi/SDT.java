@@ -22,6 +22,10 @@
 //Service Description Table
 package mpeg.psi;
 
+import gui.GuiMethods;
+
+import java.util.HashMap;
+
 import mpeg.psi.descriptors.DescriptorList;
 import mpeg.psi.descriptors.TSinformation;
 import mpeg.sbtvd.SpecialSemantic;
@@ -32,24 +36,30 @@ public class SDT extends Table {
 	public SDT() {
 		id = 0x42;
 		pid = 0x11;
-		name = "SDT actual";
+		name = "SDT";
 	}
 
-	public boolean printDescription(byte[] ba) {
-		if (!verifyMultiSection(ba))
-			return false;
-		printSectionInfo();
-		// original_network_id 16 uimsbf
-		int onid = bw.pop16();
-		addSubItem("original_network_id: " + SpecialSemantic.parseNetworkID(onid));
+	HashMap<Integer, Integer> onidGrouping = new HashMap<Integer, Integer>();
 
-		// reserved_future_use 8 bslbf
-		bw.pop();
-		int svcLoopLevel = addSubItem("Services");
+	@Override
+	public boolean printDescription(final byte[] ba) {
+		if (!verifyMultiSection(ba)) return false;
+		int onid = bw.pop16();
+		int svcLoopLevel;
+		bw.pop(); // reserved_future_use 8 bslbf
+		if (!onidGrouping.containsKey(onid)) {
+			printSectionInfo();
+			GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] {
+					name + " (pid " + BitWise.toHex(pid) + " / onid " + SpecialSemantic.parseNetworkID(onid) + ")",
+					new Integer(treeIndx) }, true);
+			svcLoopLevel = addSubItem("Services");
+			onidGrouping.put(onid, svcLoopLevel);
+		} else svcLoopLevel = onidGrouping.get(onid);
+
 		while (bw.getAvailableSize() > 0) {
 			// service_id 16 uimsbf
-			int service_id = bw.pop16();
-			int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(service_id), svcLoopLevel);
+			final int service_id = bw.pop16();
+			final int svcIdLevel = addSubItem("service_id: " + BitWise.toHex(service_id), svcLoopLevel);
 			addSubItem("type: " + TSinformation.svcTypes[BitWise.stripBits(service_id, 5, 2)], svcIdLevel);
 			addSubItem("number: " + (BitWise.stripBits(service_id, 3, 3) + 1), svcIdLevel);
 
@@ -64,14 +74,13 @@ public class SDT extends Table {
 			// free_CA_mode 1 bslbf
 			// descriptors_loop_length 12 uimsbf
 			onid = bw.pop16();
-			String[] rs = { "undefined", "off", "in a few minutes", "paused", "running" };
+			final String[] rs = { "undefined", "off", "in a few minutes", "paused", "running" };
 			addSubItem("running_status: " + rs[BitWise.stripBits(onid, 16, 3) % 5], svcIdLevel);
-			int descriptorsLenght = BitWise.stripBits(onid, 12, 12);
-			int netDescIndx = addSubItem("network descriptors: (lenght " + descriptorsLenght + ")", svcIdLevel);
-			int mark = bw.getByteCount();
-			while ((bw.getByteCount() - mark < descriptorsLenght) && (bw.getAvailableSize() > 0)) {
+			final int descriptorsLenght = BitWise.stripBits(onid, 12, 12);
+			final int netDescIndx = addSubItem("network descriptors: (lenght " + descriptorsLenght + ")", svcIdLevel);
+			final int mark = bw.getByteCount();
+			while (bw.getByteCount() - mark < descriptorsLenght && bw.getAvailableSize() > 0)
 				DescriptorList.getInstance().print(bw, netDescIndx);
-			}
 		}
 		return true;
 	}

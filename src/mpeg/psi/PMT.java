@@ -81,15 +81,21 @@ public class PMT extends Table {
 			// Reserved 3 bslbf
 			// elementary_PID 13 uimsbf
 			int esPid = BitWise.stripBits(bw.pop16(), 13, 13);
-			if (streamType == 0x0b || streamType == 0x0d)
+//			if (streamType == 0x0b || streamType == 0x0d)
+			if (streamType == 0x0b || streamType == 0x0c ||streamType == 0x0d)
 				TableList.addTable(new DSMCC(esPid));
 			if (streamType == 0x05)
 				TableList.addTable(new AIT(esPid));
+//			if (streamType == 0x0C) {
+//				// NPT or Stream Event
+//				TableList.addTable(new DSMCCDescriptor(esPID));
+//			}
 			int esInfoLevel = addSubItem("ES_PID: " + BitWise.toHex(esPid) + "   type: " + BitWise.toHex(streamType)
 					+ "- " + streamDesc, esLoopLevel);
 			// Reserved 4 bslbf
 			// ES_info_length 12 uimsbf
 			int esInfoLenght = BitWise.stripBits(bw.pop16(), 12, 12) + bw.getByteCount();
+			addSubItem("ES_info_length: " + BitWise.toHex(esInfoLenght), esInfoLevel);
 			// for(i=0,i<N2,i++){
 			// Descriptor()
 			while ((bw.getByteCount() < esInfoLenght) && (bw.getAvailableSize() > 0)) {

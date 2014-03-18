@@ -21,6 +21,10 @@
  */
 package sys;
 
+import java.nio.charset.Charset;
+
+import sun.awt.CharsetString;
+
 public class BitWise {
 
 	public byte[] buf = null;
@@ -256,6 +260,24 @@ public class BitWise {
 		}
 		sb.append("]"); //$NON-NLS-1$
 		return sb.toString();
+	}
+	
+	public String getString() {
+		int eosIndex = readPtr; 
+		while (eosIndex < buf.length && buf[eosIndex] != 0)
+			eosIndex++;
+		int size = eosIndex - readPtr;
+		String str = getString(size);
+		pop(); // '\0'
+		return str;
+	}
+	
+	public String getString(int size) {
+		if (getAvailableSize() < size)
+			size = getAvailableSize();
+		String str = new String(buf, readPtr, size, Charset.forName("US-ASCII"));
+		readPtr += size;
+		return str;
 	}
 
 	public int remainingBits = 0, lastByte = 0;

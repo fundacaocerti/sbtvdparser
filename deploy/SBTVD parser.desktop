@@ -1,11 +1,9 @@
 #!/usr/bin/env xdg-open
 
 [Desktop Entry]
-Version=1.0
 Type=Application
-Terminal=false
-Icon[pt_BR]=gnome-nettool
-Name[pt_BR]=SBTVD parser
-Exec=/usr/java/jdk1.6.0_20/bin/java -Djava.library.path=/usr/lib/jni -jar /usr/bin/tsp.jar
-Name=SBTVD parser
 Icon=gnome-nettool
+Name[en_US]=SBTVD parser
+Name[pt_BR]=Analisador SBTVD
+Exec=/usr/bin/java -Djava.library.path=/usr/lib/jni -jar /usr/bin/tsp.jar
+Terminal=false
