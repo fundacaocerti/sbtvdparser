@@ -40,7 +40,8 @@ public class Module {
 	byte[] data;
 	ModuleList moduleList;
 
-	public Module(int id, int version, int lenght, int treeLvl, ModuleList moduleList, int origSize, int blockSize) {
+	public Module(final int id, final int version, final int lenght, final int treeLvl, final ModuleList moduleList,
+			final int origSize, final int blockSize) {
 		this.id = id;
 		this.version = version;
 		this.lenght = lenght;
@@ -50,8 +51,7 @@ public class Module {
 		this.blockSize = blockSize;
 		data = new byte[lenght];
 		remainingParts = lenght / blockSize;
-		if (lenght % blockSize > 0)
-			remainingParts++;
+		if (lenght % blockSize > 0) remainingParts++;
 		receivedParts = new boolean[remainingParts];
 		partLvl = MainPanel.addTreeItem(Messages.getString("Module.parts") + remainingParts, treeLvl); //$NON-NLS-1$
 	}
@@ -64,35 +64,34 @@ public class Module {
 		return remainingParts == 0;
 	}
 
+	@Override
 	public String toString() {
 		return "000" + Integer.toHexString(id); //$NON-NLS-1$
 	}
 
-	public void save(File f) {
+	public void save(final File f) {
 		try {
 			// File f = new
 			// File("k:\\modules\\module"+mId.substring(mId.length()-4,
 			// mId.length()));
-			if (f.exists())
-				f.delete();
+			if (f.exists()) f.delete();
 			f.createNewFile();
-			FileOutputStream fos = new FileOutputStream(f);
+			final FileOutputStream fos = new FileOutputStream(f);
 			fos.write(data);
 			fos.flush();
 			fos.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public boolean feedPart(byte[] data, int dataOffset, int dataLenght, int blockNumber, int partLvl) {
-		if (remainingParts == 0 || blockNumber >= receivedParts.length || receivedParts[blockNumber])
-			return false;
-		MainPanel
-				.addTreeItem(
-						Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
-		if ((data.length < dataOffset + dataLenght) || (this.data.length < blockNumber * blockSize + dataLenght)) {
-			StringBuffer sb = new StringBuffer();
+	public boolean feedPart(final byte[] data, final int dataOffset, final int dataLenght, final int blockNumber,
+			final int partLvl) {
+		if (remainingParts == 0 || blockNumber >= receivedParts.length || receivedParts[blockNumber]) return false;
+		MainPanel.addTreeItem(
+				Messages.getString("Module.part") + blockNumber + Messages.getString("Module.size") + dataLenght, partLvl); //$NON-NLS-1$ //$NON-NLS-2$
+		if (data.length < dataOffset + dataLenght || this.data.length < blockNumber * blockSize + dataLenght) {
+			final StringBuffer sb = new StringBuffer();
 			sb.append("Module "); //$NON-NLS-1$
 			sb.append(id);
 			sb.append(" data feed err: inserting "); //$NON-NLS-1$
@@ -108,30 +107,29 @@ public class Module {
 			Log.printWarning(sb.toString());
 			return false;
 		}
+
 		System.arraycopy(data, dataOffset, this.data, blockNumber * blockSize, dataLenght);
 		remainingParts--;
 		receivedParts[blockNumber] = true;
 		if (remainingParts == 0) {
 			if (origSize != lenght) {
-				Inflater decompresser = new Inflater();
+				final Inflater decompresser = new Inflater();
 				decompresser.setInput(this.data, 0, lenght);
-				byte[] result = new byte[origSize];
+				final byte[] result = new byte[origSize];
 				try {
-					int resultLength = decompresser.inflate(result);
+					final int resultLength = decompresser.inflate(result);
 					decompresser.end();
-					if (resultLength == origSize)
-						this.data = result;
-				} catch (DataFormatException e) {
+					if (resultLength == origSize) this.data = result;
+				} catch (final DataFormatException e) {
 					e.printStackTrace();
 				}
 			}
 			MainPanel.setTreeData(treeLvl, this);
-			BIOP b = new BIOP(moduleList.fileList);
-			BitWise bw = new BitWise(this.data);
+			final BIOP b = new BIOP(moduleList.fileList);
+			final BitWise bw = new BitWise(this.data);
 			b.parseModule(bw, treeLvl, id);
 			moduleList.increaseCompleted();
-			if (moduleList.isReadyToMount())
-				moduleList.mountFS();
+			if (moduleList.isReadyToMount()) moduleList.mountFS();
 		}
 		return true;
 		// StringBuffer sb = new StringBuffer();
