@@ -22,6 +22,11 @@
 package gui.dialogs;
 
 import gui.MainPanel;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 import mpeg.PCR;
 
 import org.eclipse.swt.SWT;
@@ -45,17 +50,18 @@ public class CopyPopUp implements Listener {
 	static int mouseButton, x, y;
 
 	static LogicTree lt = null;
+	static MenuItem copyRAW, copyTree;
 
 	Shell s;
 
 	int yBias;
 
-	public CopyPopUp(Shell s, int yBias) {
+	public CopyPopUp(final Shell s, final int yBias) {
 		this.s = s;
 		this.yBias = yBias;
 	}
 
-	public void handleEvent(Event event) {
+	public void handleEvent(final Event event) {
 		if (event.type == SWT.MouseDown) {
 			mouseButton = event.button;
 			x = event.x;
@@ -63,22 +69,38 @@ public class CopyPopUp implements Listener {
 			if (event.widget.getClass() == Tree.class && mouseButton == 3) {
 				// if (event.item != null)
 				// lt = (LogicTree) ((TreeItem) event.item).getData();
-				Menu menu = new Menu(s, SWT.POP_UP);
-				MenuItem item = new MenuItem(menu, SWT.PUSH);
-				item.setText(Messages.getString("CopyPopUp.copyQuestion")); //$NON-NLS-1$
-				item.addListener(SWT.Selection, this);
+				final Menu menu = new Menu(s, SWT.POP_UP);
+				copyRAW = new MenuItem(menu, SWT.PUSH);
+				copyTree = new MenuItem(menu, SWT.PUSH);
+				copyRAW.setText(Messages.getString("CopyPopUp.copyQuestion")); //$NON-NLS-1$
+				copyRAW.addListener(SWT.Selection, this);
+				copyTree.setText(Messages.getString("CopyPopUp.copyTreeQuestion")); //$NON-NLS-1$
+				copyTree.addListener(SWT.Selection, this);
 				menu.setLocation(x + s.getLocation().x, y + yBias + s.getLocation().y);
 				menu.setVisible(true);
-				while (!menu.isDisposed() && menu.isVisible()) {
-					if (!Display.getDefault().readAndDispatch())
-						Display.getDefault().sleep();
-				}
+				while (!menu.isDisposed() && menu.isVisible())
+					if (!Display.getDefault().readAndDispatch()) Display.getDefault().sleep();
 				menu.dispose();
 			}
 		}
-		if (event.widget.getClass() == MenuItem.class) {
-			Clipboard clipboard = new Clipboard(Display.getDefault());
+		if (event.widget == copyRAW) {
+			final Clipboard clipboard = new Clipboard(Display.getDefault());
 			clipboard.setContents(new Object[] { lt.toString() }, new Transfer[] { TextTransfer.getInstance() });
+		}
+		if (event.widget == copyTree) {
+			final Clipboard clipboard = new Clipboard(Display.getDefault());
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				baos.write(lt.text.getBytes("UTF-8"));
+				baos.write('\n');
+				lt.print(baos);
+				clipboard.setContents(new Object[] { baos.toString("UTF-8") },
+						new Transfer[] { TextTransfer.getInstance() });
+			} catch (final UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
 		}
 		// TODO: add subtitles and statistics
 		if (event.type == SWT.Selection && event.widget.getClass() == Tree.class) {
