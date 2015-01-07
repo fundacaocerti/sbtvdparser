@@ -1,9 +1,5 @@
 package mpeg.psi.descriptors;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-
-import sys.Log;
 
 public class Application extends AITDescriptor {
 
@@ -15,15 +11,15 @@ public class Application extends AITDescriptor {
 
 	public void printDescription() {
 
-		this.level = addSubItem(name, tableIndx);
+		level = addSubItem(name, tableIndx);
 
 		// normalmente o valor deste campo será 5
-		int application_profiles_lenght = bw.pop();
+		final int application_profiles_lenght = bw.pop();
 
-		if (application_profiles_lenght != 5) {
-			this.printSubItem("Erro: ", "Valor do campo 'application_profiles_lenght' inesperado ".getBytes());
-		} else {
-			int app_profile_number = bw.pop16();
+		if (application_profiles_lenght != 5) addSubItem(
+				"Erro: Valor do campo 'application_profiles_lenght' inesperado ", level);
+		else {
+			final int app_profile_number = bw.pop16();
 			String application_profile;
 
 			switch (app_profile_number) {
@@ -43,19 +39,17 @@ public class Application extends AITDescriptor {
 				application_profile = "";
 			}
 
-			this.printSubItem("Application Profile: ", application_profile.getBytes());
+			addSubItem("Application Profile: " + application_profile, level);
 
-			int[] version = new int[] { bw.pop(), bw.pop(), bw.pop() };
-			String versionS = version[0] + "." + version[1] + "." + version[2];
+			final int[] version = new int[] { bw.pop(), bw.pop(), bw.pop() };
 
-			this.printSubItem("Version: ", versionS.getBytes());
+			addSubItem("Version: " + version[0] + "." + version[1] + "." + version[2], level);
 
-			int service_bound_flag = bw.consumeBits(1);
-			String serviceS = "" + service_bound_flag;
+			final int service_bound_flag = bw.consumeBits(1);
 
-			this.printSubItem("Service Bound Flag: ", serviceS.getBytes());
+			addSubItem("Service Bound Flag: " + service_bound_flag, level);
 
-			int visibility = bw.consumeBits(2);
+			final int visibility = bw.consumeBits(2);
 			String visiString;
 
 			switch (visibility) {
@@ -76,38 +70,24 @@ public class Application extends AITDescriptor {
 				break;
 			}
 
-			this.printSubItem("Visibility: ", visiString.getBytes());
+			addSubItem("Visibility: " + visiString, level);
 
 			// Reserved for future use according to 15606-3
 			bw.consumeBits(5);
 
-			int app_priority = bw.pop();
-			String app_priority_S = "" + app_priority;
+			final int app_priority = bw.pop();
 
-			this.printSubItem("Application Priority: ", app_priority_S.getBytes());
+			addSubItem("Application Priority: " + app_priority, level);
 
 			// We read 8 bytes before this point
 			int remaininBytes = descriptor_length - 8;
 			while (remaininBytes > 0) {
-				byte[] transport_protocol_label = new byte[] { (byte) bw.pop() };
-				this.printSubItem("Transport Protocol Label: ", transport_protocol_label);
+				addSubItem("Transport Protocol Label: " + bw.getHexSequence(1), level);
 				remaininBytes--;
 			}
 
 		}
 
-	}
-
-	private void printSubItem(String label, byte[] value) {
-		try {
-			InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(value), "ISO8859_15_FDIS");
-			char[] ca = new char[value.length];
-			isr.read(ca);
-			String valueS = new String(ca);
-			addSubItem(label.concat(valueS), level);
-		} catch (Exception e) {
-			Log.printStackTrace(e);
-		}
 	}
 
 }
