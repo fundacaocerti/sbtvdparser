@@ -22,6 +22,8 @@
 //Conditional Access Table;
 package mpeg.psi;
 
+import mpeg.psi.descriptors.DescriptorList;
+
 public class CAT extends Table {
 
 	public CAT() {
@@ -30,11 +32,13 @@ public class CAT extends Table {
 		name = "CAT";
 	}
 
-	public boolean printDescription(byte[] ba) {
-		if (!verifyMultiSection(ba))
-			return false;
+	@Override
+	public boolean printDescription(final byte[] ba) {
+		if (!verifyMultiSection(ba)) return false;
 		printSectionInfo();
-		addSubItem("not implemented");
+		final int catLvl = addSubItem("Descriptors");
+		while (bw.getAvailableSize() > 0)
+			DescriptorList.getInstance().print(bw, catLvl);
 		return true;
 	}
 }
