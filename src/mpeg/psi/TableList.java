@@ -38,6 +38,7 @@ public class TableList {
 	public static void setDefaultPids() {
 		tableList.add(new PAT());
 		tableList.add(new SDT());
+		tableList.add(new CAT());
 		tableList.add(new NIT());
 		tableList.add(new EIT(EIT.FULLSEGPID));
 		tableList.add(new EIT(EIT.ONESEGPID));
@@ -49,11 +50,10 @@ public class TableList {
 		// tableList.add(new TSDT());
 	}
 
-	public static Table getByPid(int pid) {
-		if (pid == 0xFFFF)
-			return null;
+	public static Table getByPid(final int pid) {
+		if (pid == 0xFFFF) return null;
 		for (int i = 0; i < tableList.size(); i++)
-			if ((tableList.get(i)).pid == pid) {
+			if (tableList.get(i).pid == pid) {
 				tableIndex = i;
 				// if (!tablesParsed[i]) //TODO: colocar na UI como opção (pegar
 				// todas vs. pegar 1a)
@@ -62,9 +62,8 @@ public class TableList {
 		return null;
 	}
 
-	public static Table getByIndex(int index) {
-		if (index >= tableList.size())
-			return null;
+	public static Table getByIndex(final int index) {
+		if (index >= tableList.size()) return null;
 		return tableList.get(index);
 	}
 
@@ -72,19 +71,18 @@ public class TableList {
 		return tableList.size();
 	}
 
-	public static void forceTable(Table table) {
+	public static void forceTable(final Table table) {
 		forcedTable = table;
 	}
 
-	public static void addTable(Table table) {
+	public static void addTable(final Table table) {
 		tableList.add(table);
 	}
 
 	public static boolean tablesCaught() {
 		boolean res = true;
 		for (int i = 0; i < tableList.size(); i++)
-			if (!tableList.get(i).parsed)
-				res = false;
+			if (!tableList.get(i).parsed) res = false;
 		return res;
 	}
 
@@ -92,8 +90,7 @@ public class TableList {
 		Arrays.fill(continuityErrorCounters, 0);
 		tableList.removeAllElements();
 		setDefaultPids();
-		if (forcedTable != null)
-			addTable(forcedTable);
+		if (forcedTable != null) addTable(forcedTable);
 		tableIndex = 0;
 	}
 }
