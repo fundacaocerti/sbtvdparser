@@ -33,7 +33,7 @@ public class PES {
 
 	BitWise bw;
 
-	byte[] bigBuffer;
+	protected byte[] bigBuffer;
 
 	protected int thisPacket;
 
@@ -44,7 +44,7 @@ public class PES {
 		esId = bw.pop();
 		if (id != -1 && esId != id) {
 			final int errMsg = addSubItem("Conteúdo da ES não reconhecido: " + BitWise.toHex(esId)); //$NON-NLS-1$
-			addSubItem("TID esperado: " + BitWise.toHex(id) + " - " + name, errMsg); //$NON-NLS-1$ //$NON-NLS-2$
+			addSubItem("esID esperado: " + BitWise.toHex(id) + " - " + name, errMsg); //$NON-NLS-1$ //$NON-NLS-2$
 			// addSubItem("content: ["+bw.getHexSequence(section_length)+"]",
 			// errMsg);
 			return;
