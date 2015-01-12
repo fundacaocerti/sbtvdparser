@@ -29,11 +29,12 @@ import sys.Messages;
 
 public class NIT extends Table {
 
-	public NIT() {
+	public NIT(int i) {
 		id = 0x40;
-		pid = 0x10;
+		pid = i;
 		name = "NIT actual"; //$NON-NLS-1$
 	}
+	
 
 	public boolean printDescription(byte[] ba) {
 		if (!verifyMultiSection(ba))

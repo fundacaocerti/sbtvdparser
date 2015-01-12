@@ -36,18 +36,15 @@ public class TableList {
 
 	// TODO: remover todos os publics e p�r os m�todos que usam as vars.
 	public static void setDefaultPids() {
-		tableList.add(new PAT());
-		tableList.add(new SDT());
-		tableList.add(new CAT());
-		tableList.add(new NIT());
+		tableList.add(new PAT(0x00));
+		tableList.add(new SDT(0x11));
+		tableList.add(new CAT(0x01));
+		tableList.add(new NIT(0x10));
 		tableList.add(new EIT(EIT.FULLSEGPID));
 		tableList.add(new EIT(EIT.ONESEGPID));
-		tableList.add(new TOT());
+		tableList.add(new TOT(0x14));
 		tableList.add(new SDTT(SDTT.HIGH_PROTECTION_LAYER_PID));
 		tableList.add(new SDTT(SDTT.LOW_PROTECTION_LAYER_PID));
-		// tableList.add(new DSMCC(0x0384));
-		// tableList.add(new DSMCC(2003));
-		// tableList.add(new TSDT());
 	}
 
 	public static Table getByPid(final int pid) {

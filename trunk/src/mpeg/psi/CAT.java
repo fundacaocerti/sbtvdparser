@@ -26,12 +26,12 @@ import mpeg.psi.descriptors.DescriptorList;
 
 public class CAT extends Table {
 
-	public CAT() {
+	public CAT(int pid) {
+		this.pid = pid;
 		id = 0x01;
-		pid = 0x01;
 		name = "CAT";
 	}
-
+	
 	@Override
 	public boolean printDescription(final byte[] ba) {
 		if (!verifyMultiSection(ba)) return false;

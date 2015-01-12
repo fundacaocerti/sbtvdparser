@@ -29,7 +29,7 @@ import sys.Log;
 import sys.Messages;
 import sys.PIDStats;
 
-public class Table {
+public abstract class Table {
 
 	public boolean parsed = false;
 
@@ -54,6 +54,8 @@ public class Table {
 			"LIT", "ERT", "ITT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	boolean onStats = false;
+	
+	//public Table(int pid) {};
 
 	public String getTableName(int tid) {
 		String tn = ""; //$NON-NLS-1$

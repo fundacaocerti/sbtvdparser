@@ -42,9 +42,9 @@ public class TOT extends Table {
 
 	public static float lastBitrate = 0;
 
-	public TOT() {
+	public TOT(int i) {
 		id = 0x73;
-		pid = 0x14;
+		pid = i;
 		name = "TOT";
 	}
 
