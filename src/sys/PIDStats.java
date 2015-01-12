@@ -22,6 +22,9 @@
 package sys;
 
 import gui.GuiMethods;
+
+import java.util.Vector;
+
 import mpeg.PCR;
 import parsers.Packet;
 
@@ -31,6 +34,7 @@ public class PIDStats {
 	static final float measureRate = 0.125f; // em segundos
 
 	static Set[] sets = new Set[MAXPIDS];
+	public static Vector bars = new Vector(); 
 
 	static int foundPids = 0;
 
@@ -53,6 +57,7 @@ public class PIDStats {
 			i++;
 		}
 		foundPids = 0;
+		bars.clear();
 	}
 
 	public static void setIdentification(int pid, String idText) {
@@ -121,6 +126,7 @@ public class PIDStats {
 			Object[] bar = { new Integer(sets[i].pid), new Integer(sets[i].counter), new Integer(maxCount),
 					formatScaleFactor((float) sets[i].counter / Packet.packetCount * bitrate) + "bps (" + sets[i].name //$NON-NLS-1$
 							+ ")" }; //$NON-NLS-1$
+			bars.add(bar);
 			GuiMethods.runMethod(GuiMethods.ADDPIDBAR, bar, true);
 			i--;
 		}

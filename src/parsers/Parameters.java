@@ -43,6 +43,7 @@ import mpeg.psi.Table;
 import mpeg.psi.TableList;
 import sys.Log;
 import sys.Messages;
+import sys.Persistence;
 
 public class Parameters {
 
@@ -87,7 +88,10 @@ public class Parameters {
 	}
 
 	public static void preParse(final String[] args) {
-		if (args.length != 0 && args[0].equalsIgnoreCase("-help")) printHelp();
+		if (args.length != 0 && args[0].equalsIgnoreCase("-help")) {
+			printHelp();
+			System.exit(0);
+		}
 		startArgs = args;
 		final StringBuffer sb = new StringBuffer();
 		sb.append(Messages.getString("Parameters.command")); //$NON-NLS-1$
@@ -103,35 +107,40 @@ public class Parameters {
 			noTree = true;
 			if (args[i].equalsIgnoreCase("-noStats")) //$NON-NLS-1$
 			noStats = true;
-			if (args[i].equalsIgnoreCase("-help")) printHelp();
+			if (args[i].equalsIgnoreCase("-help")) {
+				printHelp();
+				System.exit(0);
+			}
 		}
 		Log.printWarning(sb.toString());
 	}
 
 	private static void printHelp() {
+		System.out.println(("SBTVD Transport Stream Parser v" + Persistence.CURRENT_SW_VERSION + "\nCopyright © 2010 Gabriel A. G. Marques\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "gabriel.marques@gmail.com"));
 		System.out.println("usage: java -Djava.library.path=/usr/lib/jni -jar tsp.jar [filename] [options]");
 		System.out.println("\n[filename] is the TransportStream file to be parsed");
-		System.out
-				.println("options are:\n\t-noGui: do not open a graphical interface, print parsing resylts to stdout - limited functionality");
+		System.out.println("options are:\n" );
+		System.out.println("\t-noGui: do not open a graphical interface, print parsing resylts to stdout - limited functionality");
 		System.out.println("\t-noTree: supress PSI tree from the output");
 		System.out.println("\t-noStats: supress table/bitrate statistics from the output");
 		System.out
 				.println("\t-forcePid 0xNNN TableName: force the informed PID to be parsed as TableName, if known - in case it's not referenced by other tables");
 		System.out.println("\t\tTableName: one of AIT, CAT, DSMCC, EIT, IIP, NIT, PAT, PMT, SDT, SDTT, TOT or TSDT");
-		System.out.println("\t-filter: ");
-		System.out.println("\t\t-limitInput: ");
-		System.out.println("\t\t-limitMatches: ");
-		System.out.println("\t\t-isRegex: ");
-		System.out.println("\t\t-listOnlyMatches: ");
-		System.out.println("\t-demux: ");
-		System.out.println("\t-crop: ");
-		System.exit(0);
+		System.out.println("\t-limitInput 'int': maximum number of TS packets to process, else the whole file is processed");
+		System.out.println("\t-filter \"stringPattern\" to reduce the amount of displayed info, when present, the following tags will be considered");
+		System.out.println("\t\t-limitMatches 'int': when present, only the informed N maches are shown (on GUI or stdOut)");
+		System.out.println("\t\t-listOnlyMatches: when present, only the exact maches will be displayed, with no context info");
+		System.out.println("\t\t-isRegex: when present, \"stringPattern\" is applied as regex");
+		System.out.println("\t-demux: outputFileName PidToKeep1 PidToKeep2...");
+		System.out.println("\t-crop: outputFileName startPos endPos //start and end are floats between 0.0 and 1.0, relative to file length");
 	}
 
 	public static void startParser(final String[] args) {
 		startArgs = args;
 		if (args.length == 0) {
 			Log.printWarning(Messages.getString("Parameters.noInput")); //$NON-NLS-1$
+			printHelp();
 			return;
 		}
 		final String srcPath = args[0];
@@ -149,14 +158,6 @@ public class Parameters {
 			initialMessage = Messages.getString("Parameters.fopenErr") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			Log.printStackTrace(new Exception(initialMessage));
 			Log.printWarning(initialMessage);
-			return;
-		}
-
-		if (!srcFile.exists() || !srcFile.isFile()) {
-			initialMessage = Messages.getString("Parameters.fNotFound") + srcFile.getAbsolutePath() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			Log.printStackTrace(new Exception(initialMessage));
-			Log.printWarning(initialMessage);
-			return;
 		}
 
 		bis = getStream();
@@ -190,47 +191,16 @@ public class Parameters {
 			if (forcePid > 0 && forcePid == i - 2) if (args[i - 1].startsWith("0x")) {
 				final int pid = Integer.parseInt(args[i - 1].substring(2), 16);
 				final String table = "mpeg.psi." + args[i];
-				System.out.println(table + " for pid " + pid);
+				System.out.println("assigned "+table + " for pid " + pid);
 				try {
 					final Class<?> cl = Class.forName(table);
 					if (cl.getSuperclass() == Table.class) {
 						final Constructor<?> c = cl.getConstructor(new Class[] { int.class });
 						TableList.forceTable((Table) c.newInstance(new Object[] { pid }));
-						break;
 					} else System.out.println("Not a table");
-				} catch (final ClassNotFoundException e) {
+				} catch (final Exception e) {
 					System.out.println("ClassNotFoundException: " + e.getMessage());
-				} catch (final SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (final NoSuchMethodException e) {
-				} catch (final IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (final InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (final IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (final InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Class<?> cl;
-				try {
-					cl = Class.forName(table);
-					TableList.forceTable((Table) cl.newInstance());
-				} catch (final ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (final InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (final IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} 
 			}
 			if (filter > 0 && filter == i - 1) MainPanel.setFilter(args[i]);
 			if (Packet.limit > 0 && Packet.limit == i - 1) {
@@ -352,7 +322,7 @@ public class Parameters {
 				}
 		}
 		// MainPanel.addTreeItem("parsing done", 0);
-		if (!noTree) MainPanel.printTree();
+		//if (!noTree) MainPanel.printTree();
 		// if (!noStats)
 		// SimpleAssertions.checkSBTVDConformity(MainPanel.getTreeRoot());
 		if (noGui) MainPanel.printTabsAsText();

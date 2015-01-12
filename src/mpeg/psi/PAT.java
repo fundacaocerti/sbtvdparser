@@ -27,10 +27,10 @@ import sys.BitWise;
 
 public class PAT extends Table {
 
-	public PAT() {
+	public PAT(final int pid) {
+		this.pid = pid;
 		id = 0x00;
-		pid = 0x00;
-		name = "PAT";
+		name = "PAT (pid " + Integer.toHexString(pid) + ")";
 	}
 
 	public boolean printDescription(byte[] ba) {

@@ -42,7 +42,7 @@ public class DSMCC extends Table {
 	public int progressLvl = 0, downloadId = -1;
 	ModuleList moduleList;
 
-	public DSMCC(int pid) {
+	public DSMCC(final int pid) {
 		id = 0x3c;
 		this.pid = pid;
 		name = "DSMCC"; //$NON-NLS-1$
@@ -52,30 +52,27 @@ public class DSMCC extends Table {
 		moduleList = new ModuleList(this);
 	}
 
-	public void updateDlSize(int bytes) {
+	public void updateDlSize(final int bytes) {
 		totalLenght += bytes;
 	}
 
-	public void updateProgress(int bytes) {
+	public void updateProgress(final int bytes) {
 		downloaded += bytes;
-		if (totalLenght == 0)
-			GuiMethods.runMethod(GuiMethods.CHANGEITEM,
-					new Object[] { Messages.getString("DSMCC.mount") + " " + BitWise.toHex(pid) + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
-							new Integer(progressLvl) }, true);
-		else
-			GuiMethods
-					.runMethod(
-							GuiMethods.CHANGEITEM,
-							new Object[] {
-									Messages.getString("DSMCC.mount") + " " + BitWise.toHex(pid) + " " + (downloaded * 100 / totalLenght) + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							true);
+		if (totalLenght == 0) GuiMethods.runMethod(GuiMethods.CHANGEITEM,
+				new Object[] { Messages.getString("DSMCC.mount") + " " + BitWise.toHex(pid) + " 0%", //$NON-NLS-1$ //$NON-NLS-2$
+						new Integer(progressLvl) }, true);
+		else GuiMethods
+				.runMethod(
+						GuiMethods.CHANGEITEM,
+						new Object[] {
+								Messages.getString("DSMCC.mount") + " " + BitWise.toHex(pid) + " " + downloaded * 100 / totalLenght + "%", new Integer(progressLvl) }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						true);
 	}
 
-	public boolean printDescription(byte[] ba) {
-		if (moduleList.isReadyToMount())
-			return true;
-		if (!verifyMultiSection(ba))
-			return false;
+	@Override
+	public boolean printDescription(final byte[] ba) {
+		if (moduleList.isReadyToMount()) return true;
+		if (!verifyMultiSection(ba)) return false;
 		// printSectionInfo();
 		// bw.printBuffer(0, 20);
 		// addSubItem("pid: "+BitWise.toHex(pid));
@@ -105,13 +102,11 @@ public class DSMCC extends Table {
 	}
 
 	void userNetworkMessage() {
-		int unmLvl = 0;
+		final int unmLvl = 0;
 		// int unmLvl = addSubItem("userNetworkMessage");
-		int msgId = dsmccMsgHeader(unmLvl);
-		if (msgId == 0x1002)
-			downloadInfoIndication();
-		if (msgId == 0x1006)
-			downloadServerInitiate();
+		final int msgId = dsmccMsgHeader(unmLvl);
+		if (msgId == 0x1002) downloadInfoIndication();
+		if (msgId == 0x1006) downloadServerInitiate();
 	}
 
 	private void downloadServerInitiate() {
@@ -128,8 +123,7 @@ public class DSMCC extends Table {
 	int lastSectionVersion = -1, lastCrc = -1;
 
 	private void downloadInfoIndication() {
-		if (lastSectionVersion == versionNumber && crc == lastCrc)
-			return;
+		if (lastSectionVersion == versionNumber && crc == lastCrc) return;
 		lastCrc = crc;
 		if (lastSectionVersion != -1) {
 			Log.printWarning(Messages.getString("DSMCC.rebuild")); //$NON-NLS-1$
@@ -139,10 +133,10 @@ public class DSMCC extends Table {
 			moduleList.reset();
 		}
 		lastSectionVersion = versionNumber;
-		int diiLvl = addSubItem("downloadInfoIndication", progressLvl); //$NON-NLS-1$
+		final int diiLvl = addSubItem("downloadInfoIndication", progressLvl); //$NON-NLS-1$
 		downloadId = bw.pop16() << 16 + bw.pop16();
 		addSubItem("downloadId: " + BitWise.toHex(downloadId), diiLvl); //$NON-NLS-1$
-		int blockSize = bw.pop16();
+		final int blockSize = bw.pop16();
 		addSubItem("blockSize: " + BitWise.toHex(blockSize), diiLvl); //$NON-NLS-1$
 
 		// int windowSize = bw.pop();
@@ -160,15 +154,15 @@ public class DSMCC extends Table {
 		// compatibilityDescriptor()
 		new Compatibility().parse(bw);
 		// bw.pop16();
-		int numberOfModules = bw.pop16();
-		int moduleLvl = addSubItem(Messages.getString("DSMCC.modules") + numberOfModules + ")", diiLvl); //$NON-NLS-1$ //$NON-NLS-2$
+		final int numberOfModules = bw.pop16();
+		final int moduleLvl = addSubItem(Messages.getString("DSMCC.modules") + numberOfModules + ")", diiLvl); //$NON-NLS-1$ //$NON-NLS-2$
 		MainPanel.setTreeData(moduleLvl, moduleList);
 		for (int i = 0; i < numberOfModules; i++)
 			moduleList.createModule(bw, moduleLvl, blockSize);
 		moduleList.loadCache();
-		int privateDataLength = bw.pop16();
+		final int privateDataLength = bw.pop16();
 		if (privateDataLength > 0) {
-			int pdLvl = addSubItem("privateData: " + BitWise.toHex(privateDataLength), diiLvl); //$NON-NLS-1$
+			final int pdLvl = addSubItem("privateData: " + BitWise.toHex(privateDataLength), diiLvl); //$NON-NLS-1$
 			addSubItem(bw.getHexSequence(privateDataLength), pdLvl);
 		}
 	}
@@ -176,65 +170,72 @@ public class DSMCC extends Table {
 	void downloadDataMessage() {
 		// int ddmLvl = addSubItem("downloadDataMessage");
 		// DownloadDataBlock
-		if (dsmccMsgHeader(0) != 0x1003)
-			return; // its not a DDB message
-		int moduleId = bw.pop16();
-		Module m = moduleList.getById(new Integer(moduleId));
+		if (dsmccMsgHeader(0) != 0x1003) return; // its not a DDB message
+		final int moduleId = bw.pop16();
+		final Module m = moduleList.getById(new Integer(moduleId));
 		// addSubItem("moduleId: "+BitWise.toHex(moduleId), ddmLvl);
 		// addSubItem("moduleVersion: "+BitWise.toHex(moduleVersion), ddmLvl);
 		bw.pop();
 		bw.pop(); // reserved
-		int blockNumber = bw.pop16();
+		final int blockNumber = bw.pop16();
 
 		if (m != null) {
-			if (m.isComplete())
-				return;
-			int ddmLvl = addSubItem("downloadDataMessage", m.partLvl); //$NON-NLS-1$
+			if (m.isComplete()) return;
+			final int ddmLvl = addSubItem("downloadDataMessage", m.partLvl); //$NON-NLS-1$
 			addSubItem("blockNumber: " + BitWise.toHex(blockNumber), ddmLvl); //$NON-NLS-1$
+			// cód. para salvar DDMs
+			// System.out.println("downloadDataMessage crc: " + BitWise.toHex(crc) + " blockNumber: "
+			// + BitWise.toHex(blockNumber) + " moduleId: " + moduleId);
+			// try {
+			// final FileOutputStream fos = new FileOutputStream("section_" + BitWise.toHex(crc));
+			// fos.write(bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize());
+			// fos.close();
+			// } catch (final IOException e) {
+			// e.printStackTrace();
+			// }
 			moduleList.feedData(m, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize(), blockNumber, ddmLvl);
-		} else {
-			moduleList.cacheData(moduleId, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize(), blockNumber);
 		}
+		;// else moduleList.cacheData(moduleId, bw.buf, bw.getAbsolutePosition(), bw.getAvailableSize(), blockNumber);
 	}
-	
+
 	void streamEventDescriptor() {
-		int sedLvl = addSubItem("stream event descriptor", progressLvl);
+		final int sedLvl = addSubItem("stream event descriptor", progressLvl);
 		addSubItem("descriptor_tag: " + BitWise.toHex(bw.pop()), sedLvl);
-		
-		int descriptor_length = bw.pop();
+
+		final int descriptor_length = bw.pop();
 		addSubItem("descriptor_length: " + descriptor_length, sedLvl);
-		
-		int emgi = bw.pop16();
-		int event_msg_group_id = BitWise.stripBits(emgi, 12, 12);
+
+		final int emgi = bw.pop16();
+		final int event_msg_group_id = BitWise.stripBits(emgi, 12, 12);
 		addSubItem("event_msg_group_id: " + BitWise.toHex(event_msg_group_id), sedLvl);
 		addSubItem("reserved_for_future_use: " + BitWise.stripBits(emgi, 16, 4), sedLvl);
 
-		int time_mode = bw.pop();
+		final int time_mode = bw.pop();
 		addSubItem("time_mode: " + BitWise.toHex(time_mode), sedLvl);
-		
-//		if (time_mode == 0) {
-			addSubItem("reserved_for_future_use: " + BitWise.toHex(bw.pop(5)), sedLvl);
-//		}
-		
-		int event_msg_type = bw.pop();
+
+		// if (time_mode == 0) {
+		addSubItem("reserved_for_future_use: " + BitWise.toHex(bw.pop(5)), sedLvl);
+		// }
+
+		final int event_msg_type = bw.pop();
 		addSubItem("event_msg_type: " + BitWise.toHex(event_msg_type), sedLvl);
-		
-		int event_msg_id = bw.pop16();
+
+		final int event_msg_id = bw.pop16();
 		addSubItem("event_msg_id: " + BitWise.toHex(event_msg_id), sedLvl);
-		
-		int necLvl = addSubItem("nclEditingCommand", sedLvl);
-		
-		int command_tag = bw.pop();
+
+		final int necLvl = addSubItem("nclEditingCommand", sedLvl);
+
+		final int command_tag = bw.pop();
 		addSubItem("command_tag: " + BitWise.toHex(command_tag), necLvl);
-		
+
 		addSubItem("unknown_field: " + BitWise.toHex(bw.pop()), necLvl);
-		
-		addSubItem("parameters: \"" + bw.getString() +"\"", necLvl);
+
+		addSubItem("parameters: \"" + bw.getString() + "\"", necLvl);
 	}
 
 	int messageLength;
 
-	private int dsmccMsgHeader(int ddmLvl) {
+	private int dsmccMsgHeader(final int ddmLvl) {
 		// ARIB B24 vol 3 item 6.2.2
 		// bw.printBuffer(bw.getAbsolutePosition(),
 		// bw.getAbsolutePosition()+20);
@@ -246,7 +247,7 @@ public class DSMCC extends Table {
 			System.out.println(Messages.getString("DSMCC.wrongtype")); //$NON-NLS-1$
 			return -1;
 		}
-		int messageId = bw.pop16();
+		final int messageId = bw.pop16();
 		// addSubItem("messageId: "+BitWise.toHex(messageId), ddmLvl);
 		// System.out.println("messageId: "+BitWise.toHex(messageId));
 		// transaction_id 32 uimsbf - 2x 16
@@ -254,21 +255,22 @@ public class DSMCC extends Table {
 		// System.out.println(BitWise.toHex(transactionId));
 		// addSubItem("transaction_id: "+BitWise.toHex(downloadId), ddmLvl);
 		bw.pop(); // reserved
-		int adaptationLength = bw.pop();
+		final int adaptationLength = bw.pop();
 		// System.out.println("adaptationLength: "+adaptationLength);
 		messageLength = bw.pop16();
 		// System.out.println("messageLength: "+messageLength);
 		// addSubItem("messageLength: "+BitWise.toHex(messageLength), ddmLvl);
-		if (adaptationLength > 0)
-			bw.pop(adaptationLength);
+		if (adaptationLength > 0) bw.pop(adaptationLength);
 		return messageId;
 	}
 
-	public int addSubItem(String msg, int parent) {
+	@Override
+	public int addSubItem(final String msg, final int parent) {
 		return MainPanel.addTreeItem(msg, parent, MainPanel.DSMCC_TREE);
 	}
 
-	public int addSubItem(String msg) {
+	@Override
+	public int addSubItem(final String msg) {
 		return addSubItem(msg, 0);
 	}
 }

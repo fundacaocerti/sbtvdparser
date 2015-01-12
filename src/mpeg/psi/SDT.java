@@ -33,12 +33,12 @@ import sys.BitWise;
 
 public class SDT extends Table {
 
-	public SDT() {
+	public SDT(int pid) {
+		this.pid = pid;
 		id = 0x42;
-		pid = 0x11;
 		name = "SDT";
 	}
-
+	
 	HashMap<Integer, Integer> onidGrouping = new HashMap<Integer, Integer>();
 
 	@Override

@@ -33,7 +33,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
@@ -54,6 +56,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -63,6 +66,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import parsers.Packet;
 import parsers.Parameters;
+import sys.BitWise;
 import sys.Log;
 import sys.LogicTree;
 import sys.Messages;
@@ -545,23 +549,42 @@ public class MainPanel {
 		return trees[rootIndx];
 	}
 
-	public static void printTree() {
-		if (!Parameters.noGui && display != null && !display.isDisposed()) display.asyncExec(null);
-		else try {
-			trees[PSI_TREE].print(System.out);
-			return;
-		} catch (final UnsupportedEncodingException e1) {
-			Log.printStackTrace(e1);
-		} catch (final IOException e1) {
-			Log.printStackTrace(e1);
-		}
+	public static void printTree(OutputStream fos, String filePth) throws IOException {
+		fos.write(0xEF); fos.write(0xBB); fos.write(0xBF);
+		final String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"), //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.getString("MainPanel.stats"), Messages.getString("MainPanel.dsmcc"), //$NON-NLS-1$ //$NON-NLS-2$
+				Messages.getString("MainPanel.caption") }; //$NON-NLS-1$
+		if (filePth.endsWith("htm")) //$NON-NLS-1$
+			for (int i = 0; i < trees.length; i++)
+				trees[i].printBonsai(fos, treeNames[i]);
+		else
+			if (filePth.endsWith("xml")) //$NON-NLS-1$
+				trees[PSI_TREE].printXML(fos);
+			else {
+				for (int i = 0; i < trees.length; i++) {
+					fos.write("****".getBytes()); //$NON-NLS-1$
+					fos.write(treeNames[i].getBytes());
+					fos.write("****\n".getBytes()); //$NON-NLS-1$
+					trees[i].print(fos);
+					fos.write("\n\n\n".getBytes()); //$NON-NLS-1$
+				}
+				fos.write("**** Bitrates ****\n".getBytes());
+				Iterator<Object[]> it = sys.PIDStats.bars.iterator();
+				while (it.hasNext()) {
+					Object[] bar = it.next();
+					float percent = ((Integer)bar[1]*1.0f/(Integer)bar[2]);
+					int i = Math.round(percent*32);
+					for (int j = 0; j < 32; j++) if (j<i) fos.write('#'); else fos.write('_');
+					fos.write((" pid "+BitWise.toHex((Integer)bar[0])+": "+bar[3]+"\n").getBytes());
+				}
+			}
+			fos.flush();
+			fos.close();
 	}
 
 	public static void printTabsAsText() {
 		try {
-			for (int i = 1; i < trees.length; i++)
-				trees[i].print(System.out);
-			return;
+			printTree(System.out, ".txt");
 		} catch (final UnsupportedEncodingException e1) {
 			Log.printStackTrace(e1);
 		} catch (final IOException e1) {
@@ -589,29 +612,12 @@ public class MainPanel {
 	}
 
 	public static void saveTree(final String filePth) {
-		final String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"), //$NON-NLS-1$ //$NON-NLS-2$
-				Messages.getString("MainPanel.stats"), Messages.getString("MainPanel.dsmcc"), //$NON-NLS-1$ //$NON-NLS-2$
-				Messages.getString("MainPanel.caption") }; //$NON-NLS-1$
 		try {
 			final File f = new File(filePth);
 			if (f.exists()) f.delete();
 			f.createNewFile();
 			final FileOutputStream fos = new FileOutputStream(f);
-			if (filePth.endsWith("htm")) //$NON-NLS-1$
-			for (int i = 0; i < trees.length; i++)
-				trees[i].printBonsai(fos, treeNames[i]);
-			else
-				if (filePth.endsWith("xml")) //$NON-NLS-1$
-				trees[PSI_TREE].printXML(fos);
-				else for (int i = 0; i < trees.length; i++) {
-					fos.write("****".getBytes()); //$NON-NLS-1$
-					fos.write(treeNames[i].getBytes());
-					fos.write("****\n".getBytes()); //$NON-NLS-1$
-					trees[i].print(fos);
-					fos.write("\n\n\n".getBytes()); //$NON-NLS-1$
-				}
-			fos.flush();
-			fos.close();
+			printTree(fos, filePth);
 		} catch (final Exception e) {
 			if (Parameters.noGui) System.err.println(e.getMessage());
 			else new TreeItem(mainTree, SWT.NONE).setText(e.getMessage());
