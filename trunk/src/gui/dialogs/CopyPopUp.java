@@ -94,8 +94,11 @@ public class CopyPopUp implements Listener {
 				baos.write(lt.text.getBytes("UTF-8"));
 				baos.write('\n');
 				lt.print(baos);
-				clipboard.setContents(new Object[] { baos.toString("UTF-8") },
+				baos.flush();
+				System.out.println(baos.toString("UTF-8"));
+				clipboard.setContents(new String[] { baos.toString("UTF-8") },
 						new Transfer[] { TextTransfer.getInstance() });
+				clipboard.dispose();
 			} catch (final UnsupportedEncodingException e) {
 				e.printStackTrace();
 			} catch (final IOException e) {

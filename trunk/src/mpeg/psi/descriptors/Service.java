@@ -21,10 +21,6 @@
  */
 package mpeg.psi.descriptors;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-
-import sys.BitWise;
 
 public class Service extends Descriptor {
 
@@ -33,9 +29,8 @@ public class Service extends Descriptor {
 	static String name = "Service Descriptor";
 
 	/*
-	 * service_descriptor(){ service_type 8 uimsbf service_provider_name_length
-	 * 8 uimsbf for(i=0;i<N;i++){ char 8 uimsbf } service_name_length 8 uimsbf
-	 * for(i=0;i<N;i++){ Char 8 uimsbf } }
+	 * service_descriptor(){ service_type 8 uimsbf service_provider_name_length 8 uimsbf for(i=0;i<N;i++){ char 8 uimsbf
+	 * } service_name_length 8 uimsbf for(i=0;i<N;i++){ Char 8 uimsbf } }
 	 */
 	int[] typeTags = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x16,
 			0x17, 0x18, 0x19, 0x1A, 0x1B, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xC0 };
@@ -53,32 +48,15 @@ public class Service extends Descriptor {
 			"Serv. simultâneo do tipo servidor", "Serv. independente de arquivos", "Dados" };
 
 	public void printDescription() {
-		int level = addSubItem(name, tableIndx);
+		final int level = addSubItem(name, tableIndx);
 		String serviceType = "Não definido";
-		int typeTag = bw.pop();
+		final int typeTag = bw.pop();
 		for (int i = 0; i < typeTags.length; i++)
-			if (typeTags[i] == typeTag)
-				serviceType = typeNames[i];
+			if (typeTags[i] == typeTag) serviceType = typeNames[i];
 		addSubItem("service_type: " + serviceType, level);
 		int textLenght = bw.pop();
 		addSubItem("service_provider: [" + getText(textLenght, bw) + "]", level);
 		textLenght = bw.pop();
 		addSubItem("service_name: [" + getText(textLenght, bw) + "]", level);
-	}
-
-	public String getText(int lenght, BitWise bw) {
-		String text = null;
-		byte[] ba = new byte[lenght];
-		for (int i = 0; i < ba.length; i++)
-			ba[i] = (byte) bw.pop();
-		try {
-			InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(ba), "ISO8859_15_FDIS");
-			char[] ca = new char[lenght];
-			isr.read(ca);
-			text = new String(ca);
-		} catch (Exception e) {
-			text = "codificaçao desconhecida";
-		}
-		return text;
 	}
 }
