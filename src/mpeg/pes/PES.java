@@ -22,6 +22,8 @@
 package mpeg.pes;
 
 import gui.MainPanel;
+import mpeg.PCR;
+import parsers.Packet;
 import sys.BitWise;
 
 public class PES {
@@ -121,7 +123,7 @@ public class PES {
 			addSubItem("PTS: " + PTS_DTS.parse(bw, 3) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
 			addSubItem("DTS: " + PTS_DTS.parse(bw, 1) + "s", hdr); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-
+		addSubItem(PCR.getFormatedTimestamp(Packet.packetCount), hdr);
 		// if (ESCR_flag = = '1') {
 		// reserved 2 bslbf
 		// ESCR_base[32..30] 3 bslbf
