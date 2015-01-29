@@ -24,7 +24,6 @@ package mpeg.psi;
 
 import gui.GuiMethods;
 import mpeg.AdaptationField;
-import mpeg.es.H264;
 import mpeg.pes.CC;
 import mpeg.pes.PESList;
 import mpeg.psi.descriptors.DescriptorList;
@@ -103,7 +102,7 @@ public class PMT extends Table {
 					+ StreamIdentifier.getType(StreamIdentifier.cTag));
 			else PIDStats.setIdentification(esPid, "prog. " + BitWise.toHex(idExt) + " " + streamDesc);
 			StreamIdentifier.cTag = -1;
-			if (streamType == 0x1b) new H264(esPid, esInfoLevel);
+			// if (streamType == 0x1b) new H264(esPid, esInfoLevel);
 		}
 		return true;
 	}
