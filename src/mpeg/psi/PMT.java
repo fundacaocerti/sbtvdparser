@@ -50,13 +50,17 @@ public class PMT extends Table {
 		GuiMethods.runMethod(GuiMethods.CHANGEITEM, new Object[] { name, new Integer(treeIndx) }, true);
 		PIDStats.setIdentification(pid, name);
 		addSubItem("type: " + TSinformation.svcTypes[BitWise.stripBits(idExt, 5, 2)], svcIdLevel);
-		addSubItem("number: " + (BitWise.stripBits(idExt, 3, 3) + 1), svcIdLevel);
+		final int pgNumber = BitWise.stripBits(idExt, 3, 3) + 1;
+		addSubItem("number: " + pgNumber, svcIdLevel);
 		// reserved 3 - não tá na norma
 		// PCR_PID 13 uimsbf
 		final int pcrPid = BitWise.stripBits(bw.pop16(), 13, 13);
 		addSubItem("PCR_PID: " + BitWise.toHex(pcrPid), svcIdLevel);
 		PIDStats.setIdentification(pcrPid, "prog. " + BitWise.toHex(idExt) + " PCR");
-		if (AdaptationField.pcrPid == -1) AdaptationField.pcrPid = pcrPid;
+		if (CC.onlyCC && CC.singleProgramId != 0) {
+			if (CC.singleProgramId == pgNumber && AdaptationField.pcrPid == -1) AdaptationField.pcrPid = pcrPid;
+		} else
+			if (AdaptationField.pcrPid == -1) AdaptationField.pcrPid = pcrPid;
 		// Reserved 4 bslbf
 		// program_info_length 12 uimsbf
 		final int programInfoLength = BitWise.stripBits(bw.pop16(), 12, 12);
@@ -97,7 +101,9 @@ public class PMT extends Table {
 			// Descriptor()
 			while (bw.getByteCount() < esInfoLenght && bw.getAvailableSize() > 0)
 				DescriptorList.getInstance().print(bw, esInfoLevel);
-			if (StreamIdentifier.cTag == 0x30) PESList.addElementaryStream(new CC(esPid));
+			if (!CC.onlyCC || CC.singleProgramId == 0 || CC.singleProgramId == pgNumber) if (StreamIdentifier.cTag >= 0x30
+					&& StreamIdentifier.cTag < 0x38) PESList.addElementaryStream(new CC(esPid, pgNumber,
+					StreamIdentifier.cTag));
 			if (StreamIdentifier.cTag != -1) PIDStats.setIdentification(esPid, "prog. " + BitWise.toHex(idExt) + " "
 					+ StreamIdentifier.getType(StreamIdentifier.cTag));
 			else PIDStats.setIdentification(esPid, "prog. " + BitWise.toHex(idExt) + " " + streamDesc);

@@ -33,50 +33,41 @@ public class ESPacket {
 
 	void parsePES() {
 		pes = PESList.getByPid(TSP.pid);
-		if (pes == null)
-			return;
+		if (pes == null) return;
 		// TSP.print();
-		if ((TSP.continuityCounter - continuityOld != 1) && (continuityOld - TSP.continuityCounter != 15)
-				&& (continuityOld != -1))
-			TableList.continuityErrorCounters[PESList.getLenght()]++;
+		if (TSP.continuityCounter - continuityOld != 1 && continuityOld - TSP.continuityCounter != 15
+				&& continuityOld != -1) TableList.continuityErrorCounters[PESList.getLenght()]++;
 		continuityOld = TSP.continuityCounter;
 
-		if (Packet.layer > 0 && Packet.layer < 4)
-			pes.layer = Packet.layer;
+		if (Packet.layer > 0 && Packet.layer < 4) pes.layer = Packet.layer;
 
 		if (TSP.payloadUnitStartIndicator == 1) {
 			// início da seção
-			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3)
-				System.out.println("adaptation present"); //$NON-NLS-1$
+			if (TSP.adaptationFieldControl != 1 && TSP.adaptationFieldControl != 3) System.out
+					.println("adaptation present"); //$NON-NLS-1$
 			int pointer_field = 0;
-			if (TSP.dataOffset < Packet.buffer.length)
-				pointer_field = Packet.buffer[TSP.dataOffset];
-			if (pointer_field < 0)
-				pointer_field += 256;
+			if (TSP.dataOffset < Packet.buffer.length) pointer_field = Packet.buffer[TSP.dataOffset];
+			if (pointer_field < 0) pointer_field += 256;
 
 			int srcPosition = TSP.dataOffset + 1;// 1 is the
 			// pointer_field
 			if (pointer_field > 0) { // remainder of the last packet
 				pes.feedPart(Packet.buffer, srcPosition, pointer_field);
 				srcPosition += pointer_field;
-			} else
-				srcPosition = TSP.dataOffset;
-			int length = TSP.TS_PACKET_LEN - 1 - srcPosition;
-			if (length < 1)
-				return;
-			if (srcPosition + length <= Packet.buffer.length)
-				pes.startPacket(Packet.buffer, srcPosition, length);
+			} else srcPosition = TSP.dataOffset;
+			final int length = TSP.TS_PACKET_LEN - 1 - srcPosition;
+			if (length < 1) return;
+			if (srcPosition + length <= Packet.buffer.length) pes.startPacket(Packet.buffer, srcPosition, length);
 			// }
 		} else {
 			// if (TSP.adaptationFieldControl == 1
 			// || TSP.adaptationFieldControl == 3) {
 			int pointer_field = 0;
-			if (TSP.dataOffset < Packet.buffer.length)
-				pointer_field = Packet.buffer[TSP.dataOffset];
-			if (pointer_field < 0)
-				pointer_field += 256;
-			int srcPosition = TSP.dataOffset + 1 + pointer_field;
-			pes.feedPart(Packet.buffer, srcPosition, Packet.buffer.length - srcPosition);
+			if (TSP.dataOffset < Packet.buffer.length) pointer_field = Packet.buffer[TSP.dataOffset];
+			if (pointer_field < 0) pointer_field += 256;
+			final int srcPosition = TSP.dataOffset + 1 + pointer_field;
+			if (srcPosition < Packet.buffer.length) pes.feedPart(Packet.buffer, srcPosition, Packet.buffer.length
+					- srcPosition);
 			// }
 		}
 	}

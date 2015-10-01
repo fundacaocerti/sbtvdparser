@@ -44,7 +44,7 @@ import sys.PIDStats;
 
 public class Packet extends Thread {
 
-	InputStream bis = null;
+	static InputStream bis = null;
 
 	public OutputStream bos = null;
 
@@ -71,9 +71,9 @@ public class Packet extends Thread {
 
 	public static byte[] buffer = new byte[TSP.TS_PACKET_LEN - 1];
 
-	public Packet(InputStream bis) {
+	public Packet(final InputStream bis) {
 		super();
-		this.bis = bis;
+		Packet.bis = bis;
 	}
 
 	void parsePacket() throws IOException {
@@ -88,8 +88,7 @@ public class Packet extends Thread {
 				TableList.addTable(new IIP(TSP.pid));
 				iipAdded = true;
 			}
-		} else
-			byteCount += bis.skip(skipSize);
+		} else byteCount += bis.skip(skipSize);
 		while (sync != TSP.SYNC_BYTE && (MainPanel.isOpen || Parameters.noGui) && sync != -1) {
 			sync = bis.read();
 			i++;
@@ -99,9 +98,9 @@ public class Packet extends Thread {
 		byteCount += i;
 		if (i != 1) {
 			syncLosses++;
-			if (syncLosses % 500 == 0)
-				Log.printWarning(Messages.getString("Packet.warning") + packetCount + "-" + realPktLenght + "-" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						+ skipSize);
+			if (syncLosses % 500 == 0) Log
+					.printWarning(Messages.getString("Packet.warning") + packetCount + "-" + realPktLenght + "-" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ skipSize);
 			if (syncLosses > synclossesToRecalc) {
 				customPktCount = 0;
 				synclossesToRecalc += syncLosses;
@@ -109,8 +108,7 @@ public class Packet extends Thread {
 			}
 		}
 		if (customPktCount < skipsToSetPktLen) {
-			if (i > skipsToSetPktLen)
-				i = skipsToSetPktLen;
+			if (i > skipsToSetPktLen) i = skipsToSetPktLen;
 			skips[customPktCount] = i - 1;
 			customPktCount++;
 			if (customPktCount == skipsToSetPktLen) {
@@ -124,8 +122,7 @@ public class Packet extends Thread {
 					}
 
 				realPktLenght = TSP.TS_PACKET_LEN + skipSize;
-				if (realPktLenght % TSP.TS_PACKET_LEN == 0)
-					realPktLenght = TSP.TS_PACKET_LEN;
+				if (realPktLenght % TSP.TS_PACKET_LEN == 0) realPktLenght = TSP.TS_PACKET_LEN;
 				MainPanel.addTreeItem(Messages.getString("Packet.set") + realPktLenght + " bytes.", 0); //$NON-NLS-1$ //$NON-NLS-2$
 				syncLosses = 0;
 				estimate = fileLenght / realPktLenght;
@@ -138,15 +135,14 @@ public class Packet extends Thread {
 		byteCount += bis.read(buffer); // TODO: skip PIDs not used
 		packetCount++;
 		TSP.parse(buffer);
-		if (TSP.transportErrorIndicator == 1)
-			TEIerrors++;
+		if (TSP.transportErrorIndicator == 1) TEIerrors++;
 	}
 
+	@Override
 	public void run() {
 		try {
 			is204b = false;
-			if (bis == null)
-				return;
+			if (bis == null) return;
 			packetCount = 0;
 			byteCount = 0;
 			AdaptationField.pcrPid = -1;
@@ -155,25 +151,21 @@ public class Packet extends Thread {
 			PESList.resetList();
 			PIDStats.reset();
 			System.gc();
-			if (limit > 0)
-				MainPanel.setLimit(limit);
+			if (limit > 0) MainPanel.setLimit(limit);
 			MainPanel.getLimit();
 			try {
-				if (filterPIDs != null)
-					pidFilterLoop();
-				if (cropPoints != null)
-					cropLoop();
-				else
-					mainLoop();
+				if (filterPIDs != null) pidFilterLoop();
+				if (cropPoints != null) cropLoop();
+				else mainLoop();
 				bis.close();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 				Log.printStackTrace(new Exception("dataOffset: " + TSP.dataOffset)); //$NON-NLS-1$
 				Log.printStackTrace(e);
 			}
 			Parameters.printStats();
 			MainPanel.setProgress(1);
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			Log.printStackTrace(e);
 			e.printStackTrace();
 		}
@@ -187,8 +179,8 @@ public class Packet extends Thread {
 		do {
 			parsePacket();
 			PIDStats.increasePid(TSP.pid);
-			if (TSP.transportErrorIndicator == 1)// check if should copy TSP.pid
-				continue;
+			if (TSP.transportErrorIndicator == 1) // check if should copy TSP.pid
+			continue;
 			bos.write(0x47);
 			bos.write(buffer);
 		} while (hasBytesToRead() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached);
@@ -200,11 +192,10 @@ public class Packet extends Thread {
 
 	private boolean hasBytesToRead() {
 		boolean hasBytesToRead;
-		if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0)
-			MainPanel.setProgress((float) packetCount / estimate);
-		hasBytesToRead = byteCount < (estimate * realPktLenght) && byteCount < fileLenght;
-		if (limitNotReached)
-			limitNotReached = (limit == 0 || packetCount < limit);
+		if (estimate > 500 && !Parameters.noGui && packetCount % (estimate / 500) == 0) MainPanel
+				.setProgress((float) packetCount / estimate);
+		hasBytesToRead = byteCount < estimate * realPktLenght && byteCount < fileLenght;
+		if (limitNotReached) limitNotReached = limit == 0 || packetCount < limit;
 		return hasBytesToRead;
 	}
 
@@ -213,8 +204,8 @@ public class Packet extends Thread {
 		do {
 			parsePacket();
 			PIDStats.increasePid(TSP.pid);
-			if (TSP.transportErrorIndicator == 1)// check if should copy TSP.pid
-				continue;
+			if (TSP.transportErrorIndicator == 1) // check if should copy TSP.pid
+			continue;
 			for (int i = 0; i < filterPIDs.length; i++)
 				if (filterPIDs[i] == TSP.pid) {
 					bos.write(0x47);
@@ -231,21 +222,18 @@ public class Packet extends Thread {
 
 	public void printBitrate() {
 		float bitrate = PCR.getAverageBitrate();
-		if (Float.isInfinite(bitrate) || bitrate == 0)
-			bitrate = TOT.lastBitrate;
-		if (bitrate == 0)
-			return;
+		if (Float.isInfinite(bitrate) || bitrate == 0) bitrate = TOT.lastBitrate;
+		if (bitrate == 0) return;
 		PIDStats.printStats(bitrate);
 		if (!Float.isInfinite(TOT.lastBitrate)) {
 			MainPanel.addTreeItem(Messages.getString("Packet.bitrate") + bitrate + " Mbps", 0, MainPanel.STATS_TREE); //$NON-NLS-1$ //$NON-NLS-2$
 			// MainPanel.addTreeItem("TS packets: " + packetCounter, 0);
-			int duration = (int) (packetCount / bitrate * realPktLenght * 8 / 1e6);
-			String[] hms = new String[3];
+			final int duration = (int) (packetCount / bitrate * realPktLenght * 8 / 1e6);
+			final String[] hms = new String[3];
 			int hmsDuration = duration;
 			for (int i = 0; i < hms.length; i++) {
 				hms[i] = Integer.toString(hmsDuration % 60);
-				if (hms[i].length() == 1)
-					hms[i] = "0" + hms[i]; //$NON-NLS-1$
+				if (hms[i].length() == 1) hms[i] = "0" + hms[i]; //$NON-NLS-1$
 				hmsDuration = hmsDuration / 60;
 			}
 			MainPanel
@@ -259,9 +247,9 @@ public class Packet extends Thread {
 
 	private void mainLoop() throws InterruptedException, IOException {
 		limitNotReached = true;
-		Section sp = new Section();
-		ESPacket pp = new ESPacket();
-		int[] miniBlacklist = new int[10];
+		final Section sp = new Section();
+		final ESPacket pp = new ESPacket();
+		final int[] miniBlacklist = new int[10];
 		for (int i = 0; i < miniBlacklist.length; i++)
 			miniBlacklist[i] = -1;
 		int blPos = 0;
@@ -273,27 +261,26 @@ public class Packet extends Thread {
 			parsePacket();
 			PIDStats.increasePid(TSP.pid);
 			for (int i = 0; i < miniBlacklist.length; i++)
-				if (miniBlacklist[i] == TSP.pid)
-					process = false;
-			if (process)
-				try {
-					sp.parseTable();
-					pp.parsePES();
-				} catch (RuntimeException e) {
+				if (miniBlacklist[i] == TSP.pid) process = false;
+			if (process) try {
+				sp.parseTable();
+				pp.parsePES();
+			} catch (final RuntimeException e) {
+				Log.printStackTrace(e);
+				if (!Parameters.noBlackList) {
 					miniBlacklist[blPos++] = TSP.pid;
-					Log.printStackTrace(e);
 					Log.printWarning("PID " + BitWise.toHex(TSP.pid) + " caused an exception and is now blacklisted");
 				}
+			}
 
 			if (jumpOK) {
 				MainPanel.setProgress((float) packetCount / estimate);
 				MainPanel.setCursor(SWT.CURSOR_ARROW);
 				jumpOK = false;
 			}
-			if (jump)
-				jump();
-		} while (jump
-				|| (hasBytesToRead() && !TableList.tablesCaught() && (MainPanel.isOpen || Parameters.noGui) && limitNotReached));
+			if (jump) jump();
+		} while (jump || hasBytesToRead() && !TableList.tablesCaught() && (MainPanel.isOpen || Parameters.noGui)
+				&& limitNotReached);
 		MainPanel.setCursor(SWT.CURSOR_ARROW);
 		// System.out.println(hasBytesToRead + ","
 		// + !TableList.tablesCaught() + ","
@@ -308,8 +295,7 @@ public class Packet extends Thread {
 
 	private void jump() throws IOException {
 		bitrateIsValid = false;
-		if (filePosition > byteCount)
-			bis.skip(filePosition - byteCount);
+		if (filePosition > byteCount) bis.skip(filePosition - byteCount);
 		else {
 			bis.close();
 			bis = Parameters.getStream();
@@ -327,8 +313,8 @@ public class Packet extends Thread {
 
 	private static boolean jump = false, jumpOK = false;
 
-	public static void jumpTo(float location) {
-		filePosition = (long) ((estimate * realPktLenght) * location);
+	public static void jumpTo(final float location) {
+		filePosition = (long) (estimate * realPktLenght * location);
 		jump = true;
 	}
 
@@ -338,17 +324,11 @@ public class Packet extends Thread {
 		return paused;
 	}
 
-	public static void pause(boolean state) {
+	public static void pause(final boolean state) {
 		paused = state;
 	}
 
-	public static void setPacketLimit(long limit) {
-		if (limit > 0) {
-			Packet.limit = limit;
-
-			// TODO: these lines only make sense with real streams, not files
-			// if (limit < estimate)
-			// estimate = limit;
-		}
+	public static void setPacketLimit(final long limit) {
+		if (limit > 0) Packet.limit = limit;
 	}
 }

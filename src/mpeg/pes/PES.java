@@ -50,7 +50,7 @@ public class PES {
 			// addSubItem("content: ["+bw.getHexSequence(section_length)+"]",
 			// errMsg);
 			return;
-		} else addSubItem("ES_id: " + BitWise.toHex(esId));
+		} // else addSubItem("ES_id: " + BitWise.toHex(esId));
 		packetLenght = bw.pop16();
 		if (packetLenght > 100000 || packetLenght == 0) // my safety limit
 		return;
@@ -70,10 +70,15 @@ public class PES {
 		if (bufWriteIndx == bigBuffer.length) return;
 		if (bufWriteIndx + writeSize > bigBuffer.length) writeSize = bigBuffer.length - bufWriteIndx;
 		if (srcOffset + writeSize > source.length) writeSize = source.length - srcOffset;
-		System.arraycopy(source, srcOffset, bigBuffer, bufWriteIndx, writeSize);
-		bufWriteIndx += writeSize;
+		try {
+			System.arraycopy(source, srcOffset, bigBuffer, bufWriteIndx, writeSize);
 
-		if (bufWriteIndx == bigBuffer.length) printHeader();
+			bufWriteIndx += writeSize;
+
+			if (bufWriteIndx == bigBuffer.length) printHeader();
+		} catch (final ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void printHeader() {
