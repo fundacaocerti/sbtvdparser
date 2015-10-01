@@ -13,7 +13,7 @@ public class Application extends AITDescriptor {
 
 		level = addSubItem(name, tableIndx);
 
-		// normalmente o valor deste campo será 5
+		// normalmente o valor deste campo sera 5
 		final int application_profiles_lenght = bw.pop();
 
 		if (application_profiles_lenght != 5) addSubItem(
@@ -24,19 +24,21 @@ public class Application extends AITDescriptor {
 
 			switch (app_profile_number) {
 			case 1:
-				application_profile = "Perfil FSA_09 ou OSA_09 - Sem canal de interatividade";
+				application_profile = "Perfile A (FSA_09 ou OSA_09) - Sem canal de interatividade";
 				break;
 			case 2:
-				application_profile = "Perfil FSB_09 ou OSB_09 - Sem canal de interatividade";
+				application_profile = "Perfil B (FSB_09 ou OSB_09 )- Sem canal de interatividade";
 				break;
 			case 32769:
-				application_profile = "Perfil FSA_09 ou OSA_09 - Com canal de interatividade";
+				application_profile = "Perfil A (FSA_09 ou OSA_09) - Com canal de interatividade";
 				break;
 			case 32770:
-				application_profile = "Perfil FSB_09 ou OSB_09 - Com canal de interatividade";
+				application_profile = "Perfil B (FSB_09 ou OSB_09) - Com canal de interatividade";
+			case 32771:
+				application_profile = "Perfil C (FSC_09 ou OSC_09) - Com canal de interatividade";
 				break;
 			default:
-				application_profile = "";
+				application_profile = "Desconhecido:[" + app_profile_number +"]";
 			}
 
 			addSubItem("Application Profile: " + application_profile, level);
