@@ -38,6 +38,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Vector;
 
+import mpeg.pes.CC;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
@@ -56,7 +58,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -512,7 +513,7 @@ public class MainPanel {
 
 		// TODO: remove this flag and add a listener for the limit-box
 		if (filterLimit == 0) Packet.limitNotReached = false;
-
+		if (Parameters.onTheFly) System.out.println(tit);
 		return items.size() - 1;
 	}
 
@@ -549,37 +550,43 @@ public class MainPanel {
 		return trees[rootIndx];
 	}
 
-	public static void printTree(OutputStream fos, String filePth) throws IOException {
-		fos.write(0xEF); fos.write(0xBB); fos.write(0xBF);
+	public static void printTree(final OutputStream fos, final String filePth) throws IOException {
+		fos.write(0xEF);
+		fos.write(0xBB);
+		fos.write(0xBF);
 		final String[] treeNames = { Messages.getString("MainPanel.struct"), Messages.getString("MainPanel.epg"), //$NON-NLS-1$ //$NON-NLS-2$
 				Messages.getString("MainPanel.stats"), Messages.getString("MainPanel.dsmcc"), //$NON-NLS-1$ //$NON-NLS-2$
 				Messages.getString("MainPanel.caption") }; //$NON-NLS-1$
 		if (filePth.endsWith("htm")) //$NON-NLS-1$
-			for (int i = 0; i < trees.length; i++)
-				trees[i].printBonsai(fos, treeNames[i]);
+		for (int i = 0; i < trees.length; i++)
+			trees[i].printBonsai(fos, treeNames[i]);
 		else
 			if (filePth.endsWith("xml")) //$NON-NLS-1$
-				trees[PSI_TREE].printXML(fos);
-			else {
-				for (int i = 0; i < trees.length; i++) {
-					fos.write("****".getBytes()); //$NON-NLS-1$
-					fos.write(treeNames[i].getBytes());
-					fos.write("****\n".getBytes()); //$NON-NLS-1$
-					trees[i].print(fos);
-					fos.write("\n\n\n".getBytes()); //$NON-NLS-1$
+			trees[PSI_TREE].printXML(fos);
+			else
+				if (!Parameters.onTheFly) if (CC.onlyCC) trees[MainPanel.CC_TREE].print(fos);
+				else {
+					for (int i = 0; i < trees.length; i++) {
+						fos.write("****".getBytes()); //$NON-NLS-1$
+						fos.write(treeNames[i].getBytes());
+						fos.write("****\n".getBytes()); //$NON-NLS-1$
+						trees[i].print(fos);
+						fos.write("\n\n\n".getBytes()); //$NON-NLS-1$
+					}
+					fos.write("**** Bitrates ****\n".getBytes());
+					final Iterator<Object[]> it = sys.PIDStats.bars.iterator();
+					while (it.hasNext()) {
+						final Object[] bar = it.next();
+						final float percent = (Integer) bar[1] * 1.0f / (Integer) bar[2];
+						final int i = Math.round(percent * 32);
+						for (int j = 0; j < 32; j++)
+							if (j < i) fos.write('#');
+							else fos.write('_');
+						fos.write((" pid " + BitWise.toHex((Integer) bar[0]) + ": " + bar[3] + "\n").getBytes());
+					}
 				}
-				fos.write("**** Bitrates ****\n".getBytes());
-				Iterator<Object[]> it = sys.PIDStats.bars.iterator();
-				while (it.hasNext()) {
-					Object[] bar = it.next();
-					float percent = ((Integer)bar[1]*1.0f/(Integer)bar[2]);
-					int i = Math.round(percent*32);
-					for (int j = 0; j < 32; j++) if (j<i) fos.write('#'); else fos.write('_');
-					fos.write((" pid "+BitWise.toHex((Integer)bar[0])+": "+bar[3]+"\n").getBytes());
-				}
-			}
-			fos.flush();
-			fos.close();
+		fos.flush();
+		fos.close();
 	}
 
 	public static void printTabsAsText() {

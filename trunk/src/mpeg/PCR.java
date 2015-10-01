@@ -22,8 +22,10 @@
 //Program Clock Reference
 package mpeg;
 
+import gui.MainPanel;
 import mpeg.psi.TOT;
 import parsers.Packet;
+import parsers.Parameters;
 import sys.BitWise;
 import sys.Log;
 import sys.Messages;
@@ -37,6 +39,8 @@ public class PCR {
 	static double[] smoothAvgBitrate;
 
 	static long firstPacketCount = 0, lastPacketCount = 0, lastpcr = 0, pcrWrap = 0;
+
+	public static int skipSize = 0, pcrPackets = 0;
 
 	private PCR() {
 		smoothAvgBitrate = new double[3];
@@ -53,37 +57,33 @@ public class PCR {
 		return (float) smoothAvgBitrate[2] / 1000000;
 	}
 
-	public static double getTimestamp(long packetNumber) {
+	public static double getTimestamp(final long packetNumber) {
 		return packetNumber * Packet.realPktLenght * 8 / smoothAvgBitrate[2];
 	}
 
-	public static String getFormatedTimestamp(long packetNumber) {
-		if (lastTimeStamp == -1)
-			return Messages.getString("PCR.pktTimestamp") + Long.toString(packetNumber); //$NON-NLS-1$
-		double sec = getTimestamp(packetNumber);
+	public static String getFormatedTimestamp(final long packetNumber) {
+		if (lastTimeStamp == -1) return Messages.getString("PCR.pktTimestamp") + Long.toString(packetNumber); //$NON-NLS-1$
+		final double sec = getTimestamp(packetNumber);
 		String seconds = Double.toString(sec) + "000"; //$NON-NLS-1$
 		seconds = seconds.substring(0, seconds.indexOf('.') + 4);
-		String utcTime = TOT.getTimeStamp(sec);
-		if (utcTime != null)
-			return Messages.getString("PCR.realTimestamp") + " " + seconds + "s (" + utcTime + " UTC-3)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		final String utcTime = TOT.getTimeStamp(sec);
+		if (utcTime != null) return Messages.getString("PCR.realTimestamp") + " " + seconds + "s (" + utcTime + " UTC-3)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return Messages.getString("PCR.offsetTimestamp") + " " + seconds + "s"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static float getCurrentTimestamp() {
-		double bits = (Packet.packetCount - lastPacketCount) * Packet.realPktLenght * 8;
-		if (firstTimestamp == lastTimeStamp)
-			return 0;
+		final double bits = (Packet.packetCount - lastPacketCount) * Packet.realPktLenght * 8;
+		if (firstTimestamp == lastTimeStamp) return 0;
 		float currentTs = (float) (bits / smoothAvgBitrate[2] + (lastTimeStamp - firstTimestamp));
-		if (currentTs < 0 || currentTs > 60 * 60 * 24)
-			currentTs = 0;
+		if (currentTs < 0 || currentTs > 60 * 60 * 24) currentTs = 0;
 		return currentTs;
 	}
 
-	public void update(BitWise bw) {
+	public void update(final BitWise bw) {
 		long pcr_base = bw.pop16();
 		pcr_base = (pcr_base << 16) + bw.pop16();
 		int pcr_extension = bw.pop16();
-		pcr_base = ((pcr_base << 1) | (pcr_extension & 0x80));
+		pcr_base = pcr_base << 1 | pcr_extension & 0x80;
 		if (pcr_base < 1e4 && lastpcr > 0x1ffff0000l) {// PCR wrap
 			Log.printWarning("PCR wrapped: " + getFormatedTimestamp(Packet.packetCount)); //$NON-NLS-1$
 			pcrWrap += 0x1ffffffffl;
@@ -93,8 +93,8 @@ public class PCR {
 		// The first 33 bits are based on a 90 kHz clock. The last 9 are based
 		// on a 27 MHz clock.
 		pcr_extension = BitWise.stripBits(pcr_extension, 9, 9);
-		long pcr = pcr_base * 300 + pcr_extension;// ticks of a 27MHz clock
-		double timeStamp = ((double) pcr) / 27000000;
+		final long pcr = pcr_base * 300 + pcr_extension;// ticks of a 27MHz clock
+		final double timeStamp = (double) pcr / 27000000;
 		if (firstTimestamp == -1) {
 			firstTimestamp = timeStamp;
 			lastTimeStamp = timeStamp;
@@ -102,10 +102,10 @@ public class PCR {
 			lastPacketCount = firstPacketCount;
 		} else {
 			if (timeStamp - lastTimeStamp > 2 || timeStamp - lastTimeStamp < 0) {
-				lastTimeStamp = timeStamp;
 				Log.printWarning("PCR err"); //$NON-NLS-1$
 				Log.printWarning("lts: " + lastTimeStamp); //$NON-NLS-1$
 				Log.printWarning("ts: " + timeStamp); //$NON-NLS-1$
+				lastTimeStamp = timeStamp;
 				return;
 			}
 			// double currentBitrate = (Packet.packetCount - lastPacketCount) /
@@ -113,7 +113,7 @@ public class PCR {
 			// * Packet.realPktLenght * 8;
 			lastTimeStamp = timeStamp;
 			lastPacketCount = Packet.packetCount;
-			double avgBitrate = (lastPacketCount - firstPacketCount) / (timeStamp - firstTimestamp)
+			final double avgBitrate = (lastPacketCount - firstPacketCount) / (timeStamp - firstTimestamp)
 					* Packet.realPktLenght * 8;
 			if (smoothAvgBitrate[0] == 0) {
 				smoothAvgBitrate[0] = avgBitrate;
@@ -123,12 +123,24 @@ public class PCR {
 			smoothAvgBitrate[1] = smoothAvgBitrate[2];
 			smoothAvgBitrate[2] = smoothAvgBitrate[0] * 0.475 + smoothAvgBitrate[1] * 0.475 + avgBitrate * 0.05;
 			/*
-			 * TODO: make some PCR jitter tests with gnuplot plot 'data.txt'
-			 * using 0:2 "%lf %lf %lf\n" with lines, 'data.txt' using 0:3
-			 * "%lf %lf %lf\n" with lines System.out.print(currentBitrate);
-			 * System.out.print(';'); System.out.print(avgBitrate);
-			 * System.out.print(';'); System.out.println(smoothAvgBitrate[2]);
+			 * TODO: make some PCR jitter tests with gnuplot plot 'data.txt' using 0:2 "%lf %lf %lf\n" with lines,
+			 * 'data.txt' using 0:3 "%lf %lf %lf\n" with lines System.out.print(currentBitrate); System.out.print(';');
+			 * System.out.print(avgBitrate); System.out.print(';'); System.out.println(smoothAvgBitrate[2]);
 			 */
+			pcrPackets++;
+			if (pcrPackets == 20) {
+				MainPanel.addTreeItem("bitrate: " + (long) smoothAvgBitrate[2] + "bps", 0, MainPanel.PSI_TREE);
+				if (skipSize > 0) {
+					System.out.println("getCurrentTimestamp " + getCurrentTimestamp());
+					System.out.println("skip " + skipSize);
+					long bytes = (long) (smoothAvgBitrate[2] / 8 * skipSize);
+					bytes = Parameters.skip(bytes);
+					Packet.packetCount += bytes / Packet.realPktLenght;
+					lastTimeStamp += skipSize;
+					lastPacketCount = Packet.packetCount;
+					skipSize = -1;
+				}
+			}
 		}
 	}
 }
