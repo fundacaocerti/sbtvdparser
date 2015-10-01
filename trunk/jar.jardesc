@@ -11,7 +11,17 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.psi.descriptors"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.es"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;gui"/>
         <javaElement handleIdentifier="=TV-D/res"/>
-        <javaElement handleIdentifier="=TV-D/src"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;parsers"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.sbtvd"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;gui.dialogs"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.pes"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;mpeg.psi"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;sys"/>
+        <javaElement handleIdentifier="=TV-D/src&lt;dsmcc"/>
     </selectedElements>
 </jardesc>

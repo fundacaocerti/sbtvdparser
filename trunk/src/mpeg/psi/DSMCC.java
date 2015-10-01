@@ -134,6 +134,7 @@ public class DSMCC extends Table {
 		}
 		lastSectionVersion = versionNumber;
 		final int diiLvl = addSubItem("downloadInfoIndication", progressLvl); //$NON-NLS-1$
+		addSubItem("versionNumber: " + BitWise.toHex(versionNumber), diiLvl);
 		downloadId = bw.pop16() << 16 + bw.pop16();
 		addSubItem("downloadId: " + BitWise.toHex(downloadId), diiLvl); //$NON-NLS-1$
 		final int blockSize = bw.pop16();
